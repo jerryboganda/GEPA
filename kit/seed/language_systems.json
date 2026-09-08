@@ -1,0 +1,1388 @@
+{
+  "package": "GEPA Pilot Item Bank v2",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "prepared": "2026-09-08",
+  "status": "pilot — expert review / cognitive labs / closed beta only; NOT a public production bank",
+  "note": "Option order printed in source = authoring layout only. Runtime MUST shuffle per session and store the permutation.",
+  "module": "LS",
+  "reported": "diagnostic_only",
+  "locator_rule": "first two items in each A1-C2 band are locator candidates",
+  "items": [
+    {
+      "item_id": "LS-PRE-01",
+      "module": "LS",
+      "band": "Pre-A1",
+      "stem": "This is a ___.",
+      "construct": "word recognition",
+      "domain": "personal",
+      "topic_family": "home",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_418ddc98a5",
+          "text": "door"
+        },
+        {
+          "option_id": "opt_0d6ed947bc",
+          "text": "quick"
+        },
+        {
+          "option_id": "opt_75159ad7c1",
+          "text": "Monday"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-PRE-02",
+      "module": "LS",
+      "band": "Pre-A1",
+      "stem": "Thank ___.",
+      "construct": "basic phrase",
+      "domain": "public",
+      "topic_family": "service",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_46443584a7",
+          "text": "at"
+        },
+        {
+          "option_id": "opt_d4b9f820a9",
+          "text": "you"
+        },
+        {
+          "option_id": "opt_eadd67e815",
+          "text": "because"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-PRE-03",
+      "module": "LS",
+      "band": "Pre-A1",
+      "stem": "I drink ___.",
+      "construct": "word recognition",
+      "domain": "personal",
+      "topic_family": "food",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_251e19a66f",
+          "text": "chair"
+        },
+        {
+          "option_id": "opt_ea438e4c56",
+          "text": "night"
+        },
+        {
+          "option_id": "opt_410ab1142b",
+          "text": "water"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-PRE-04",
+      "module": "LS",
+      "band": "Pre-A1",
+      "stem": "The bus is ___.",
+      "construct": "basic phrase",
+      "domain": "public",
+      "topic_family": "transport",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_612713b4f9",
+          "text": "bluely"
+        },
+        {
+          "option_id": "opt_d0d144161b",
+          "text": "late"
+        },
+        {
+          "option_id": "opt_656a12fdaf",
+          "text": "eat"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-01",
+      "module": "LS",
+      "band": "A1",
+      "stem": "I ___ from Egypt.",
+      "construct": "present simple be",
+      "domain": "personal",
+      "topic_family": "home",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_ca875fd283",
+          "text": "am"
+        },
+        {
+          "option_id": "opt_3997d8e4a4",
+          "text": "is"
+        },
+        {
+          "option_id": "opt_bc6b680317",
+          "text": "are"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-02",
+      "module": "LS",
+      "band": "A1",
+      "stem": "Our class is ___ Monday.",
+      "construct": "time preposition",
+      "domain": "educational",
+      "topic_family": "schedule",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_ce5081b338",
+          "text": "at"
+        },
+        {
+          "option_id": "opt_a0adfe1fbd",
+          "text": "on"
+        },
+        {
+          "option_id": "opt_47cc3d2538",
+          "text": "in"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-03",
+      "module": "LS",
+      "band": "A1",
+      "stem": "There ___ two chairs in the room.",
+      "construct": "there is/are",
+      "domain": "personal",
+      "topic_family": "home",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_2d69839701",
+          "text": "is"
+        },
+        {
+          "option_id": "opt_5950602f66",
+          "text": "be"
+        },
+        {
+          "option_id": "opt_6a30102a67",
+          "text": "are"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-04",
+      "module": "LS",
+      "band": "A1",
+      "stem": "Can you ___ me, please?",
+      "construct": "modal + base verb",
+      "domain": "public",
+      "topic_family": "service",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_bcf9657bf2",
+          "text": "helps"
+        },
+        {
+          "option_id": "opt_783eaff3b5",
+          "text": "help"
+        },
+        {
+          "option_id": "opt_671a66532f",
+          "text": "helping"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-05",
+      "module": "LS",
+      "band": "A1",
+      "stem": "I do not have ___ brothers.",
+      "construct": "determiner",
+      "domain": "personal",
+      "topic_family": "family",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_b6a548a688",
+          "text": "any"
+        },
+        {
+          "option_id": "opt_fa1752a545",
+          "text": "some"
+        },
+        {
+          "option_id": "opt_bf1b41f824",
+          "text": "much"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-06",
+      "module": "LS",
+      "band": "A1",
+      "stem": "The opposite of \"cheap\" is ___.",
+      "construct": "common adjective",
+      "domain": "public",
+      "topic_family": "shopping",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_2551a7ec15",
+          "text": "quiet"
+        },
+        {
+          "option_id": "opt_9903361f1d",
+          "text": "empty"
+        },
+        {
+          "option_id": "opt_2e9ca19e99",
+          "text": "expensive"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-07",
+      "module": "LS",
+      "band": "A1",
+      "stem": "She usually ___ breakfast at seven.",
+      "construct": "present simple",
+      "domain": "personal",
+      "topic_family": "routine",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_e163f09602",
+          "text": "has"
+        },
+        {
+          "option_id": "opt_35b2cc953d",
+          "text": "have"
+        },
+        {
+          "option_id": "opt_61fd95b36f",
+          "text": "having"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A1-08",
+      "module": "LS",
+      "band": "A1",
+      "stem": "This is Maria. ___ book is on the desk.",
+      "construct": "possessive",
+      "domain": "educational",
+      "topic_family": "classroom",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_5c91dbe76e",
+          "text": "His"
+        },
+        {
+          "option_id": "opt_1316ecb7ca",
+          "text": "Her"
+        },
+        {
+          "option_id": "opt_eabbd66989",
+          "text": "Their"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-01",
+      "module": "LS",
+      "band": "A2",
+      "stem": "I have lived here ___ 2024.",
+      "construct": "present perfect + since",
+      "domain": "personal",
+      "topic_family": "residence",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_ef9e8acdeb",
+          "text": "since"
+        },
+        {
+          "option_id": "opt_4592ffac82",
+          "text": "for"
+        },
+        {
+          "option_id": "opt_eabf0eb888",
+          "text": "from"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-02",
+      "module": "LS",
+      "band": "A2",
+      "stem": "When I called, she ___ dinner.",
+      "construct": "past continuous",
+      "domain": "personal",
+      "topic_family": "routine",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_ed9e39452b",
+          "text": "made"
+        },
+        {
+          "option_id": "opt_a04f687285",
+          "text": "was making"
+        },
+        {
+          "option_id": "opt_ba72aec145",
+          "text": "has made"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-03",
+      "module": "LS",
+      "band": "A2",
+      "stem": "The train is ___ than the bus today.",
+      "construct": "comparative",
+      "domain": "public",
+      "topic_family": "transport",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_b8a5ba160f",
+          "text": "fastest"
+        },
+        {
+          "option_id": "opt_52367cfba9",
+          "text": "more fast"
+        },
+        {
+          "option_id": "opt_6a52287692",
+          "text": "faster"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-04",
+      "module": "LS",
+      "band": "A2",
+      "stem": "If it rains, we ___ inside.",
+      "construct": "first conditional",
+      "domain": "public",
+      "topic_family": "weather",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_74a7705e89",
+          "text": "stayed"
+        },
+        {
+          "option_id": "opt_ec938a45ce",
+          "text": "will stay"
+        },
+        {
+          "option_id": "opt_04654470fa",
+          "text": "stay yesterday"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-05",
+      "module": "LS",
+      "band": "A2",
+      "stem": "Could you tell me where the station ___?",
+      "construct": "embedded question",
+      "domain": "public",
+      "topic_family": "directions",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_3218ac54b4",
+          "text": "is"
+        },
+        {
+          "option_id": "opt_d2197706e7",
+          "text": "does"
+        },
+        {
+          "option_id": "opt_b51a89e502",
+          "text": "be"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-06",
+      "module": "LS",
+      "band": "A2",
+      "stem": "He forgot ___ the door before he left.",
+      "construct": "verb pattern",
+      "domain": "personal",
+      "topic_family": "home",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_6a3d3117e1",
+          "text": "locking yesterday"
+        },
+        {
+          "option_id": "opt_b5a1cd5575",
+          "text": "lock to"
+        },
+        {
+          "option_id": "opt_aadb032fa9",
+          "text": "to lock"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-07",
+      "module": "LS",
+      "band": "A2",
+      "stem": "The lesson was put off until Friday. \"Put off\" means ___.",
+      "construct": "phrasal verb meaning",
+      "domain": "educational",
+      "topic_family": "course",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_2090ae512e",
+          "text": "postponed"
+        },
+        {
+          "option_id": "opt_c6640f3f84",
+          "text": "completed"
+        },
+        {
+          "option_id": "opt_9be4578c95",
+          "text": "recorded"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-A2-08",
+      "module": "LS",
+      "band": "A2",
+      "stem": "I have not finished the book ___.",
+      "construct": "adverb position",
+      "domain": "personal",
+      "topic_family": "routine",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_967b9105b8",
+          "text": "ever before"
+        },
+        {
+          "option_id": "opt_d59af96618",
+          "text": "yet"
+        },
+        {
+          "option_id": "opt_62b81fb92e",
+          "text": "already not"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-01",
+      "module": "LS",
+      "band": "B1",
+      "stem": "If I ___ earlier, I would have caught the train.",
+      "construct": "third conditional",
+      "domain": "public",
+      "topic_family": "travel",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_7cca0d4843",
+          "text": "had left"
+        },
+        {
+          "option_id": "opt_4c67f41212",
+          "text": "left"
+        },
+        {
+          "option_id": "opt_90e74a787a",
+          "text": "would leave"
+        },
+        {
+          "option_id": "opt_e8250ac8ee",
+          "text": "have left"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-02",
+      "module": "LS",
+      "band": "B1",
+      "stem": "We need to ___ a decision before Friday.",
+      "construct": "collocation",
+      "domain": "occupational",
+      "topic_family": "decision",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_c94f2ca28e",
+          "text": "do"
+        },
+        {
+          "option_id": "opt_e3e401270f",
+          "text": "make"
+        },
+        {
+          "option_id": "opt_d4c21ffe36",
+          "text": "build"
+        },
+        {
+          "option_id": "opt_9bb4160f48",
+          "text": "perform"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-03",
+      "module": "LS",
+      "band": "B1",
+      "stem": "The woman ___ bicycle was stolen reported it immediately.",
+      "construct": "relative clause",
+      "domain": "public",
+      "topic_family": "incident",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_2edd7eaddc",
+          "text": "who"
+        },
+        {
+          "option_id": "opt_c644dd6b43",
+          "text": "which"
+        },
+        {
+          "option_id": "opt_9303e68435",
+          "text": "whose"
+        },
+        {
+          "option_id": "opt_90ed590a51",
+          "text": "whom"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-04",
+      "module": "LS",
+      "band": "B1",
+      "stem": "I wish I ___ more free time during the week.",
+      "construct": "wish + past",
+      "domain": "personal",
+      "topic_family": "time",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_3d5e744e35",
+          "text": "have"
+        },
+        {
+          "option_id": "opt_0859cd99e9",
+          "text": "would have had"
+        },
+        {
+          "option_id": "opt_fb0e01bfcc",
+          "text": "am having"
+        },
+        {
+          "option_id": "opt_56eec0063d",
+          "text": "had"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-05",
+      "module": "LS",
+      "band": "B1",
+      "stem": "Despite ___ tired, he finished the report.",
+      "construct": "preposition + gerund",
+      "domain": "occupational",
+      "topic_family": "work",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_be6f184600",
+          "text": "be"
+        },
+        {
+          "option_id": "opt_ba4d3c1dd9",
+          "text": "being"
+        },
+        {
+          "option_id": "opt_5b5c197c29",
+          "text": "to be"
+        },
+        {
+          "option_id": "opt_3fc21e5806",
+          "text": "been"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-06",
+      "module": "LS",
+      "band": "B1",
+      "stem": "The workshop was more useful than I ___.",
+      "construct": "past expectation",
+      "domain": "educational",
+      "topic_family": "course",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_6ef2458af2",
+          "text": "expect"
+        },
+        {
+          "option_id": "opt_0a08675e57",
+          "text": "am expecting"
+        },
+        {
+          "option_id": "opt_5eb6b90670",
+          "text": "expected"
+        },
+        {
+          "option_id": "opt_0503d68f76",
+          "text": "had expect"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-07",
+      "module": "LS",
+      "band": "B1",
+      "stem": "Visitors were asked ___ their phones off.",
+      "construct": "passive infinitive",
+      "domain": "public",
+      "topic_family": "venue",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_ed2d32ac1c",
+          "text": "switching"
+        },
+        {
+          "option_id": "opt_925dd61743",
+          "text": "switched"
+        },
+        {
+          "option_id": "opt_91a82aa746",
+          "text": "switch"
+        },
+        {
+          "option_id": "opt_e945a3192f",
+          "text": "to switch"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B1-08",
+      "module": "LS",
+      "band": "B1",
+      "stem": "The company plans to ___ the new service next month.",
+      "construct": "lexical precision",
+      "domain": "occupational",
+      "topic_family": "product",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_feab9507d6",
+          "text": "launch"
+        },
+        {
+          "option_id": "opt_b291630be3",
+          "text": "lift"
+        },
+        {
+          "option_id": "opt_f15d224dee",
+          "text": "throw"
+        },
+        {
+          "option_id": "opt_b1baec616a",
+          "text": "carry"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-01",
+      "module": "LS",
+      "band": "B2",
+      "stem": "The scheme was introduced ___ reducing unnecessary journeys.",
+      "construct": "purpose phrase",
+      "domain": "public",
+      "topic_family": "policy",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_5de5ab3cf6",
+          "text": "with the aim of"
+        },
+        {
+          "option_id": "opt_1534ca8984",
+          "text": "because of"
+        },
+        {
+          "option_id": "opt_43acbc7e6b",
+          "text": "in spite of"
+        },
+        {
+          "option_id": "opt_9e1942150d",
+          "text": "apart from"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-02",
+      "module": "LS",
+      "band": "B2",
+      "stem": "The proposal, ___ was revised twice, was finally approved.",
+      "construct": "non-defining relative",
+      "domain": "educational",
+      "topic_family": "proposal",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_e3d2f2e55d",
+          "text": "that"
+        },
+        {
+          "option_id": "opt_7df9263bfe",
+          "text": "which"
+        },
+        {
+          "option_id": "opt_bf958ab958",
+          "text": "what"
+        },
+        {
+          "option_id": "opt_50ca91419e",
+          "text": "where"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-03",
+      "module": "LS",
+      "band": "B2",
+      "stem": "His explanation was plausible but not entirely ___.",
+      "construct": "lexical precision",
+      "domain": "public",
+      "topic_family": "explanation",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_3a3e90f209",
+          "text": "convinced"
+        },
+        {
+          "option_id": "opt_28272296d8",
+          "text": "conviction"
+        },
+        {
+          "option_id": "opt_eaabd846c1",
+          "text": "convincing"
+        },
+        {
+          "option_id": "opt_df9fd7ceb5",
+          "text": "convenient"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-04",
+      "module": "LS",
+      "band": "B2",
+      "stem": "We need to take the long-term cost ___ account.",
+      "construct": "collocation",
+      "domain": "occupational",
+      "topic_family": "planning",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_a904c748b8",
+          "text": "on"
+        },
+        {
+          "option_id": "opt_03604e7b27",
+          "text": "for"
+        },
+        {
+          "option_id": "opt_e70662d126",
+          "text": "through"
+        },
+        {
+          "option_id": "opt_1c5aba1764",
+          "text": "into"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-05",
+      "module": "LS",
+      "band": "B2",
+      "stem": "The results ___ interpreted cautiously because the sample was small.",
+      "construct": "modal passive",
+      "domain": "educational",
+      "topic_family": "research",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_9f062c1916",
+          "text": "should"
+        },
+        {
+          "option_id": "opt_7b4b16779e",
+          "text": "should be"
+        },
+        {
+          "option_id": "opt_40419ef64c",
+          "text": "have"
+        },
+        {
+          "option_id": "opt_d0576ceda7",
+          "text": "are to have"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-06",
+      "module": "LS",
+      "band": "B2",
+      "stem": "By the time we arrived, the talk ___.",
+      "construct": "past perfect sequencing",
+      "domain": "public",
+      "topic_family": "event",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_30dbb98ea3",
+          "text": "already starts"
+        },
+        {
+          "option_id": "opt_58f4b1659c",
+          "text": "has starting"
+        },
+        {
+          "option_id": "opt_24a0fe4e03",
+          "text": "had already started"
+        },
+        {
+          "option_id": "opt_ba1c80ffda",
+          "text": "would start already"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-07",
+      "module": "LS",
+      "band": "B2",
+      "stem": "Several staff objected to ___ from the discussion.",
+      "construct": "preposition + gerund",
+      "domain": "occupational",
+      "topic_family": "meeting",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_a24d439b05",
+          "text": "exclude"
+        },
+        {
+          "option_id": "opt_6f1bb99e8f",
+          "text": "have excluded"
+        },
+        {
+          "option_id": "opt_61def0e8c7",
+          "text": "be exclude"
+        },
+        {
+          "option_id": "opt_b81918c083",
+          "text": "being excluded"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-B2-08",
+      "module": "LS",
+      "band": "B2",
+      "stem": "The proposal is unlikely to be approved ___ further evidence.",
+      "construct": "condition/constraint",
+      "domain": "public",
+      "topic_family": "approval",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_220ab53710",
+          "text": "without"
+        },
+        {
+          "option_id": "opt_101336fee6",
+          "text": "unless of"
+        },
+        {
+          "option_id": "opt_00df8c6be7",
+          "text": "despite"
+        },
+        {
+          "option_id": "opt_44a13bd208",
+          "text": "whereas"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-01",
+      "module": "LS",
+      "band": "C1",
+      "stem": "Rarely ___ we see such a clear contrast between the two accounts.",
+      "construct": "inversion",
+      "domain": "educational",
+      "topic_family": "analysis",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_c1773fd058",
+          "text": "do"
+        },
+        {
+          "option_id": "opt_9455ac8aec",
+          "text": "are"
+        },
+        {
+          "option_id": "opt_c06339e166",
+          "text": "have been"
+        },
+        {
+          "option_id": "opt_02e1e063c7",
+          "text": "did to"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-02",
+      "module": "LS",
+      "band": "C1",
+      "stem": "The conclusion is based on evidence that remains ___.",
+      "construct": "lexical precision",
+      "domain": "public",
+      "topic_family": "policy",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_7dcf5b4689",
+          "text": "permanent"
+        },
+        {
+          "option_id": "opt_d1d9fcc058",
+          "text": "provisional"
+        },
+        {
+          "option_id": "opt_6cc97ee8cb",
+          "text": "literal"
+        },
+        {
+          "option_id": "opt_118b36c568",
+          "text": "decorative"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-03",
+      "module": "LS",
+      "band": "C1",
+      "stem": "Far from ___ the problem, the change created a different one.",
+      "construct": "concessive structure",
+      "domain": "occupational",
+      "topic_family": "change",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_38c8c9883e",
+          "text": "resolve"
+        },
+        {
+          "option_id": "opt_79dcbb5c6e",
+          "text": "resolved"
+        },
+        {
+          "option_id": "opt_21f4baa973",
+          "text": "resolving"
+        },
+        {
+          "option_id": "opt_5e07989374",
+          "text": "to resolved"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-04",
+      "module": "LS",
+      "band": "C1",
+      "stem": "The policy may have unintended ___ for people who rely on the service.",
+      "construct": "lexical precision",
+      "domain": "public",
+      "topic_family": "consequence",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_002b2d5816",
+          "text": "repetitions"
+        },
+        {
+          "option_id": "opt_0ed7db6b69",
+          "text": "permissions"
+        },
+        {
+          "option_id": "opt_d923d41268",
+          "text": "proportions"
+        },
+        {
+          "option_id": "opt_66792b2d5e",
+          "text": "repercussions"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-05",
+      "module": "LS",
+      "band": "C1",
+      "stem": "The findings should be treated as ___ rather than definitive.",
+      "construct": "hedging",
+      "domain": "educational",
+      "topic_family": "evidence",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_6387a6e501",
+          "text": "absolute"
+        },
+        {
+          "option_id": "opt_8c6e2a912a",
+          "text": "tentative"
+        },
+        {
+          "option_id": "opt_75e0b419fd",
+          "text": "irrelevant"
+        },
+        {
+          "option_id": "opt_a764fa79ec",
+          "text": "identical"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-06",
+      "module": "LS",
+      "band": "C1",
+      "stem": "What the report fails to ___ is how the change affected different groups.",
+      "construct": "discourse verb",
+      "domain": "public",
+      "topic_family": "report",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_bc63b7dad1",
+          "text": "decorate"
+        },
+        {
+          "option_id": "opt_f1c530552d",
+          "text": "postpone"
+        },
+        {
+          "option_id": "opt_f646bf70ee",
+          "text": "acknowledge"
+        },
+        {
+          "option_id": "opt_7ce26350cd",
+          "text": "translate"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-07",
+      "module": "LS",
+      "band": "C1",
+      "stem": "Successful implementation depends on the ___ of responsibilities.",
+      "construct": "nominalisation/collocation",
+      "domain": "occupational",
+      "topic_family": "implementation",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_1bc7f1dfcb",
+          "text": "clear"
+        },
+        {
+          "option_id": "opt_24dc59f9f6",
+          "text": "clarify"
+        },
+        {
+          "option_id": "opt_688697545a",
+          "text": "clearing"
+        },
+        {
+          "option_id": "opt_5221c7e1e4",
+          "text": "clarity"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C1-08",
+      "module": "LS",
+      "band": "C1",
+      "stem": "The evidence is persuasive, ___ it does not settle the question completely.",
+      "construct": "qualification",
+      "domain": "educational",
+      "topic_family": "argument",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_e64306fbfa",
+          "text": "although"
+        },
+        {
+          "option_id": "opt_7c8f4a9732",
+          "text": "because"
+        },
+        {
+          "option_id": "opt_763da0656b",
+          "text": "unless"
+        },
+        {
+          "option_id": "opt_ebde480961",
+          "text": "therefore"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-01",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The apology was carefully worded but remained ___ on the question of responsibility.",
+      "construct": "pragmatic precision",
+      "domain": "public",
+      "topic_family": "apology",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_f56eac68fa",
+          "text": "equivocal"
+        },
+        {
+          "option_id": "opt_91edf12032",
+          "text": "comprehensive"
+        },
+        {
+          "option_id": "opt_bc470ad8d7",
+          "text": "spontaneous"
+        },
+        {
+          "option_id": "opt_d4426b96b9",
+          "text": "transparent"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-02",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The argument rests on a distinction that becomes less ___ under closer scrutiny.",
+      "construct": "lexical precision",
+      "domain": "educational",
+      "topic_family": "argument",
+      "locator_candidate": true,
+      "options": [
+        {
+          "option_id": "opt_b657487e86",
+          "text": "portable"
+        },
+        {
+          "option_id": "opt_232143f266",
+          "text": "tenable"
+        },
+        {
+          "option_id": "opt_774424dc15",
+          "text": "numerical"
+        },
+        {
+          "option_id": "opt_c4f39774c5",
+          "text": "obedient"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-03",
+      "module": "LS",
+      "band": "C2",
+      "stem": "Even if the policy is well-intentioned, its effects may ___ its stated purpose.",
+      "construct": "semantic relation",
+      "domain": "public",
+      "topic_family": "policy",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_cb8d30779c",
+          "text": "announce"
+        },
+        {
+          "option_id": "opt_7b596f1c2e",
+          "text": "compile"
+        },
+        {
+          "option_id": "opt_d16b428133",
+          "text": "undermine"
+        },
+        {
+          "option_id": "opt_2413e8c438",
+          "text": "inherit"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-04",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The author stops short of ___ that the reform failed outright.",
+      "construct": "stance verb",
+      "domain": "educational",
+      "topic_family": "review",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_c8a255c6d1",
+          "text": "to claim"
+        },
+        {
+          "option_id": "opt_6eefb083a3",
+          "text": "claimed"
+        },
+        {
+          "option_id": "opt_e323e8257e",
+          "text": "claim"
+        },
+        {
+          "option_id": "opt_d6a015208c",
+          "text": "claiming"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-05",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The proposal is attractive in principle, but its practical implications are ___.",
+      "construct": "idiomatic precision",
+      "domain": "occupational",
+      "topic_family": "implementation",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_c67148dbd0",
+          "text": "fully automatic"
+        },
+        {
+          "option_id": "opt_a14a3076cc",
+          "text": "far from trivial"
+        },
+        {
+          "option_id": "opt_746dc07b73",
+          "text": "beside the point always"
+        },
+        {
+          "option_id": "opt_e0d09fb7e6",
+          "text": "without any consequence"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-06",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The available evidence is ___ with more than one interpretation.",
+      "construct": "compatibility/interpretation",
+      "domain": "educational",
+      "topic_family": "evidence",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_b23e43e65e",
+          "text": "comparable to only"
+        },
+        {
+          "option_id": "opt_f1a521e12e",
+          "text": "compulsory"
+        },
+        {
+          "option_id": "opt_a6b7408845",
+          "text": "compatible"
+        },
+        {
+          "option_id": "opt_e2f67837af",
+          "text": "comprehensive of"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-07",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The review praises the ambition of the plan while ___ several of its assumptions.",
+      "construct": "stance/contrast",
+      "domain": "public",
+      "topic_family": "review",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_befae07727",
+          "text": "questioned"
+        },
+        {
+          "option_id": "opt_3b743e2e14",
+          "text": "to question"
+        },
+        {
+          "option_id": "opt_75496d3b41",
+          "text": "has question"
+        },
+        {
+          "option_id": "opt_b099e6add8",
+          "text": "questioning"
+        }
+      ]
+    },
+    {
+      "item_id": "LS-C2-08",
+      "module": "LS",
+      "band": "C2",
+      "stem": "The speaker acknowledges the benefits but repeatedly qualifies them. The tone is best described as ___.",
+      "construct": "tone",
+      "domain": "public",
+      "topic_family": "commentary",
+      "locator_candidate": false,
+      "options": [
+        {
+          "option_id": "opt_493dc1923d",
+          "text": "cautiously sceptical"
+        },
+        {
+          "option_id": "opt_196a90392f",
+          "text": "unreservedly enthusiastic"
+        },
+        {
+          "option_id": "opt_8a94d20d0d",
+          "text": "openly hostile"
+        },
+        {
+          "option_id": "opt_b489e6fb13",
+          "text": "completely indifferent"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "version": "2.0.0-beta",
+  "status": "Provisional rubrics and evidence rules for an indicative estimate. Must be anchored to human-rated benchmark performances before production.",
+  "dual_reference_rating": "Every productive response is rated twice: against the route's LOWER band expectation and against the UPPER band expectation. A trait score of 3 = 'meets what a typical candidate at that band produces on this task'. This is the kit's implementation of 'task level and response traits are evaluated together' (record in DECISIONS.md).",
+  "speaking": {
+    "traits": [
+      "intelligibility",
+      "fluency",
+      "grammar",
+      "vocabulary",
+      "communication"
+    ],
+    "core_traits": [
+      "grammar",
+      "vocabulary",
+      "communication"
+    ],
+    "scale": "0-5 integers",
+    "descriptors": {
+      "5": {
+        "intelligibility": "Effortlessly intelligible; prosody supports meaning",
+        "fluency": "Sustained and flexible; pauses mainly rhetorical",
+        "grammar": "Wide range with consistently strong control",
+        "vocabulary": "Precise, flexible, nuanced",
+        "communication": "Fully fulfils task; coherent, developed, appropriate to listener"
+      },
+      "4": {
+        "intelligibility": "Clear and easy to understand; minor lapses",
+        "fluency": "Generally smooth; occasional searching",
+        "grammar": "Good range/control; minor errors",
+        "vocabulary": "Good range; generally precise",
+        "communication": "All main demands met with clear development"
+      },
+      "3": {
+        "intelligibility": "Generally intelligible; some effort needed",
+        "fluency": "Noticeable hesitation but coherent",
+        "grammar": "Adequate common structures; errors with complexity",
+        "vocabulary": "Sufficient range with some repetition",
+        "communication": "Main task achieved; development may be uneven"
+      },
+      "2": {
+        "intelligibility": "Frequent pronunciation problems sometimes obscure meaning",
+        "fluency": "Frequent pauses / fragmented delivery",
+        "grammar": "Limited control; errors sometimes obscure relations",
+        "vocabulary": "Restricted range / vague wording",
+        "communication": "Partial task; important elements missing"
+      },
+      "1": {
+        "intelligibility": "Often difficult to understand",
+        "fluency": "Isolated phrases / long pauses",
+        "grammar": "Very limited control",
+        "vocabulary": "Very limited vocabulary",
+        "communication": "Minimal relevant communication"
+      },
+      "0": {
+        "intelligibility": "No usable evidence",
+        "fluency": "No usable evidence",
+        "grammar": "No usable evidence",
+        "vocabulary": "No usable evidence",
+        "communication": "Off-topic / empty / non-English / unusable capture"
+      }
+    },
+    "trait_weights_default": {
+      "intelligibility": 0.2,
+      "fluency": 0.2,
+      "grammar": 0.2,
+      "vocabulary": 0.2,
+      "communication": 0.2
+    },
+    "per_task_trait_override": {
+      "oral_reading": [
+        "intelligibility",
+        "fluency"
+      ],
+      "sentence_reconstruction": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ]
+    },
+    "task_weights": {
+      "oral_reading": 0.1,
+      "sentence_reconstruction": 0.1,
+      "functional_situation": 0.15,
+      "retell_summarise": 0.15,
+      "extended_response_1": 0.15,
+      "extended_response_2": 0.15,
+      "simulated_interaction_two_turn": 0.2
+    },
+    "diagnostic_cap": 0.2,
+    "spontaneous_floor": 0.6,
+    "evidence_rules": {
+      "meets_lower": {
+        "min_usable_spontaneous_responses": 3,
+        "weighted_trait_mean_at_lower": ">=2.75",
+        "communication_at_lower": ">=3 on at least 2 responses"
+      },
+      "meets_upper": {
+        "min_usable_spontaneous_responses": 3,
+        "weighted_trait_mean_at_upper": ">=3.0",
+        "no_core_trait_below": 2,
+        "independent_responses_meeting_upper": ">=2"
+      },
+      "report_upper": "meets_upper AND meets_lower",
+      "report_lower": "meets_lower AND NOT meets_upper",
+      "insufficient": "otherwise: too little usable speech, unresolved technical failure, off-topic across multiple tasks -> 'Speaking: insufficient evidence' (never force a low level)"
+    },
+    "never_score": [
+      "accent similarity to a native variety",
+      "disorder-characteristic disfluency (approved accommodation)",
+      "failed/clipped recordings as pronunciation weakness"
+    ]
+  },
+  "writing": {
+    "traits": [
+      "task_fulfilment",
+      "organisation",
+      "grammar",
+      "vocabulary",
+      "mechanics_register"
+    ],
+    "scale": "0-5 integers",
+    "descriptors": {
+      "5": {
+        "task_fulfilment": "Purpose fully achieved; precise relevant development",
+        "organisation": "Highly coherent; flexible organisation",
+        "grammar": "Wide range, consistently strong control",
+        "vocabulary": "Wide, precise, nuanced",
+        "mechanics_register": "Accurate mechanics; register consistently effective"
+      },
+      "4": {
+        "task_fulfilment": "All main demands fulfilled; clear and relevant",
+        "organisation": "Logical progression; effective cohesion",
+        "grammar": "Good range/control; minor errors",
+        "vocabulary": "Good range; generally precise",
+        "mechanics_register": "Few errors; register appropriate"
+      },
+      "3": {
+        "task_fulfilment": "Main purpose achieved; some underdevelopment",
+        "organisation": "Generally organised; linking may be mechanical",
+        "grammar": "Adequate range; errors do not block meaning",
+        "vocabulary": "Sufficient range; repetition/imprecision",
+        "mechanics_register": "Errors noticeable but rarely impede; register mostly suitable"
+      },
+      "2": {
+        "task_fulfilment": "Partially fulfils task; important content missing",
+        "organisation": "Weak progression / loose connection",
+        "grammar": "Limited structures; errors sometimes impede",
+        "vocabulary": "Limited range / inaccurate choice",
+        "mechanics_register": "Frequent errors; inconsistent register"
+      },
+      "1": {
+        "task_fulfilment": "Minimal relevant content",
+        "organisation": "Little organisation",
+        "grammar": "Very limited control",
+        "vocabulary": "Very limited vocabulary",
+        "mechanics_register": "Errors frequently obstruct reading"
+      },
+      "0": {
+        "task_fulfilment": "No usable response / copied or unrelated",
+        "organisation": "No usable evidence",
+        "grammar": "No usable evidence",
+        "vocabulary": "No usable evidence",
+        "mechanics_register": "No usable evidence"
+      }
+    },
+    "trait_weights_default": {
+      "task_fulfilment": 0.2,
+      "organisation": 0.2,
+      "grammar": 0.2,
+      "vocabulary": 0.2,
+      "mechanics_register": 0.2
+    },
+    "task_weights": {
+      "functional_communication": 0.3,
+      "mediation_synthesis": 0.3,
+      "extended_response": 0.4,
+      "integrated_accuracy_diagnostic": 0.0
+    },
+    "evidence_rules": {
+      "meets_lower": {
+        "tasks": ">=2 of 3 scored tasks",
+        "weighted_trait_mean_at_lower": ">=2.75",
+        "task_fulfilment_at_lower": ">=3"
+      },
+      "meets_upper": {
+        "tasks": ">=2 of 3 scored tasks",
+        "weighted_trait_mean_at_upper": ">=3.0",
+        "task_fulfilment_and_organisation_not_below": 2
+      },
+      "report_upper": "meets_upper AND meets_lower",
+      "report_lower": "meets_lower AND NOT meets_upper",
+      "insufficient": "multiple tasks too short / copied / off-topic / technically unusable -> 'Writing: not measured' (never force a low score)"
+    },
+    "diagnostic": "integrated listen-to-write accuracy is reported as an orthography/accuracy diagnostic only; weight 0"
+  },
+  "integrity_rules": [
+    {
+      "condition": "empty / silence",
+      "action": "no usable evidence; never a low level from absence alone"
+    },
+    {
+      "condition": "audio clipping / severe noise",
+      "action": "technical re-record or review; never scored as pronunciation weakness"
+    },
+    {
+      "condition": "extremely short productive response",
+      "action": "insufficient-evidence flag; task fulfilment low where meaningful; no precise level from one short task"
+    },
+    {
+      "condition": "off-topic response",
+      "action": "task fulfilment low; flag; language quality alone cannot prove target task level"
+    },
+    {
+      "condition": "suspected AI-generated writing",
+      "action": "behavioural/profile-consistency flag only; never automatic zero or accusation"
+    },
+    {
+      "condition": "large productive vs receptive mismatch",
+      "action": "internal consistency flag; possible human review"
+    },
+    {
+      "condition": "rapid clicking",
+      "action": "effort/integrity flag; reduce confidence only after a defined pattern (e.g. >=5 consecutive objective responses under 1.5s), never one fast item"
+    }
+  ]
+}

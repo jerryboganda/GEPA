@@ -1,0 +1,209 @@
+{
+  "purpose": "Cross-skill topic overlaps in the pilot bank that could prime answers or rehearse content. Form assembler must not place items from one group in the same session where an earlier item could prime a later one. The pilot has a single productive task set per route, so some conflicts are unavoidable: LOG them (enemy_conflict) and surface to reviewers; they justify authoring alternates.",
+  "severity_scale": {
+    "high": "answer-bearing objective items in two skills, or identical prompt in two productive skills",
+    "medium": "objective stimulus content reused as productive prompt content",
+    "low": "shared theme only"
+  },
+  "groups": [
+    {
+      "family": "heritage_authenticity",
+      "severity": "high",
+      "members": [
+        "RD-C2-S3",
+        "LSN-C2-S3"
+      ],
+      "note": "both objective; same 'authentic' argument"
+    },
+    {
+      "family": "meeting_time",
+      "severity": "high",
+      "members": [
+        "SPK-PreA1A1-INT1",
+        "WRT-PA-1"
+      ],
+      "note": "identical prompt"
+    },
+    {
+      "family": "class_booking",
+      "severity": "high",
+      "members": [
+        "SPK-A1A2-FS",
+        "WRT-A12-1"
+      ],
+      "note": "identical scenario"
+    },
+    {
+      "family": "meeting_time_sentence",
+      "severity": "high",
+      "members": [
+        "SPK-A1A2-SR",
+        "WRT-A12-D"
+      ],
+      "note": "identical sentence"
+    },
+    {
+      "family": "workshop_places",
+      "severity": "high",
+      "members": [
+        "SPK-A2B1-RT",
+        "WRT-A2B1-2"
+      ],
+      "note": "same message"
+    },
+    {
+      "family": "learning_alone_vs_group",
+      "severity": "high",
+      "members": [
+        "SPK-A2B1-ER1",
+        "WRT-A2B1-3"
+      ],
+      "note": "same prompt"
+    },
+    {
+      "family": "hybrid_work",
+      "severity": "medium",
+      "members": [
+        "RD-B1-S1",
+        "SPK-B1B2-ER1",
+        "WRT-B1B2-3"
+      ]
+    },
+    {
+      "family": "meeting_format",
+      "severity": "medium",
+      "members": [
+        "LSN-B2-S1",
+        "SPK-B1B2-FS",
+        "WRT-B1B2-1"
+      ]
+    },
+    {
+      "family": "training_attendance",
+      "severity": "medium",
+      "members": [
+        "SPK-B1B2-INT1",
+        "WRT-B1B2-2"
+      ]
+    },
+    {
+      "family": "pilot_scaling",
+      "severity": "medium",
+      "members": [
+        "LSN-C1-S3",
+        "SPK-B2C1-INT1",
+        "SPK-B2C1-INT2",
+        "WRT-C1C2-1"
+      ]
+    },
+    {
+      "family": "policy_consistency",
+      "severity": "medium",
+      "members": [
+        "RD-C1-S3",
+        "SPK-B2C1-OR",
+        "SPK-B2C1-ER2"
+      ]
+    },
+    {
+      "family": "simplification_clarity",
+      "severity": "medium",
+      "members": [
+        "RD-C1-S1",
+        "LSN-C2-S2",
+        "SPK-B2C1-RT",
+        "SPK-B2C1-ER1",
+        "WRT-B2C1-2"
+      ]
+    },
+    {
+      "family": "uncertainty_communication",
+      "severity": "medium",
+      "members": [
+        "LSN-C1-S1",
+        "SPK-B2C1-SR",
+        "WRT-B1B2-D",
+        "WRT-B2C1-3",
+        "WRT-B2C1-D",
+        "WRT-C1C2-D"
+      ]
+    },
+    {
+      "family": "claim_calibration",
+      "severity": "medium",
+      "members": [
+        "SPK-B2C1-FS",
+        "WRT-B2C1-1",
+        "SPK-C1C2-FS",
+        "WRT-C1C2-1"
+      ]
+    },
+    {
+      "family": "recommendation_systems",
+      "severity": "low",
+      "members": [
+        "RD-C2-S1",
+        "SPK-C1C2-OR"
+      ]
+    },
+    {
+      "family": "forecasting",
+      "severity": "low",
+      "members": [
+        "LSN-C2-S1",
+        "SPK-C1C2-SR"
+      ]
+    },
+    {
+      "family": "dictionary_usage",
+      "severity": "medium",
+      "members": [
+        "RD-C2-S2",
+        "SPK-C1C2-RT",
+        "WRT-C1C2-2"
+      ]
+    },
+    {
+      "family": "information_transparency",
+      "severity": "medium",
+      "members": [
+        "SPK-C1C2-ER1",
+        "WRT-C1C2-3"
+      ]
+    },
+    {
+      "family": "library_hours",
+      "severity": "low",
+      "members": [
+        "RD-A1-S2",
+        "SPK-A1A2-RT",
+        "WRT-PA-2"
+      ]
+    },
+    {
+      "family": "english_study_habits",
+      "severity": "medium",
+      "members": [
+        "SPK-A1A2-INT1",
+        "WRT-A12-3"
+      ]
+    },
+    {
+      "family": "booking_system",
+      "severity": "low",
+      "members": [
+        "LSN-B1-S1",
+        "SPK-B1B2-OR"
+      ]
+    },
+    {
+      "family": "class_room_time",
+      "severity": "low",
+      "members": [
+        "LSN-PRE-S3",
+        "RD-A1-S3"
+      ],
+      "note": "confusable room/time values across adjacent bands"
+    }
+  ]
+}

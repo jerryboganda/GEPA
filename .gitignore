@@ -1,0 +1,42 @@
+﻿# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing & Coverage
+coverage/
+test-results/
+
+# Production build
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Firebase cache
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*

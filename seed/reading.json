@@ -1,0 +1,1306 @@
+{
+  "package": "GEPA Pilot Item Bank v2",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "prepared": "2026-09-08",
+  "status": "pilot — expert review / cognitive labs / closed beta only; NOT a public production bank",
+  "note": "Option order printed in source = authoring layout only. Runtime MUST shuffle per session and store the permutation.",
+  "module": "RD",
+  "reported": true,
+  "stimuli": [
+    {
+      "stimulus_id": "RD-PRE-S1",
+      "band": "Pre-A1",
+      "topic_family": "signs",
+      "text": "STAFF ONLY",
+      "item_ids": [
+        "RD-PRE-01",
+        "RD-PRE-02"
+      ],
+      "stimulus_type": "Sign",
+      "domain": "public",
+      "word_count": 2
+    },
+    {
+      "stimulus_id": "RD-PRE-S2",
+      "band": "Pre-A1",
+      "topic_family": "transport",
+      "text": "BUS 7 - CITY CENTRE - 08:40",
+      "item_ids": [
+        "RD-PRE-03",
+        "RD-PRE-04"
+      ],
+      "stimulus_type": "Notice",
+      "domain": "public",
+      "word_count": 7
+    },
+    {
+      "stimulus_id": "RD-PRE-S3",
+      "band": "Pre-A1",
+      "topic_family": "packing",
+      "text": "Please bring your passport and a pen.",
+      "item_ids": [
+        "RD-PRE-05",
+        "RD-PRE-06"
+      ],
+      "stimulus_type": "Message",
+      "domain": "personal",
+      "word_count": 7
+    },
+    {
+      "stimulus_id": "RD-A1-S1",
+      "band": "A1",
+      "topic_family": "routine",
+      "text": "Hi Sam, I work at the cafe on Monday, Wednesday and Friday. On Tuesday evening I study English. I am free on\nSaturday afternoon. Nina",
+      "item_ids": [
+        "RD-A1-01",
+        "RD-A1-02"
+      ],
+      "stimulus_type": "Message",
+      "domain": "personal",
+      "word_count": 25
+    },
+    {
+      "stimulus_id": "RD-A1-S2",
+      "band": "A1",
+      "topic_family": "library",
+      "text": "Library: Monday-Friday 9:00-18:00. Saturday 10:00-14:00. Sunday closed.",
+      "item_ids": [
+        "RD-A1-03",
+        "RD-A1-04"
+      ],
+      "stimulus_type": "Notice",
+      "domain": "public",
+      "word_count": 7
+    },
+    {
+      "stimulus_id": "RD-A1-S3",
+      "band": "A1",
+      "topic_family": "class",
+      "text": "Your English class is in Room 4 today. Please arrive by 5:45. The lesson starts at 6:00.",
+      "item_ids": [
+        "RD-A1-05",
+        "RD-A1-06"
+      ],
+      "stimulus_type": "Email",
+      "domain": "educational",
+      "word_count": 17
+    },
+    {
+      "stimulus_id": "RD-A2-S1",
+      "band": "A2",
+      "topic_family": "course",
+      "text": "Photography course: six Saturday mornings, starting 12 October. Beginners are welcome. Bring a phone or camera.\nFour places are still available.",
+      "item_ids": [
+        "RD-A2-01",
+        "RD-A2-02"
+      ],
+      "stimulus_type": "Course notice",
+      "domain": "educational",
+      "word_count": 21
+    },
+    {
+      "stimulus_id": "RD-A2-S2",
+      "band": "A2",
+      "topic_family": "travel",
+      "text": "The 10:15 train to Lakeside will leave from Platform 6 instead of Platform 4. It is expected to depart at 10:25\nbecause of a short delay.",
+      "item_ids": [
+        "RD-A2-03",
+        "RD-A2-04"
+      ],
+      "stimulus_type": "Travel update",
+      "domain": "public",
+      "word_count": 26
+    },
+    {
+      "stimulus_id": "RD-A2-S3",
+      "band": "A2",
+      "topic_family": "schedule",
+      "text": "Please send your weekly update before Thursday afternoon. I will read all updates on Friday morning and reply\nbefore the end of the day.",
+      "item_ids": [
+        "RD-A2-05",
+        "RD-A2-06"
+      ],
+      "stimulus_type": "Email",
+      "domain": "occupational",
+      "word_count": 24
+    },
+    {
+      "stimulus_id": "RD-B1-S1",
+      "band": "B1",
+      "topic_family": "hybrid_work",
+      "text": "A small design company allowed staff to choose two days a week to work from home. Managers expected\nproductivity to rise immediately, but the first month was mixed. Some employees completed individual tasks faster,\nwhile team projects slowed because people were not always available at the same time. The company then\nintroduced shared online hours for collaboration. After that change, project delays fell and most staff wanted the\narrangement to continue.",
+      "item_ids": [
+        "RD-B1-01",
+        "RD-B1-02"
+      ],
+      "stimulus_type": "Article",
+      "domain": "occupational",
+      "word_count": 71
+    },
+    {
+      "stimulus_id": "RD-B1-S2",
+      "band": "B1",
+      "topic_family": "volunteering",
+      "text": "Notice A: Volunteers are needed to help visitors find rooms during the town festival. Training is provided on Friday\nevening.\nNotice B: Volunteers are needed to prepare food boxes at the community kitchen. No training is required, but\nvolunteers must be able to lift boxes safely.",
+      "item_ids": [
+        "RD-B1-03",
+        "RD-B1-04"
+      ],
+      "stimulus_type": "Two notices",
+      "domain": "public",
+      "word_count": 46
+    },
+    {
+      "stimulus_id": "RD-B1-S3",
+      "band": "B1",
+      "topic_family": "study_habits",
+      "text": "Students often assume that studying for longer always produces better results. In practice, shorter sessions with a\nclear goal can be more effective, especially when learners return to difficult material after a break. This does not\nmean long study sessions are useless; they may be necessary for complex projects. The main point is that time\nalone is a poor measure of useful study.",
+      "item_ids": [
+        "RD-B1-05",
+        "RD-B1-06"
+      ],
+      "stimulus_type": "Short article",
+      "domain": "educational",
+      "word_count": 63
+    },
+    {
+      "stimulus_id": "RD-B2-S1",
+      "band": "B2",
+      "topic_family": "urban_space",
+      "text": "A city converted several roadside parking spaces into small public seating areas. Supporters argued that the\nchange made busy streets more pleasant and gave local businesses more foot traffic. Critics worried about parking\nshortages. After six months, surveys showed high use of the seating areas, but the effect on nearby businesses\nvaried greatly by street. The city decided to keep the scheme while collecting more evidence before expanding it.",
+      "item_ids": [
+        "RD-B2-01",
+        "RD-B2-02"
+      ],
+      "stimulus_type": "Article",
+      "domain": "public",
+      "word_count": 69
+    },
+    {
+      "stimulus_id": "RD-B2-S2",
+      "band": "B2",
+      "topic_family": "course_feedback",
+      "text": "Many online courses offer flexible access to recorded lessons. [GAP] This flexibility can help learners with irregular\nschedules, but it also places more responsibility on them to plan their own study. Courses that combine recordings\nwith regular check-ins may therefore work better for some learners than fully self-paced programmes.",
+      "item_ids": [
+        "RD-B2-03",
+        "RD-B2-04"
+      ],
+      "stimulus_type": "Paragraph insertion",
+      "domain": "educational",
+      "word_count": 49
+    },
+    {
+      "stimulus_id": "RD-B2-S3",
+      "band": "B2",
+      "topic_family": "reviews",
+      "text": "Review 1: The new museum guide is concise and easy to follow, though it sometimes simplifies debates that\ndeserve more explanation.\nReview 2: The guide gives useful background and avoids overwhelming visitors, but people already familiar with the\nsubject may find it too cautious.",
+      "item_ids": [
+        "RD-B2-05",
+        "RD-B2-06"
+      ],
+      "stimulus_type": "Two reviews",
+      "domain": "public",
+      "word_count": 44
+    },
+    {
+      "stimulus_id": "RD-C1-S1",
+      "band": "C1",
+      "topic_family": "public_information",
+      "text": "Public information campaigns often aim for simplicity, but simplicity is not the same as clarity. Removing technical\ndetail can make a message easier to read, yet it can also hide uncertainty that matters to a decision. The challenge\nis not to include every available fact. It is to decide which distinctions a reader needs in order to understand both the\nmain message and its limits. A short explanation that signals uncertainty may therefore be more informative than a\nlonger one that presents a single conclusion with unjustified confidence.",
+      "item_ids": [
+        "RD-C1-01",
+        "RD-C1-02"
+      ],
+      "stimulus_type": "Article",
+      "domain": "public",
+      "word_count": 88
+    },
+    {
+      "stimulus_id": "RD-C1-S2",
+      "band": "C1",
+      "topic_family": "research_summary",
+      "text": "Abstract A concludes that a short training programme improved participants' confidence, but notes that the study\nhad no comparison group.\nAbstract B reports similar confidence gains in a larger sample and also finds a small improvement on an\nindependent performance task.",
+      "item_ids": [
+        "RD-C1-03",
+        "RD-C1-04"
+      ],
+      "stimulus_type": "Two abstracts",
+      "domain": "educational",
+      "word_count": 41
+    },
+    {
+      "stimulus_id": "RD-C1-S3",
+      "band": "C1",
+      "topic_family": "remote_policy",
+      "text": "When organisations introduce a policy across many teams, consistency can be useful: employees know what to\nexpect and managers can apply the same rules. However, uniformity can become misleading when teams perform\nvery different kinds of work. A policy may be formally equal while producing unequal practical effects. The more\nvaried the work, the stronger the case for defining common principles while allowing limited local adaptation.",
+      "item_ids": [
+        "RD-C1-05",
+        "RD-C1-06"
+      ],
+      "stimulus_type": "Article",
+      "domain": "occupational",
+      "word_count": 66
+    },
+    {
+      "stimulus_id": "RD-C2-S1",
+      "band": "C2",
+      "topic_family": "algorithmic_choice",
+      "text": "Recommendation systems are often described as tools that reveal what people want. That description is\nincomplete. By deciding which options are made visible, the system also helps shape the preferences it later claims\nmerely to measure. This does not make recommendation inherently manipulative: selection is unavoidable\nwhenever attention is limited. It does, however, complicate the comforting distinction between neutral prediction and\nactive influence. The relevant question is not whether the system influences choice, but whether that influence is\ntransparent, contestable and compatible with the user's interests.",
+      "item_ids": [
+        "RD-C2-01",
+        "RD-C2-02"
+      ],
+      "stimulus_type": "Essay",
+      "domain": "public",
+      "word_count": 86
+    },
+    {
+      "stimulus_id": "RD-C2-S2",
+      "band": "C2",
+      "topic_family": "language_change",
+      "text": "Commentary A argues that changes in everyday usage should eventually influence formal dictionaries because\ndictionaries describe a living language.\nCommentary B agrees that usage matters but warns that frequency alone cannot settle questions of meaning,\nregister or appropriateness in every context.",
+      "item_ids": [
+        "RD-C2-03",
+        "RD-C2-04"
+      ],
+      "stimulus_type": "Two commentaries",
+      "domain": "educational",
+      "word_count": 41
+    },
+    {
+      "stimulus_id": "RD-C2-S3",
+      "band": "C2",
+      "topic_family": "heritage",
+      "text": "Arguments about preserving historic places often turn on the word \"authentic\". Yet authenticity can refer to original\nmaterials, original use, accumulated changes, or the experience a place enables. Restoring a building to an earlier\nstate may increase authenticity in one sense while erasing later history in another. The term is therefore not\nuseless, but it is argumentative: using it without specifying the relevant sense can make a preference appear like a\nneutral fact.",
+      "item_ids": [
+        "RD-C2-05",
+        "RD-C2-06"
+      ],
+      "stimulus_type": "Essay",
+      "domain": "public",
+      "word_count": 73
+    }
+  ],
+  "items": [
+    {
+      "item_id": "RD-PRE-01",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "Who can go in?",
+      "evidence_focus": "literal recognition",
+      "stimulus_id": "RD-PRE-S1",
+      "options": [
+        {
+          "option_id": "opt_bbe9d0ca62",
+          "text": "Workers"
+        },
+        {
+          "option_id": "opt_f1fe313e06",
+          "text": "Visitors"
+        },
+        {
+          "option_id": "opt_b29ed1ef35",
+          "text": "Children"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-PRE-02",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "What kind of message is this?",
+      "evidence_focus": "basic purpose",
+      "stimulus_id": "RD-PRE-S1",
+      "options": [
+        {
+          "option_id": "opt_da7365a0f2",
+          "text": "A price"
+        },
+        {
+          "option_id": "opt_5e7d192e4c",
+          "text": "A restriction"
+        },
+        {
+          "option_id": "opt_0cb881ee02",
+          "text": "A greeting"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-PRE-03",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "Where does the bus go?",
+      "evidence_focus": "literal recognition",
+      "stimulus_id": "RD-PRE-S2",
+      "options": [
+        {
+          "option_id": "opt_48ec34de37",
+          "text": "Airport"
+        },
+        {
+          "option_id": "opt_d697d17811",
+          "text": "School"
+        },
+        {
+          "option_id": "opt_40d3823444",
+          "text": "City centre"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-PRE-04",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "What time is shown?",
+      "evidence_focus": "number recognition",
+      "stimulus_id": "RD-PRE-S2",
+      "options": [
+        {
+          "option_id": "opt_95074ccaed",
+          "text": "09:20"
+        },
+        {
+          "option_id": "opt_fffba362e3",
+          "text": "08:40"
+        },
+        {
+          "option_id": "opt_e08f68851d",
+          "text": "07:15"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-PRE-05",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "What do you need to bring?",
+      "evidence_focus": "literal recognition",
+      "stimulus_id": "RD-PRE-S3",
+      "options": [
+        {
+          "option_id": "opt_38aacadfcc",
+          "text": "A passport and a pen"
+        },
+        {
+          "option_id": "opt_7c581a9ac7",
+          "text": "A phone and a pen"
+        },
+        {
+          "option_id": "opt_691906e366",
+          "text": "A passport and food"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-PRE-06",
+      "module": "RD",
+      "band": "Pre-A1",
+      "stem": "Which item is mentioned?",
+      "evidence_focus": "word recognition",
+      "stimulus_id": "RD-PRE-S3",
+      "options": [
+        {
+          "option_id": "opt_c0475d759c",
+          "text": "A cup"
+        },
+        {
+          "option_id": "opt_b355d68385",
+          "text": "A key"
+        },
+        {
+          "option_id": "opt_3590069852",
+          "text": "A pen"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-01",
+      "module": "RD",
+      "band": "A1",
+      "stem": "When does Nina study English?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A1-S1",
+      "options": [
+        {
+          "option_id": "opt_4ec6cf752c",
+          "text": "Tuesday evening"
+        },
+        {
+          "option_id": "opt_0579244778",
+          "text": "Monday morning"
+        },
+        {
+          "option_id": "opt_b00ba96a1b",
+          "text": "Friday evening"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-02",
+      "module": "RD",
+      "band": "A1",
+      "stem": "When is Nina free?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A1-S1",
+      "options": [
+        {
+          "option_id": "opt_fbb1e42c08",
+          "text": "Wednesday afternoon"
+        },
+        {
+          "option_id": "opt_165e1f9604",
+          "text": "Saturday afternoon"
+        },
+        {
+          "option_id": "opt_ab4ac91401",
+          "text": "Sunday morning"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-03",
+      "module": "RD",
+      "band": "A1",
+      "stem": "When is the library closed?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A1-S2",
+      "options": [
+        {
+          "option_id": "opt_354e818aa5",
+          "text": "Saturday"
+        },
+        {
+          "option_id": "opt_d6e2518139",
+          "text": "Friday"
+        },
+        {
+          "option_id": "opt_ad93270551",
+          "text": "Sunday"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-04",
+      "module": "RD",
+      "band": "A1",
+      "stem": "What time does it open on Saturday?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A1-S2",
+      "options": [
+        {
+          "option_id": "opt_93d19c1df5",
+          "text": "09:00"
+        },
+        {
+          "option_id": "opt_ab013d069c",
+          "text": "10:00"
+        },
+        {
+          "option_id": "opt_f00d5059bf",
+          "text": "14:00"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-05",
+      "module": "RD",
+      "band": "A1",
+      "stem": "Where is the class?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A1-S3",
+      "options": [
+        {
+          "option_id": "opt_f2a95c882b",
+          "text": "Room 4"
+        },
+        {
+          "option_id": "opt_8eaca8ba61",
+          "text": "Room 5"
+        },
+        {
+          "option_id": "opt_7e7a91c792",
+          "text": "Online"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A1-06",
+      "module": "RD",
+      "band": "A1",
+      "stem": "Why should students arrive by 5:45?",
+      "evidence_focus": "simple reason",
+      "stimulus_id": "RD-A1-S3",
+      "options": [
+        {
+          "option_id": "opt_8f5c037f3b",
+          "text": "The room closes at 5:45"
+        },
+        {
+          "option_id": "opt_92a5db9341",
+          "text": "The class ends at 5:45"
+        },
+        {
+          "option_id": "opt_13616ba824",
+          "text": "The lesson starts at 6:00"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-01",
+      "module": "RD",
+      "band": "A2",
+      "stem": "Who can join the course?",
+      "evidence_focus": "simple purpose/detail",
+      "stimulus_id": "RD-A2-S1",
+      "options": [
+        {
+          "option_id": "opt_fd3a8a8f77",
+          "text": "Beginners as well as experienced learners"
+        },
+        {
+          "option_id": "opt_ad4b512305",
+          "text": "Only professional photographers"
+        },
+        {
+          "option_id": "opt_58b58bdfc5",
+          "text": "Only people with expensive cameras"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-02",
+      "module": "RD",
+      "band": "A2",
+      "stem": "Why might someone register soon?",
+      "evidence_focus": "simple inference",
+      "stimulus_id": "RD-A2-S1",
+      "options": [
+        {
+          "option_id": "opt_95d39f224a",
+          "text": "The course starts every day"
+        },
+        {
+          "option_id": "opt_6cd6454ae9",
+          "text": "Only four places are left"
+        },
+        {
+          "option_id": "opt_bf9611c3c3",
+          "text": "Cameras are provided free"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-03",
+      "module": "RD",
+      "band": "A2",
+      "stem": "What changed?",
+      "evidence_focus": "explicit change",
+      "stimulus_id": "RD-A2-S2",
+      "options": [
+        {
+          "option_id": "opt_99f7e9cb70",
+          "text": "The destination"
+        },
+        {
+          "option_id": "opt_49930edc13",
+          "text": "The ticket price"
+        },
+        {
+          "option_id": "opt_444599e50c",
+          "text": "The platform number"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-04",
+      "module": "RD",
+      "band": "A2",
+      "stem": "When is the train expected to leave?",
+      "evidence_focus": "explicit temporal detail",
+      "stimulus_id": "RD-A2-S2",
+      "options": [
+        {
+          "option_id": "opt_e754209c45",
+          "text": "10:05"
+        },
+        {
+          "option_id": "opt_8cbf22d48b",
+          "text": "10:25"
+        },
+        {
+          "option_id": "opt_b1aa08c9f2",
+          "text": "10:15"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-05",
+      "module": "RD",
+      "band": "A2",
+      "stem": "What should staff do first?",
+      "evidence_focus": "sequence",
+      "stimulus_id": "RD-A2-S3",
+      "options": [
+        {
+          "option_id": "opt_4a69b93148",
+          "text": "Send the update by Thursday afternoon"
+        },
+        {
+          "option_id": "opt_5e93deb63a",
+          "text": "Wait for a Friday reply"
+        },
+        {
+          "option_id": "opt_043e6cfdc8",
+          "text": "Arrange a Monday meeting"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-A2-06",
+      "module": "RD",
+      "band": "A2",
+      "stem": "When will replies be sent?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "RD-A2-S3",
+      "options": [
+        {
+          "option_id": "opt_461b7caa8e",
+          "text": "Before Thursday afternoon"
+        },
+        {
+          "option_id": "opt_60556bbd85",
+          "text": "On Saturday morning"
+        },
+        {
+          "option_id": "opt_e376d06b37",
+          "text": "By the end of Friday"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-01",
+      "module": "RD",
+      "band": "B1",
+      "stem": "Why did team projects initially slow down?",
+      "evidence_focus": "reason",
+      "stimulus_id": "RD-B1-S1",
+      "options": [
+        {
+          "option_id": "opt_a3732a1887",
+          "text": "Staff were not always available at the same time"
+        },
+        {
+          "option_id": "opt_5f17f365b5",
+          "text": "Employees had no internet access"
+        },
+        {
+          "option_id": "opt_9d4aed2f2c",
+          "text": "Managers cancelled the projects"
+        },
+        {
+          "option_id": "opt_8ee8b7b33d",
+          "text": "The company reduced working hours"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-02",
+      "module": "RD",
+      "band": "B1",
+      "stem": "What can be inferred about the shared online hours?",
+      "evidence_focus": "simple inference",
+      "stimulus_id": "RD-B1-S1",
+      "options": [
+        {
+          "option_id": "opt_3bf0b723c7",
+          "text": "They reduced individual productivity"
+        },
+        {
+          "option_id": "opt_d802207bad",
+          "text": "They improved coordination"
+        },
+        {
+          "option_id": "opt_c6086f5ee8",
+          "text": "They were unpopular with staff"
+        },
+        {
+          "option_id": "opt_fa48ac8a63",
+          "text": "They replaced remote work completely"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-03",
+      "module": "RD",
+      "band": "B1",
+      "stem": "Which role requires training?",
+      "evidence_focus": "cross-text matching",
+      "stimulus_id": "RD-B1-S2",
+      "options": [
+        {
+          "option_id": "opt_880c16769a",
+          "text": "Community kitchen"
+        },
+        {
+          "option_id": "opt_70a245f802",
+          "text": "Both roles"
+        },
+        {
+          "option_id": "opt_bb36b85c45",
+          "text": "Festival visitor support"
+        },
+        {
+          "option_id": "opt_bf448ae469",
+          "text": "Neither role"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-04",
+      "module": "RD",
+      "band": "B1",
+      "stem": "Which role has a physical requirement?",
+      "evidence_focus": "cross-text matching",
+      "stimulus_id": "RD-B1-S2",
+      "options": [
+        {
+          "option_id": "opt_86486d0f14",
+          "text": "Festival visitor support"
+        },
+        {
+          "option_id": "opt_b11bae5bbc",
+          "text": "Both roles"
+        },
+        {
+          "option_id": "opt_194e00ff9e",
+          "text": "Neither role"
+        },
+        {
+          "option_id": "opt_a1c008b9cd",
+          "text": "Community kitchen"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-05",
+      "module": "RD",
+      "band": "B1",
+      "stem": "What does \"This\" refer to in the third sentence?",
+      "evidence_focus": "reference resolution",
+      "stimulus_id": "RD-B1-S3",
+      "options": [
+        {
+          "option_id": "opt_f90b17b146",
+          "text": "The need for complex projects"
+        },
+        {
+          "option_id": "opt_1c47a5fd13",
+          "text": "The idea that shorter sessions can be effective"
+        },
+        {
+          "option_id": "opt_3d017dde8c",
+          "text": "The length of the break"
+        },
+        {
+          "option_id": "opt_6d71f80fbb",
+          "text": "The number of students"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B1-06",
+      "module": "RD",
+      "band": "B1",
+      "stem": "Which heading best fits the text?",
+      "evidence_focus": "gist",
+      "stimulus_id": "RD-B1-S3",
+      "options": [
+        {
+          "option_id": "opt_f472964a86",
+          "text": "Why students should never study for long periods"
+        },
+        {
+          "option_id": "opt_f96e55213a",
+          "text": "How to avoid difficult material"
+        },
+        {
+          "option_id": "opt_32356b021a",
+          "text": "Quality of study matters more than time alone"
+        },
+        {
+          "option_id": "opt_588a2cc350",
+          "text": "Why breaks always reduce learning"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-01",
+      "module": "RD",
+      "band": "B2",
+      "stem": "Why did the city avoid immediate expansion?",
+      "evidence_focus": "inference",
+      "stimulus_id": "RD-B2-S1",
+      "options": [
+        {
+          "option_id": "opt_b4807c3fcf",
+          "text": "The business effects were inconsistent"
+        },
+        {
+          "option_id": "opt_0908244bf0",
+          "text": "The seating areas were rarely used"
+        },
+        {
+          "option_id": "opt_8013a63584",
+          "text": "All local businesses opposed the plan"
+        },
+        {
+          "option_id": "opt_a3771d3189",
+          "text": "Parking demand disappeared completely"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-02",
+      "module": "RD",
+      "band": "B2",
+      "stem": "Which statement best reflects the writer's position?",
+      "evidence_focus": "stance",
+      "stimulus_id": "RD-B2-S1",
+      "options": [
+        {
+          "option_id": "opt_eb187fda97",
+          "text": "The scheme clearly succeeded everywhere"
+        },
+        {
+          "option_id": "opt_84a82a33ae",
+          "text": "The scheme shows promise but evidence is still incomplete"
+        },
+        {
+          "option_id": "opt_3990ee30a2",
+          "text": "The scheme failed because parking was reduced"
+        },
+        {
+          "option_id": "opt_17735a65ca",
+          "text": "The city should remove all seating areas immediately"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-03",
+      "module": "RD",
+      "band": "B2",
+      "stem": "Which sentence best fits the gap?",
+      "evidence_focus": "cohesion/sentence insertion",
+      "stimulus_id": "RD-B2-S2",
+      "options": [
+        {
+          "option_id": "opt_7f54e4febf",
+          "text": "Recorded lessons are always shorter than classroom lessons."
+        },
+        {
+          "option_id": "opt_c6f7eb5a00",
+          "text": "Most learners prefer exams at the end of a course."
+        },
+        {
+          "option_id": "opt_48f8a12961",
+          "text": "Learners can choose when to watch them and can pause or repeat difficult sections."
+        },
+        {
+          "option_id": "opt_b172b29788",
+          "text": "Teachers should avoid using any live sessions online."
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-04",
+      "module": "RD",
+      "band": "B2",
+      "stem": "What contrast is central to the paragraph?",
+      "evidence_focus": "discourse relation",
+      "stimulus_id": "RD-B2-S2",
+      "options": [
+        {
+          "option_id": "opt_ca8115382b",
+          "text": "Online study versus travelling abroad"
+        },
+        {
+          "option_id": "opt_a54172f6d0",
+          "text": "Recorded lessons versus printed textbooks"
+        },
+        {
+          "option_id": "opt_b2d76356ca",
+          "text": "Teachers versus examination boards"
+        },
+        {
+          "option_id": "opt_0b62208b3a",
+          "text": "Flexibility versus the need for self-management"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-05",
+      "module": "RD",
+      "band": "B2",
+      "stem": "What do both reviewers value?",
+      "evidence_focus": "cross-text synthesis",
+      "stimulus_id": "RD-B2-S3",
+      "options": [
+        {
+          "option_id": "opt_69cb77e484",
+          "text": "Detailed specialist debate"
+        },
+        {
+          "option_id": "opt_858c2af46a",
+          "text": "Accessibility for general visitors"
+        },
+        {
+          "option_id": "opt_4b694b26ea",
+          "text": "A strongly critical tone"
+        },
+        {
+          "option_id": "opt_fb9f4c32ab",
+          "text": "Long explanations for every exhibit"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-B2-06",
+      "module": "RD",
+      "band": "B2",
+      "stem": "Where do the reviewers differ most?",
+      "evidence_focus": "comparison",
+      "stimulus_id": "RD-B2-S3",
+      "options": [
+        {
+          "option_id": "opt_c0bf5d3561",
+          "text": "In whether the guide is readable"
+        },
+        {
+          "option_id": "opt_bd6ceb2c81",
+          "text": "In whether the museum should have a guide"
+        },
+        {
+          "option_id": "opt_d92d29c336",
+          "text": "In why the guide may be limited"
+        },
+        {
+          "option_id": "opt_fb2ab1f67c",
+          "text": "In whether visitors need any background"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-01",
+      "module": "RD",
+      "band": "C1",
+      "stem": "What distinction does the writer make?",
+      "evidence_focus": "argument/qualification",
+      "stimulus_id": "RD-C1-S1",
+      "options": [
+        {
+          "option_id": "opt_846c4ee683",
+          "text": "A simple message can still be unclear about uncertainty"
+        },
+        {
+          "option_id": "opt_f7b1e6f6c3",
+          "text": "Technical detail always improves public understanding"
+        },
+        {
+          "option_id": "opt_18cf94bf61",
+          "text": "Longer messages are necessarily more accurate"
+        },
+        {
+          "option_id": "opt_b91bda1380",
+          "text": "Readers should receive every available fact"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-02",
+      "module": "RD",
+      "band": "C1",
+      "stem": "What is the function of the final sentence?",
+      "evidence_focus": "discourse function",
+      "stimulus_id": "RD-C1-S1",
+      "options": [
+        {
+          "option_id": "opt_44021c8c16",
+          "text": "It introduces an unrelated counterexample"
+        },
+        {
+          "option_id": "opt_c554db01f0",
+          "text": "It illustrates the principle stated earlier"
+        },
+        {
+          "option_id": "opt_ba110c4e19",
+          "text": "It rejects the need for concise communication"
+        },
+        {
+          "option_id": "opt_c15a9891b8",
+          "text": "It claims uncertainty cannot be communicated briefly"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-03",
+      "module": "RD",
+      "band": "C1",
+      "stem": "Which evidence most strengthens the claim that training changed performance, not only confidence?",
+      "evidence_focus": "evidence evaluation",
+      "stimulus_id": "RD-C1-S2",
+      "options": [
+        {
+          "option_id": "opt_f8e6cfe2b3",
+          "text": "The larger sample alone"
+        },
+        {
+          "option_id": "opt_40ef739722",
+          "text": "The fact that both studies measured confidence"
+        },
+        {
+          "option_id": "opt_e59460e554",
+          "text": "The independent performance task in Abstract B"
+        },
+        {
+          "option_id": "opt_a5511842ea",
+          "text": "The short duration of the programme"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-04",
+      "module": "RD",
+      "band": "C1",
+      "stem": "What limitation is unique to Abstract A?",
+      "evidence_focus": "cross-text detail",
+      "stimulus_id": "RD-C1-S2",
+      "options": [
+        {
+          "option_id": "opt_8da5a75d05",
+          "text": "Confidence was measured"
+        },
+        {
+          "option_id": "opt_30f56332f8",
+          "text": "The sample was larger"
+        },
+        {
+          "option_id": "opt_7daf8f0e39",
+          "text": "A performance task was used"
+        },
+        {
+          "option_id": "opt_2f6f884944",
+          "text": "No comparison group is mentioned"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-05",
+      "module": "RD",
+      "band": "C1",
+      "stem": "What does \"formally equal\" imply here?",
+      "evidence_focus": "pragmatic meaning",
+      "stimulus_id": "RD-C1-S3",
+      "options": [
+        {
+          "option_id": "opt_7989eb7651",
+          "text": "Every team receives the same outcome"
+        },
+        {
+          "option_id": "opt_f07f47ed4c",
+          "text": "The same rule applies even if its effects differ"
+        },
+        {
+          "option_id": "opt_c4ba55795d",
+          "text": "The policy is legally required"
+        },
+        {
+          "option_id": "opt_d98e10d18e",
+          "text": "Managers have no discretion at all"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C1-06",
+      "module": "RD",
+      "band": "C1",
+      "stem": "Which sentence best summarises the author's recommendation?",
+      "evidence_focus": "main argument",
+      "stimulus_id": "RD-C1-S3",
+      "options": [
+        {
+          "option_id": "opt_55a940290c",
+          "text": "Abandon organisation-wide policies entirely"
+        },
+        {
+          "option_id": "opt_c2c2a4676a",
+          "text": "Apply identical procedures to every team"
+        },
+        {
+          "option_id": "opt_e8b6f1aac2",
+          "text": "Keep shared principles but permit some context-sensitive flexibility"
+        },
+        {
+          "option_id": "opt_79a4f449d4",
+          "text": "Let each employee design a personal policy"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-01",
+      "module": "RD",
+      "band": "C2",
+      "stem": "What assumption does the writer challenge?",
+      "evidence_focus": "unstated assumption",
+      "stimulus_id": "RD-C2-S1",
+      "options": [
+        {
+          "option_id": "opt_6f1138c920",
+          "text": "That recommendation systems only discover pre-existing preferences"
+        },
+        {
+          "option_id": "opt_5ab0f1155f",
+          "text": "That attention is limited"
+        },
+        {
+          "option_id": "opt_f8d75b69fd",
+          "text": "That users have interests"
+        },
+        {
+          "option_id": "opt_4348eefa64",
+          "text": "That all selection is manipulative"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-02",
+      "module": "RD",
+      "band": "C2",
+      "stem": "Why does the writer call the distinction \"comforting\"?",
+      "evidence_focus": "rhetorical purpose",
+      "stimulus_id": "RD-C2-S1",
+      "options": [
+        {
+          "option_id": "opt_4e8a7708c7",
+          "text": "It proves recommendation systems are harmless"
+        },
+        {
+          "option_id": "opt_1afc2c183d",
+          "text": "It allows people to imagine influence can be separated neatly from prediction"
+        },
+        {
+          "option_id": "opt_4f9f2cc29d",
+          "text": "It shows users prefer simple explanations"
+        },
+        {
+          "option_id": "opt_4776398e8c",
+          "text": "It suggests transparency is impossible"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-03",
+      "module": "RD",
+      "band": "C2",
+      "stem": "Where is the disagreement most precise?",
+      "evidence_focus": "cross-text nuance",
+      "stimulus_id": "RD-C2-S2",
+      "options": [
+        {
+          "option_id": "opt_358837c5db",
+          "text": "Whether language changes at all"
+        },
+        {
+          "option_id": "opt_bb6e02a6d6",
+          "text": "Whether dictionaries should contain words"
+        },
+        {
+          "option_id": "opt_89b10c7230",
+          "text": "Whether frequency is sufficient evidence for all kinds of dictionary decisions"
+        },
+        {
+          "option_id": "opt_e2784c1b58",
+          "text": "Whether people use language differently across contexts"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-04",
+      "module": "RD",
+      "band": "C2",
+      "stem": "Which statement would both writers most likely accept?",
+      "evidence_focus": "synthesis",
+      "stimulus_id": "RD-C2-S2",
+      "options": [
+        {
+          "option_id": "opt_894b931636",
+          "text": "Formal dictionaries should ignore everyday language"
+        },
+        {
+          "option_id": "opt_c3a3c6cc91",
+          "text": "Any frequent expression is appropriate in every context"
+        },
+        {
+          "option_id": "opt_d0b3429d05",
+          "text": "Language change should be prevented where possible"
+        },
+        {
+          "option_id": "opt_f7245636c2",
+          "text": "Actual usage is relevant evidence, but it may require interpretation"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-05",
+      "module": "RD",
+      "band": "C2",
+      "stem": "What is the writer's main claim about \"authentic\"?",
+      "evidence_focus": "pragmatic/argumentative meaning",
+      "stimulus_id": "RD-C2-S3",
+      "options": [
+        {
+          "option_id": "opt_9c2d7b141e",
+          "text": "It always refers to original materials"
+        },
+        {
+          "option_id": "opt_9a0cf9b245",
+          "text": "It can hide a value judgement unless its meaning is specified"
+        },
+        {
+          "option_id": "opt_4bf474847a",
+          "text": "It is too vague to be useful in any discussion"
+        },
+        {
+          "option_id": "opt_ded69a4ede",
+          "text": "It proves restoration is preferable to preservation"
+        }
+      ]
+    },
+    {
+      "item_id": "RD-C2-06",
+      "module": "RD",
+      "band": "C2",
+      "stem": "What does \"argumentative\" mean in the final sentence?",
+      "evidence_focus": "lexical nuance",
+      "stimulus_id": "RD-C2-S3",
+      "options": [
+        {
+          "option_id": "opt_e07e22e69a",
+          "text": "The word causes people to argue loudly"
+        },
+        {
+          "option_id": "opt_436b970799",
+          "text": "The word is grammatically incorrect"
+        },
+        {
+          "option_id": "opt_fdfd224b7a",
+          "text": "The word can carry a position within a debate"
+        },
+        {
+          "option_id": "opt_78129371ef",
+          "text": "The word belongs only in academic essays"
+        }
+      ]
+    }
+  ]
+}

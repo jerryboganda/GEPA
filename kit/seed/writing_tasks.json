@@ -1,0 +1,508 @@
+{
+  "package": "GEPA Pilot Item Bank v2",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "prepared": "2026-09-08",
+  "status": "pilot — expert review / cognitive labs / closed beta only; NOT a public production bank",
+  "note": "Option order printed in source = authoring layout only. Runtime MUST shuffle per session and store the permutation.",
+  "module": "WRT",
+  "reported": true,
+  "rules": [
+    "task weights 30/30/40",
+    "diagnostic (D) weight 0 — never in Writing level",
+    "Task 3 rotates rhetorical function"
+  ],
+  "tasks": [
+    {
+      "task_id": "WRT-PA-1",
+      "module": "WRT",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Functional message",
+      "target": "15-30 words",
+      "focus": "functional communication",
+      "prompt": "Your friend asks: \"What time can we meet tomorrow?\" Write a reply with a time and place.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "meeting_time",
+      "word_guidance": {
+        "min": 15,
+        "max": 30
+      }
+    },
+    {
+      "task_id": "WRT-PA-2",
+      "module": "WRT",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Information transfer",
+      "target": "20-35 words",
+      "focus": "selection and simple sentence control",
+      "prompt": "A notice says: \"Library open Monday-Friday 9:00-18:00; Saturday 10:00-14:00; Sunday closed.\" Write two simple sentences telling a friend when the library is open.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "library_hours",
+      "word_guidance": {
+        "min": 20,
+        "max": 35
+      }
+    },
+    {
+      "task_id": "WRT-PA-3",
+      "module": "WRT",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Personal description",
+      "target": "35-60 words",
+      "focus": "basic connected writing",
+      "prompt": "Write a short message about your usual week. Say where you work or study, one day you are busy, and one thing you enjoy.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "weekly_routine",
+      "word_guidance": {
+        "min": 35,
+        "max": 60
+      }
+    },
+    {
+      "task_id": "WRT-PA-D",
+      "module": "WRT",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"The bus is late today.\" This task is diagnostic only and is not part of the Writing CEFR estimate.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "bus_time",
+      "audio_script": "The bus is late today.",
+      "word_guidance": null
+    },
+    {
+      "task_id": "WRT-A12-1",
+      "module": "WRT",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Functional email",
+      "target": "35-55 words",
+      "focus": "purpose and register",
+      "prompt": "You booked a class for Tuesday but cannot attend. Write to the centre, explain the problem and ask about another day.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "class_booking",
+      "word_guidance": {
+        "min": 35,
+        "max": 55
+      }
+    },
+    {
+      "task_id": "WRT-A12-2",
+      "module": "WRT",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Mediation / summary",
+      "target": "40-60 words",
+      "focus": "selection and paraphrase",
+      "prompt": "Your friend sends: \"The swimming pool is closed on Monday for repairs. It will reopen Tuesday at 10:00. Evening classes are not affected.\" Write a short message telling another friend the important information.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "pool_closure",
+      "word_guidance": {
+        "min": 40,
+        "max": 60
+      }
+    },
+    {
+      "task_id": "WRT-A12-3",
+      "module": "WRT",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Advice",
+      "target": "70-100 words",
+      "focus": "connected advice",
+      "prompt": "A friend wants to improve English but has only 30 minutes a day. Give two practical suggestions and explain briefly why they may help.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "english_study_habits",
+      "word_guidance": {
+        "min": 70,
+        "max": 100
+      }
+    },
+    {
+      "task_id": "WRT-A12-D",
+      "module": "WRT",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"The meeting starts at half past ten.\" Diagnostic only; excluded from the Writing CEFR estimate.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "meeting_time",
+      "audio_script": "The meeting starts at half past ten.",
+      "word_guidance": null
+    },
+    {
+      "task_id": "WRT-A2B1-1",
+      "module": "WRT",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Complaint email",
+      "target": "60-90 words",
+      "focus": "functional complaint",
+      "prompt": "Your online order arrived two days late and one item is missing. Write to customer service, explain the problem and say what you would like them to do.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "order_complaint",
+      "word_guidance": {
+        "min": 60,
+        "max": 90
+      }
+    },
+    {
+      "task_id": "WRT-A2B1-2",
+      "module": "WRT",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Mediation / summary",
+      "target": "70-100 words",
+      "focus": "cross-text selection/paraphrase",
+      "prompt": "Message A says the morning workshop is full. Message B says the afternoon workshop covers the same material and still has places. Write a short update for a colleague who wanted to attend.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "workshop_places",
+      "word_guidance": {
+        "min": 70,
+        "max": 100
+      }
+    },
+    {
+      "task_id": "WRT-A2B1-3",
+      "module": "WRT",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Viewpoint",
+      "target": "110-150 words",
+      "focus": "opinion and support",
+      "prompt": "Some people learn better alone, while others learn better in a group. Give your view, two reasons and an example.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "learning_alone_vs_group",
+      "word_guidance": {
+        "min": 110,
+        "max": 150
+      }
+    },
+    {
+      "task_id": "WRT-A2B1-D",
+      "module": "WRT",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"The workshop was cancelled because the trainer was ill.\" Diagnostic only.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "workshop_cancelled",
+      "audio_script": "The workshop was cancelled because the trainer was ill.",
+      "word_guidance": null
+    },
+    {
+      "task_id": "WRT-B1B2-1",
+      "module": "WRT",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Professional email",
+      "target": "90-120 words",
+      "focus": "professional purpose/register",
+      "prompt": "A weekly team meeting often runs over time because updates are too detailed. Write an email proposing a change to the format, explaining the problem, your proposal and one benefit.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "meeting_format",
+      "word_guidance": {
+        "min": 90,
+        "max": 120
+      }
+    },
+    {
+      "task_id": "WRT-B1B2-2",
+      "module": "WRT",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Mediation / synthesis",
+      "target": "100-140 words",
+      "focus": "mediation and synthesis",
+      "prompt": "Two colleagues disagree about training. One wants a single full-day session; the other prefers three shorter sessions because of staffing. Write a neutral summary of both views and propose one compromise.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "training_format",
+      "word_guidance": {
+        "min": 100,
+        "max": 140
+      }
+    },
+    {
+      "task_id": "WRT-B1B2-3",
+      "module": "WRT",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Reasoned response",
+      "target": "150-190 words",
+      "focus": "argument and balance",
+      "prompt": "Should organisations allow staff to choose where they work, or should they set the same office policy for everyone? Discuss both sides and give a reasoned conclusion.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "hybrid_work",
+      "word_guidance": {
+        "min": 150,
+        "max": 190
+      }
+    },
+    {
+      "task_id": "WRT-B1B2-D",
+      "module": "WRT",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"The survey suggests an improvement, but the sample was smaller than expected.\" Diagnostic only.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "evidence_caution",
+      "audio_script": "The survey suggests an improvement, but the sample was smaller than expected.",
+      "word_guidance": null
+    },
+    {
+      "task_id": "WRT-B2C1-1",
+      "module": "WRT",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Professional correction",
+      "target": "110-150 words",
+      "focus": "precision and professional register",
+      "prompt": "A project summary says a new process \"clearly improved satisfaction\", but only a small voluntary group responded. Write to the project lead suggesting more accurate wording and one way to strengthen future evidence.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "claim_calibration",
+      "word_guidance": {
+        "min": 110,
+        "max": 150
+      }
+    },
+    {
+      "task_id": "WRT-B2C1-2",
+      "module": "WRT",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Mediation / evaluate",
+      "target": "130-170 words",
+      "focus": "balanced synthesis",
+      "prompt": "You receive two short comments about a new public information page. Comment A says it is clearer and faster to use. Comment B says important detail is now harder to find. Write a concise summary that represents both views and recommends a next step.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "simplification_clarity",
+      "word_guidance": {
+        "min": 130,
+        "max": 170
+      }
+    },
+    {
+      "task_id": "WRT-B2C1-3",
+      "module": "WRT",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Evaluation",
+      "target": "180-230 words",
+      "focus": "sustained evaluation",
+      "prompt": "When a decision affects the public, how much uncertainty should an organisation communicate? Develop a balanced argument and give examples.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "uncertainty_communication",
+      "word_guidance": {
+        "min": 180,
+        "max": 230
+      }
+    },
+    {
+      "task_id": "WRT-B2C1-D",
+      "module": "WRT",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"The apparent improvement should be interpreted cautiously because the sample changed.\" Diagnostic only.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "evidence_caution",
+      "audio_script": "The apparent improvement should be interpreted cautiously because the sample changed.",
+      "word_guidance": null
+    },
+    {
+      "task_id": "WRT-C1C2-1",
+      "module": "WRT",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Executive note",
+      "target": "130-170 words",
+      "focus": "calibrated professional communication",
+      "prompt": "A senior executive wants to announce that a pilot was \"a clear success\". You know one outcome improved strongly, another was unchanged, and participation was low. Draft a concise note recommending accurate public wording.",
+      "task_type": "functional_communication",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "claim_calibration",
+      "word_guidance": {
+        "min": 130,
+        "max": 170
+      }
+    },
+    {
+      "task_id": "WRT-C1C2-2",
+      "module": "WRT",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Cross-text synthesis",
+      "target": "150-190 words",
+      "focus": "high-level mediation and synthesis",
+      "prompt": "Two commentaries disagree about whether frequent everyday usage should quickly influence dictionary definitions. Summarise the common ground and the precise disagreement without taking a side.",
+      "task_type": "mediation_synthesis",
+      "weight": 0.3,
+      "scored_in_writing_level": true,
+      "topic_family": "dictionary_usage",
+      "word_guidance": {
+        "min": 150,
+        "max": 190
+      }
+    },
+    {
+      "task_id": "WRT-C1C2-3",
+      "module": "WRT",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Critical evaluation",
+      "target": "220-280 words",
+      "focus": "sustained critical discourse",
+      "prompt": "Evaluate the proposition: \"A transparent decision is one in which all relevant information is made available.\" Consider selection, information overload, uncertainty and meaningful understanding.",
+      "task_type": "extended_response",
+      "weight": 0.4,
+      "scored_in_writing_level": true,
+      "topic_family": "information_transparency",
+      "word_guidance": {
+        "min": 220,
+        "max": 280
+      }
+    },
+    {
+      "task_id": "WRT-C1C2-D",
+      "module": "WRT",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Integrated accuracy diagnostic",
+      "target": "1 sentence",
+      "focus": "orthography/listen-to-write",
+      "prompt": "Listen and write: \"A precise estimate can still mislead if the uncertainty around it is hidden.\" Diagnostic only.",
+      "task_type": "integrated_accuracy_diagnostic",
+      "weight": 0.0,
+      "scored_in_writing_level": false,
+      "topic_family": "uncertainty_communication",
+      "audio_script": "A precise estimate can still mislead if the uncertainty around it is hidden.",
+      "word_guidance": null
+    }
+  ]
+}

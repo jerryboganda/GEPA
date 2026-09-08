@@ -1,0 +1,112 @@
+{
+  "ruleset_id": "gepa-routing-v2-beta",
+  "version": "2.0.0-beta",
+  "status": "PRE-CALIBRATION. Transparent rule-based router. Not CAT/IRT. All thresholds are operational hypotheses to be re-estimated after field calibration and standard setting.",
+  "bands": [
+    "Pre-A1",
+    "A1",
+    "A2",
+    "B1",
+    "B2",
+    "C1",
+    "C2"
+  ],
+  "routes": [
+    "PreA1-A1",
+    "A1-A2",
+    "A2-B1",
+    "B1-B2",
+    "B2-C1",
+    "C1-C2"
+  ],
+  "applies_to_modules": [
+    "LS",
+    "RD",
+    "LSN"
+  ],
+  "locator": {
+    "start_band": "B1",
+    "pair_size": 2,
+    "on_2_of_2": "move_up_one_band_and_present_next_pair (if a previous pair at the band above already scored 0/2, bracket [current, current+1] instead)",
+    "on_0_of_2": "move_down_one_band_and_present_next_pair (if a previous pair at the band below already scored 2/2, bracket [current-1, current] instead)",
+    "on_1_of_2": "present_one_same_band_tie_item; correct -> bracket [current, current+1]; incorrect -> bracket [current-1, current]",
+    "at_A1_weak_evidence": "bracket [Pre-A1, A1] and flag preA1_confirmation (never force an A1 label)",
+    "at_C1_strong_evidence": "bracket [C1, C2] directly (C2 evidence comes from the upper confirmation block); C2 reported as 'provisional C2-level evidence'",
+    "hard_cap_locator_items_per_module": 8,
+    "on_cap_without_clean_bracket": "route to the two most plausible adjacent bands (based on last two results) and flag boundary_confirmation",
+    "stimulus_modules_note": "For RD/LSN a locator pair = one stimulus with its 2 items. A tie = one further stimulus; only its designated first item routes, the second item's response is kept as confirmation evidence."
+  },
+  "confirmation": {
+    "lower_block_size": 5,
+    "upper_block_size": 5,
+    "draw_rule": "different constructs/testlets from the locator items; locator responses at the same band count toward the block when the pilot bank has too few items (record evidence_shortfall)",
+    "thresholds_as_fractions": {
+      "strong_min": 0.8,
+      "borderline": 0.6,
+      "weak_max": 0.4
+    },
+    "patterns": [
+      {
+        "lower": ">=0.8",
+        "upper": "<=0.4",
+        "action": "report_lower",
+        "note": "upper not supported"
+      },
+      {
+        "lower": ">=0.8",
+        "upper": "==0.6",
+        "action": "add_boundary_items",
+        "boundary_items": 4,
+        "boundary_rule": ">=3/4 correct at upper -> report upper; else report lower with 'upper possible'"
+      },
+      {
+        "lower": ">=0.8",
+        "upper": ">=0.8",
+        "action": "report_upper",
+        "extension": {
+          "items": 4,
+          "band": "upper+1",
+          "rule": ">=3/4 -> annotate 'upper end of band; next band possible' (band stays upper in beta)",
+          "skip_if_ceiling": true
+        }
+      },
+      {
+        "lower": "<=0.6",
+        "upper": "any",
+        "action": "descent_confirmation",
+        "items": 5,
+        "band": "lower-1",
+        "rule": "descent >=0.8 -> report lower-1 (annotate 'lower possible' if lower block was 0.6); descent <0.8 -> report lower-1 with Low confidence and flag floor_unresolved; skip if locator pair at lower-1 already scored 2/2 (report lower-1) or lower is Pre-A1 (report Pre-A1, flag)"
+      },
+      {
+        "condition": "upper_correct - lower_correct >= 3",
+        "action": "aberrant_pattern",
+        "rule": "suppress level; add 4 items at lower; if lower now >=0.8 treat as upper-supported path, else report range [lower, upper] as undetermined with Low confidence"
+      }
+    ],
+    "never": [
+      "produce +/- CEFR positions",
+      "average bands numerically",
+      "let one module cap another module"
+    ]
+  },
+  "productive_route": {
+    "base": "median of the valid objective bracket lowers (LS, RD, LSN) -> route index",
+    "lift_rule": "if RD.lower >= LS.lower+1 AND LSN.lower >= LS.lower+1 then route = max(median, LS.lower+1)",
+    "wide_window_rule": "if max(lower) - min(lower) >= 2 across the three objective modules: route = median, flag wide_window, cap confidence at Low",
+    "missing_modules": "use the median of available valid modules; if none, default route B1-B2 and flag productive_route_default",
+    "upper_extension": "strong upper-level productive performance (upper evidence met with margin) -> offer one extension task from the next route where available"
+  },
+  "timeouts_and_technical": {
+    "item_timeout": "record omitted; score incorrect for routing; keep separate omission flag",
+    "disconnection": "restore current item once with fresh timer (replay for listening); second failure on same item -> replace item / technical review, no proficiency penalty",
+    "module_abandonment": "report only measured modules; label profile partial",
+    "persistence": "every response persisted server-side on submit"
+  },
+  "listening_replay": {
+    "first_play_required": true,
+    "second_play_allowed": true,
+    "penalty": null,
+    "log": true
+  }
+}

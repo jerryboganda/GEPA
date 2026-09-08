@@ -1,0 +1,41 @@
+{
+  "generated_from": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "counts": {
+    "language_systems": 52,
+    "reading_items": 42,
+    "reading_stimuli": 21,
+    "listening_items": 42,
+    "listening_stimuli": 21,
+    "speaking_prompts": 48,
+    "writing_tasks": 24
+  },
+  "authoring_key_distribution": {
+    "LS": {
+      "A": 15,
+      "B": 16,
+      "C": 13,
+      "D": 8
+    },
+    "RD": {
+      "A": 10,
+      "B": 14,
+      "C": 14,
+      "D": 4
+    },
+    "LSN": {
+      "A": 10,
+      "B": 14,
+      "C": 14,
+      "D": 4
+    }
+  },
+  "files": {
+    "language_systems.json": "1a8e0d96caa2ce31645105415566301a878b2d383ffae50f155c7993392ec2d0",
+    "reading.json": "20f3ee55fb82954d590826180d7a4d42aac4a56b028c6d00eea7a13f6c4dad64",
+    "listening.json": "6413b7df9229d90fa650a6f656bbdcadd9cd6fef1bb550b4bf238f75bb187f76",
+    "speaking_tasks.json": "355a34bd8a905640f8abc5ffeb6239007cb4061efa7b4b6c76670172feae8a69",
+    "writing_tasks.json": "f7aaf8db0af4ad096120ad923d23253761792914885a2b856e74326dfecbd1d7",
+    "RESTRICTED_answer_keys.json": "f629ec589b581d8b83d7a685e8377e4eb7d539946e3c966bff1d1f8476451697"
+  },
+  "validation_problems": []
+}

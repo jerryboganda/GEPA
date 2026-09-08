@@ -1,0 +1,78 @@
+{
+  "headline_rule": {
+    "ordinal_only": true,
+    "even_profile": "if all four measured skills fall within a one-band range -> headline = lower median band, labelled 'Indicative overall profile'",
+    "uneven_profile": "if range across measured skills >= 2 bands -> suppress single headline; show 'Uneven profile' with full range",
+    "cap": "headline never exceeds lowest measured skill + 1 band",
+    "prominence": "individual skills always shown more prominently than the headline",
+    "foundation_only": "if only LS+RD+LSN completed -> label 'Foundation and Receptive Profile'; never imply a four-skill overall level"
+  },
+  "confidence": {
+    "Moderate": "all required modules for that profile completed; no unresolved boundary; no material technical/integrity flag; cross-module pattern broadly coherent",
+    "Low": "partial profile OR unresolved boundary OR non-monotonic pattern OR technical problem OR insufficient productive evidence OR multiple effort/integrity flags OR wide_window",
+    "High": "NOT USED before calibration"
+  },
+  "allowed_wording": [
+    "Indicative placement estimate",
+    "Diagnostic profile",
+    "Skill profile and observed diagnostic gaps",
+    "Study recommendations",
+    "Target-exam readiness advice with disclaimers",
+    "Low/Moderate confidence based on completeness and flags",
+    "Provisional C2-level evidence"
+  ],
+  "forbidden_wording": [
+    "Your validated CEFR level is ...",
+    "CEFR-aligned",
+    "validated",
+    "certified",
+    "External exam score predictions",
+    "Reliability/accuracy percentages not supported by data",
+    "Certificate or verified high-stakes claim",
+    "High confidence",
+    "+/- or quarter-level precision (e.g. B1+, B2-)",
+    "numeric confidence intervals"
+  ],
+  "readiness_layer": {
+    "principle": "Exam names are descriptive destinations, not brands for GEPA. The placement test does not predict official exam scores. The layer explains whether general-English foundations appear sufficient to begin exam-specific preparation and which skill gaps deserve priority.",
+    "targets": {
+      "OET": {
+        "safe_use": "General-English foundation and skill gaps before profession-specific OET work",
+        "never_claim": "A guaranteed OET grade / 350 / 400 or regulator outcome",
+        "currency_note": "OET remains a four-subtest healthcare-specific assessment; GEPA describes general-English readiness only"
+      },
+      "IELTS": {
+        "safe_use": "Whether foundation English or mainly test-specific practice is likely to be needed",
+        "never_claim": "A guaranteed IELTS band"
+      },
+      "TOEFL iBT": {
+        "safe_use": "Readiness for TOEFL-specific academic and integrated-task practice",
+        "never_claim": "That GEPA CEFR equals an ETS 1-6 or 0-120 score",
+        "currency_note": "TOEFL iBT changed January 2026: 1-6 section/overall scale and multistage adaptive Reading/Listening"
+      },
+      "PTE Academic": {
+        "safe_use": "Foundation plus fluency/automated-task readiness needs",
+        "never_claim": "A guaranteed PTE score",
+        "currency_note": "PTE added Summarize Group Discussion and Respond to a Situation from August 2025"
+      },
+      "Cambridge / DET / other": {
+        "safe_use": "Select an appropriate preparation level and focus areas",
+        "never_claim": "Official equivalence without a linking study"
+      },
+      "University / Work / General": {
+        "safe_use": "Study pathway and priority skills",
+        "never_claim": "Admission or employment eligibility"
+      }
+    }
+  },
+  "result_payload_sections": [
+    "skill_profile (RD, LSN, SPK, WRT with band or 'not measured'/'insufficient evidence')",
+    "confidence (Low|Moderate) with reasons",
+    "diagnostics (Grammar/Vocabulary evidence, listen-to-write accuracy)",
+    "strengths and gaps",
+    "Can-Do interpretation per skill",
+    "target-exam readiness advice with disclaimer",
+    "retest advice",
+    "headline (only when rule allows)"
+  ]
+}

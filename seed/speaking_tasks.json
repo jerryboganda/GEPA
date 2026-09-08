@@ -1,0 +1,1260 @@
+{
+  "package": "GEPA Pilot Item Bank v2",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "prepared": "2026-09-08",
+  "status": "pilot — expert review / cognitive labs / closed beta only; NOT a public production bank",
+  "note": "Option order printed in source = authoring layout only. Runtime MUST shuffle per session and store the permutation.",
+  "module": "SPK",
+  "reported": true,
+  "rules": [
+    "OR+SR combined <= 20% of Speaking estimate",
+    ">= 60% from spontaneous/interactive production",
+    "INT1+INT2 form one two-turn task worth 20%",
+    "accent similarity is never scored"
+  ],
+  "topic_family_source": "kit-assigned (blueprint gives none) — reviewer may rename",
+  "tasks": [
+    {
+      "task_id": "SPK-PreA1A1-OR",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Oral Reading",
+      "prompt": "My name is Lina. I live near a park.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "personal_intro",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-SR",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "The bus comes at nine.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "bus_time",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-SR",
+      "audio_script": "The bus comes at nine.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-PreA1A1-FS",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Functional Situation",
+      "prompt": "You are in a cafe. Ask for a glass of water.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "cafe_request",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-RT",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear: \"Maya works in a shop. She starts at ten.\" Tell me what you remember.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "shop_schedule",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-RT",
+      "audio_script": "Maya works in a shop. She starts at ten.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-ER1",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "Tell us three simple things about your home or where you live.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "home",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-ER2",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "Tell us about one food or drink you like. Say what it is and when you have it.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "food",
+      "turn": null,
+      "task_group": "SPK-PreA1A1-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-INT1",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A classmate asks: \"What time can we meet tomorrow?\" Respond with a time and place.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "meeting_time",
+      "turn": 1,
+      "task_group": "SPK-PreA1A1-INT",
+      "interlocutor_line": "What time can we meet tomorrow?",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-PreA1A1-INT2",
+      "module": "SPK",
+      "route": "PreA1-A1",
+      "route_bands": [
+        "Pre-A1",
+        "A1"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"I cannot come then. Can we meet later?\" Respond again.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "meeting_time",
+      "turn": 2,
+      "task_group": "SPK-PreA1A1-INT",
+      "interlocutor_line": "I cannot come then. Can we meet later?",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-OR",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Oral Reading",
+      "prompt": "I usually walk to work, but today I am taking the bus because it is raining.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "commute_weather",
+      "turn": null,
+      "task_group": "SPK-A1A2-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-SR",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "The meeting starts at half past ten.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "meeting_time",
+      "turn": null,
+      "task_group": "SPK-A1A2-SR",
+      "audio_script": "The meeting starts at half past ten.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-A1A2-FS",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Functional Situation",
+      "prompt": "You booked a class for Tuesday but cannot attend. Tell the centre and ask about another day.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "class_booking",
+      "turn": null,
+      "task_group": "SPK-A1A2-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-RT",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear: \"The library closes at six today, but the study room stays open until seven.\" Summarise the information.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "library_hours",
+      "turn": null,
+      "task_group": "SPK-A1A2-RT",
+      "audio_script": "The library closes at six today, but the study room stays open until seven.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-ER1",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "Describe a useful place in your town. What is it, where is it, and why do you use it?",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "town_place",
+      "turn": null,
+      "task_group": "SPK-A1A2-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-ER2",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "Tell us about something new you learned recently and why it was useful.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "learning_new",
+      "turn": null,
+      "task_group": "SPK-A1A2-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-INT1",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A friend says: \"I want to improve my English but I only have twenty minutes a day.\" Give one suggestion.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "english_study_habits",
+      "turn": 1,
+      "task_group": "SPK-A1A2-INT",
+      "interlocutor_line": "I want to improve my English but I only have twenty minutes a day.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A1A2-INT2",
+      "module": "SPK",
+      "route": "A1-A2",
+      "route_bands": [
+        "A1",
+        "A2"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"I get bored easily. What else could I do?\" Respond again.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "english_study_habits",
+      "turn": 2,
+      "task_group": "SPK-A1A2-INT",
+      "interlocutor_line": "I get bored easily. What else could I do?",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-OR",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Oral Reading",
+      "prompt": "The event was moved indoors because heavy rain was expected in the afternoon.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "event_weather",
+      "turn": null,
+      "task_group": "SPK-A2B1-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-SR",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "If you register before Friday, you will receive a confirmation email.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "registration",
+      "turn": null,
+      "task_group": "SPK-A2B1-SR",
+      "audio_script": "If you register before Friday, you will receive a confirmation email.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-A2B1-FS",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Functional Situation",
+      "prompt": "A colleague asks you to swap a shift, but you cannot. Decline politely, give a reason, and suggest an alternative.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "shift_swap",
+      "turn": null,
+      "task_group": "SPK-A2B1-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-RT",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear a short message: \"The morning workshop is full, but the afternoon session still has places. Both cover the same material.\" Summarise the key point in your own words.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "workshop_places",
+      "turn": null,
+      "task_group": "SPK-A2B1-RT",
+      "audio_script": "The morning workshop is full, but the afternoon session still has places. Both cover the same material.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-ER1",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "Do you learn better alone or with other people? Explain your preference and give an example.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "learning_alone_vs_group",
+      "turn": null,
+      "task_group": "SPK-A2B1-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-ER2",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "Describe a small problem you solved recently. What happened, what did you do, and what was the result?",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "problem_solved",
+      "turn": null,
+      "task_group": "SPK-A2B1-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-INT1",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A neighbour says: \"The music from your flat was loud last night.\" Respond appropriately.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "noise_complaint",
+      "turn": 1,
+      "task_group": "SPK-A2B1-INT",
+      "interlocutor_line": "The music from your flat was loud last night.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-A2B1-INT2",
+      "module": "SPK",
+      "route": "A2-B1",
+      "route_bands": [
+        "A2",
+        "B1"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"It has happened twice this week.\" Respond again and propose a solution.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "noise_complaint",
+      "turn": 2,
+      "task_group": "SPK-A2B1-INT",
+      "interlocutor_line": "It has happened twice this week.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-OR",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Oral Reading",
+      "prompt": "Although the new booking system is faster for regular users, first-time visitors still need clearer guidance.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "booking_system",
+      "turn": null,
+      "task_group": "SPK-B1B2-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-SR",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "The proposal may cost more at first, but it could reduce maintenance costs later.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "proposal_costs",
+      "turn": null,
+      "task_group": "SPK-B1B2-SR",
+      "audio_script": "The proposal may cost more at first, but it could reduce maintenance costs later.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-B1B2-FS",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Functional Situation",
+      "prompt": "Your team meeting often runs over time because updates are too detailed. Explain one change you would propose and why.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "meeting_format",
+      "turn": null,
+      "task_group": "SPK-B1B2-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-RT",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear: \"A town introduced extra buses on market days. Traffic fell slightly, but passenger numbers rose more than expected. The council will keep the service for another six months.\" Summarise the message and its implication.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "market_day_buses",
+      "turn": null,
+      "task_group": "SPK-B1B2-RT",
+      "audio_script": "A town introduced extra buses on market days. Traffic fell slightly, but passenger numbers rose more than expected. The council will keep the service for another six months.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-ER1",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "Should organisations give employees more flexibility about where they work? Discuss one benefit, one risk and your view.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "hybrid_work",
+      "turn": null,
+      "task_group": "SPK-B1B2-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-ER2",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "Some people prefer expert advice; others prefer reading several opinions before deciding. Which approach do you usually take, and why?",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "advice_sources",
+      "turn": null,
+      "task_group": "SPK-B1B2-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-INT1",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A colleague says: \"I think we should cancel the training because only half the team can attend.\" Respond with your view.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "training_attendance",
+      "turn": 1,
+      "task_group": "SPK-B1B2-INT",
+      "interlocutor_line": "I think we should cancel the training because only half the team can attend.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B1B2-INT2",
+      "module": "SPK",
+      "route": "B1-B2",
+      "route_bands": [
+        "B1",
+        "B2"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"What would you do instead?\" Give a concrete alternative.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "training_attendance",
+      "turn": 2,
+      "task_group": "SPK-B1B2-INT",
+      "interlocutor_line": "What would you do instead?",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-OR",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Oral Reading",
+      "prompt": "A policy can be consistent in wording yet produce different effects when teams work under very different conditions.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "policy_consistency",
+      "turn": null,
+      "task_group": "SPK-B2C1-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-SR",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "The evidence is encouraging, although the small sample means the conclusion should remain cautious.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "evidence_caution",
+      "turn": null,
+      "task_group": "SPK-B2C1-SR",
+      "audio_script": "The evidence is encouraging, although the small sample means the conclusion should remain cautious.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-B2C1-FS",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Functional Situation",
+      "prompt": "A project summary makes a strong claim but ignores an important limitation. Raise the issue constructively and suggest more accurate wording.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "claim_calibration",
+      "turn": null,
+      "task_group": "SPK-B2C1-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-RT",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear: \"A university simplified its course information pages. Students found key deadlines faster, but some said the new pages removed useful detail. The team plans to keep the simpler layout and add optional detail panels.\" Summarise both the finding and the response.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "simplification_clarity",
+      "turn": null,
+      "task_group": "SPK-B2C1-RT",
+      "audio_script": "A university simplified its course information pages. Students found key deadlines faster, but some said the new pages removed useful detail. The team plans to keep the simpler layout and add optional detail panels.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-ER1",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "When does simplifying complex information help, and when can it become misleading? Develop your answer with examples.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "simplification_clarity",
+      "turn": null,
+      "task_group": "SPK-B2C1-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-ER2",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "Is it better for public organisations to use one consistent rule or allow local flexibility? Explain the trade-off and your position.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "policy_consistency",
+      "turn": null,
+      "task_group": "SPK-B2C1-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-INT1",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A manager says: \"The pilot was successful, so we should use exactly the same process everywhere.\" Respond.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "pilot_scaling",
+      "turn": 1,
+      "task_group": "SPK-B2C1-INT",
+      "interlocutor_line": "The pilot was successful, so we should use exactly the same process everywhere.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-B2C1-INT2",
+      "module": "SPK",
+      "route": "B2-C1",
+      "route_bands": [
+        "B2",
+        "C1"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"Consistency is important. How would you preserve it without ignoring local differences?\" Respond again.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "pilot_scaling",
+      "turn": 2,
+      "task_group": "SPK-B2C1-INT",
+      "interlocutor_line": "Consistency is important. How would you preserve it without ignoring local differences?",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-OR",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Oral Reading",
+      "prompt": "A recommendation system may appear to reveal preferences while simultaneously shaping the options from which those preferences are formed.",
+      "task_type": "oral_reading",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "text_read_aloud",
+      "traits_scored": [
+        "intelligibility",
+        "fluency"
+      ],
+      "topic_family": "recommendation_systems",
+      "turn": null,
+      "task_group": "SPK-C1C2-OR",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-SR",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Sentence Reconstruction - candidate hears but does not read",
+      "prompt": "Calling a forecast inaccurate can be misleading when publishing the forecast changed the behaviour it was meant to predict.",
+      "task_type": "sentence_reconstruction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": false,
+      "delivery": "audio_only_repeat",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "communication"
+      ],
+      "topic_family": "forecasting",
+      "turn": null,
+      "task_group": "SPK-C1C2-SR",
+      "audio_script": "Calling a forecast inaccurate can be misleading when publishing the forecast changed the behaviour it was meant to predict.",
+      "candidate_sees_text": false
+    },
+    {
+      "task_id": "SPK-C1C2-FS",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Functional Situation",
+      "prompt": "A report describes \"broad public support\" even though participation was voluntary and limited. Reformulate the claim precisely and explain why your wording is better.",
+      "task_type": "functional_situation",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "claim_calibration",
+      "turn": null,
+      "task_group": "SPK-C1C2-FS",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-RT",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Retell / Summarise",
+      "prompt": "You hear: \"Two reviewers agree that everyday usage matters when dictionaries are updated. One thinks frequent use should drive change quickly; the other argues that frequency must be interpreted alongside register and context.\" Summarise the disagreement without taking a side.",
+      "task_type": "retell_summarise",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "dictionary_usage",
+      "turn": null,
+      "task_group": "SPK-C1C2-RT",
+      "audio_script": "Two reviewers agree that everyday usage matters when dictionaries are updated. One thinks frequent use should drive change quickly; the other argues that frequency must be interpreted alongside register and context.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-ER1",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Extended Response 1",
+      "prompt": "Evaluate the claim that more information always makes a decision more transparent. Consider selection, overload and uncertainty.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "information_transparency",
+      "turn": null,
+      "task_group": "SPK-C1C2-ER1",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-ER2",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Extended Response 2",
+      "prompt": "When can a neutral-sounding word hide a value judgement? Discuss how wording can frame a public debate without making an explicit argument.",
+      "task_type": "extended_response",
+      "weight": 0.15,
+      "spontaneous_or_interactive": true,
+      "delivery": "text_prompt",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "framing_language",
+      "turn": null,
+      "task_group": "SPK-C1C2-ER2",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-INT1",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Simulated Interaction - Turn 1",
+      "prompt": "A colleague says: \"If our model is statistically accurate, that is enough to justify using it.\" Respond critically but constructively.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "model_accuracy",
+      "turn": 1,
+      "task_group": "SPK-C1C2-INT",
+      "interlocutor_line": "If our model is statistically accurate, that is enough to justify using it.",
+      "candidate_sees_text": true
+    },
+    {
+      "task_id": "SPK-C1C2-INT2",
+      "module": "SPK",
+      "route": "C1-C2",
+      "route_bands": [
+        "C1",
+        "C2"
+      ],
+      "label": "Simulated Interaction - Turn 2",
+      "prompt": "Follow-up: \"What additional evidence would you want before relying on it?\" Respond again.",
+      "task_type": "simulated_interaction",
+      "weight": 0.1,
+      "spontaneous_or_interactive": true,
+      "delivery": "interlocutor_audio_then_speak",
+      "traits_scored": [
+        "intelligibility",
+        "fluency",
+        "grammar",
+        "vocabulary",
+        "communication"
+      ],
+      "topic_family": "model_accuracy",
+      "turn": 2,
+      "task_group": "SPK-C1C2-INT",
+      "interlocutor_line": "What additional evidence would you want before relying on it?",
+      "candidate_sees_text": true
+    }
+  ]
+}

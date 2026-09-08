@@ -1,0 +1,1391 @@
+{
+  "package": "GEPA Pilot Item Bank v2",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "prepared": "2026-09-08",
+  "status": "pilot — expert review / cognitive labs / closed beta only; NOT a public production bank",
+  "note": "Option order printed in source = authoring layout only. Runtime MUST shuffle per session and store the permutation.",
+  "module": "LSN",
+  "reported": true,
+  "audio_policy": "questions visible before first play; 1 required play; 2nd play allowed, logged, never penalised",
+  "stimuli": [
+    {
+      "stimulus_id": "LSN-PRE-S1",
+      "band": "Pre-A1",
+      "topic_family": "transport",
+      "text": "The bus to the town centre leaves at nine ten from stop three.",
+      "item_ids": [
+        "LSN-PRE-01",
+        "LSN-PRE-02"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 105,
+      "domain": "public",
+      "word_count": 13,
+      "est_duration_sec": 7.4,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-PRE-S2",
+      "band": "Pre-A1",
+      "topic_family": "food",
+      "text": "A: Would you like tea or water? B: Water, please. A: Here you are.",
+      "item_ids": [
+        "LSN-PRE-03",
+        "LSN-PRE-04"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 105,
+      "domain": "personal",
+      "word_count": 14,
+      "est_duration_sec": 8.0,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-PRE-S3",
+      "band": "Pre-A1",
+      "topic_family": "class",
+      "text": "Your class is in room six today. It starts at four o clock.",
+      "item_ids": [
+        "LSN-PRE-05",
+        "LSN-PRE-06"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 105,
+      "domain": "educational",
+      "word_count": 13,
+      "est_duration_sec": 7.4,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A1-S1",
+      "band": "A1",
+      "topic_family": "shopping",
+      "text": "A: I need a birthday gift for my sister. B: What does she like? A: She likes cooking. B: Then this small recipe book might be good. It is twelve pounds.",
+      "item_ids": [
+        "LSN-A1-01",
+        "LSN-A1-02"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 118,
+      "domain": "personal",
+      "word_count": 31,
+      "est_duration_sec": 15.8,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A1-S2",
+      "band": "A1",
+      "topic_family": "appointment",
+      "text": "Hello. This is a reminder that your appointment is on Thursday at half past two. Please arrive ten minutes early.",
+      "item_ids": [
+        "LSN-A1-03",
+        "LSN-A1-04"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 118,
+      "domain": "public",
+      "word_count": 20,
+      "est_duration_sec": 10.2,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A1-S3",
+      "band": "A1",
+      "topic_family": "course",
+      "text": "A: Are you coming to the class tonight? B: Yes, but I may be a little late because my bus arrives at six forty. A: That is fine. The class starts at seven.",
+      "item_ids": [
+        "LSN-A1-05",
+        "LSN-A1-06"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 118,
+      "domain": "educational",
+      "word_count": 33,
+      "est_duration_sec": 16.8,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A2-S1",
+      "band": "A2",
+      "topic_family": "travel",
+      "text": "Passengers for Greenford should note that the 11:20 service is delayed by about fifteen minutes because of a signalling problem. It will still leave from Platform 2.",
+      "item_ids": [
+        "LSN-A2-01",
+        "LSN-A2-02"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 138,
+      "domain": "public",
+      "word_count": 27,
+      "est_duration_sec": 11.7,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A2-S2",
+      "band": "A2",
+      "topic_family": "schedule",
+      "text": "A: Can we move the team call to Friday? B: Friday morning is difficult for me, but I am free after three. A: Let us make it three thirty then.",
+      "item_ids": [
+        "LSN-A2-03",
+        "LSN-A2-04"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 138,
+      "domain": "occupational",
+      "word_count": 30,
+      "est_duration_sec": 13.0,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-A2-S3",
+      "band": "A2",
+      "topic_family": "event",
+      "text": "The outdoor film will begin at eight as planned. The cafe will close at seven thirty, so please buy food before then. If it rains, the film will move into the main hall.",
+      "item_ids": [
+        "LSN-A2-05",
+        "LSN-A2-06"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 138,
+      "domain": "public",
+      "word_count": 33,
+      "est_duration_sec": 14.3,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B1-S1",
+      "band": "B1",
+      "topic_family": "service_change",
+      "text": "A: I thought the new booking system was supposed to make things quicker. B: It does when you already know the service you need, but first-time users seem to spend longer choosing. A: So the problem is not the payment stage? B: Not really. Most delays happen before people reach it.",
+      "item_ids": [
+        "LSN-B1-01",
+        "LSN-B1-02"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 150,
+      "domain": "public",
+      "word_count": 51,
+      "est_duration_sec": 20.4,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B1-S2",
+      "band": "B1",
+      "topic_family": "presentation",
+      "text": "When you prepare a short presentation, do not try to include everything you know. Decide on one main message and choose two or three examples that support it. If a detail is interesting but does not help that message, leave it out. You can always answer questions afterwards.",
+      "item_ids": [
+        "LSN-B1-03",
+        "LSN-B1-04"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 150,
+      "domain": "educational",
+      "word_count": 48,
+      "est_duration_sec": 19.2,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B1-S3",
+      "band": "B1",
+      "topic_family": "volunteer",
+      "text": "A: We need someone at the entrance from ten. B: I can do ten to twelve, but I have to leave after that. C: I am free from eleven, so I could take over at noon. A: Perfect. I will cover the first few minutes if traffic makes anyone late.",
+      "item_ids": [
+        "LSN-B1-05",
+        "LSN-B1-06"
+      ],
+      "speakers": "Three speakers",
+      "target_wpm": 150,
+      "domain": "public",
+      "word_count": 50,
+      "est_duration_sec": 20.0,
+      "speaker_count": 3,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B2-S1",
+      "band": "B2",
+      "topic_family": "meeting_format",
+      "text": "A: I like the idea of shorter meetings, but sending every update in writing could create another problem. People may stop reading them. B: True. What if written updates are limited to three points, and the meeting is used only for decisions or questions? A: That sounds more realistic. It keeps the record without turning the inbox into a report archive.",
+      "item_ids": [
+        "LSN-B2-01",
+        "LSN-B2-02"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 156,
+      "domain": "occupational",
+      "word_count": 61,
+      "est_duration_sec": 23.5,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B2-S2",
+      "band": "B2",
+      "topic_family": "housing",
+      "text": "A council is considering converting an unused office building into temporary housing. Supporters point out that the building is already connected to transport and basic services. Critics argue that the internal layout was never designed for long-term living. The council has therefore commissioned a feasibility study before making a final decision.",
+      "item_ids": [
+        "LSN-B2-03",
+        "LSN-B2-04"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 156,
+      "domain": "public",
+      "word_count": 51,
+      "est_duration_sec": 19.6,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-B2-S3",
+      "band": "B2",
+      "topic_family": "group_project",
+      "text": "A: We divided the research by topic, which was efficient, but our final report sounds like three separate documents. B: Maybe we should agree on the argument first, then edit each section around it. C: I agree, though we should keep some differences in perspective rather than forcing every section to sound identical.",
+      "item_ids": [
+        "LSN-B2-05",
+        "LSN-B2-06"
+      ],
+      "speakers": "Three speakers",
+      "target_wpm": 156,
+      "domain": "educational",
+      "word_count": 53,
+      "est_duration_sec": 20.4,
+      "speaker_count": 3,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C1-S1",
+      "band": "C1",
+      "topic_family": "risk_communication",
+      "text": "When organisations communicate risk, numbers can create an impression of precision that the underlying evidence does not justify. Saying that an event is \"unlikely\" may be vague, but giving a figure such as 8.3 percent is not automatically more honest if the model itself is highly uncertain. Good communication therefore needs two kinds of clarity: what the estimate currently is, and how much confidence we should place in it. The second is often harder to express because people mistake uncertainty for incompetence, even when uncertainty is an accurate feature of the evidence.",
+      "item_ids": [
+        "LSN-C1-01",
+        "LSN-C1-02"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 162,
+      "domain": "public",
+      "word_count": 92,
+      "est_duration_sec": 34.1,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C1-S2",
+      "band": "C1",
+      "topic_family": "peer_feedback",
+      "text": "A: The students said they wanted more detailed feedback, so we wrote much longer comments. B: Did that help? A: Not as much as we expected. Several students focused on correcting every small error and missed the two priorities we wanted them to work on. B: So perhaps more feedback is not the same as more useful feedback. A: Exactly. We are thinking of separating essential changes from optional suggestions next time.",
+      "item_ids": [
+        "LSN-C1-03",
+        "LSN-C1-04"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 162,
+      "domain": "educational",
+      "word_count": 72,
+      "est_duration_sec": 26.7,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C1-S3",
+      "band": "C1",
+      "topic_family": "implementation",
+      "text": "A: The pilot worked well in the city office, so leadership wants to use the same process everywhere. B: That is encouraging, but the smaller sites do not have the same staffing. C: Could we keep the core steps and let each site decide how to organise them? A: That may be the safest way to scale it without pretending the contexts are identical.",
+      "item_ids": [
+        "LSN-C1-05",
+        "LSN-C1-06"
+      ],
+      "speakers": "Three speakers",
+      "target_wpm": 162,
+      "domain": "occupational",
+      "word_count": 64,
+      "est_duration_sec": 23.7,
+      "speaker_count": 3,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C2-S1",
+      "band": "C2",
+      "topic_family": "forecasting",
+      "text": "Forecasts are often evaluated as though they were passive descriptions of a future that unfolds independently of them. In some settings that is a poor assumption. A warning about severe congestion may cause commuters to change their plans, preventing the congestion that was predicted. Calling the forecast \"wrong\" would then ignore the role it played in changing the outcome. The reverse is also possible: a confident demand forecast can encourage investment that helps create the demand. Evaluation therefore needs to ask not only whether a forecast matched what later happened, but how publishing it altered the system being forecast.",
+      "item_ids": [
+        "LSN-C2-01",
+        "LSN-C2-02"
+      ],
+      "speakers": "One speaker",
+      "target_wpm": 166,
+      "domain": "public",
+      "word_count": 99,
+      "est_duration_sec": 35.8,
+      "speaker_count": 1,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C2-S2",
+      "band": "C2",
+      "topic_family": "expertise",
+      "text": "A: People often say that experts communicate badly because they use too much technical language. B: Sometimes, yes. But simplifying the vocabulary does not solve the deeper problem if the expert has not decided what the audience actually needs to understand. A: So the issue is selection as much as wording. B: Exactly. You can write in plain English and still give the wrong explanation if you choose the wrong distinctions.",
+      "item_ids": [
+        "LSN-C2-03",
+        "LSN-C2-04"
+      ],
+      "speakers": "Two speakers",
+      "target_wpm": 166,
+      "domain": "educational",
+      "word_count": 71,
+      "est_duration_sec": 25.7,
+      "speaker_count": 2,
+      "admin_only": true
+    },
+    {
+      "stimulus_id": "LSN-C2-S3",
+      "band": "C2",
+      "topic_family": "heritage_decision",
+      "text": "A: If we restore the hall exactly as it looked in 1920, visitors will see the original design more clearly. B: But the changes made in the 1960s are now part of its history too. C: Perhaps we should stop asking which period is \"the authentic one\" and explain why different choices preserve different kinds of evidence. A: That would make the decision more transparent, though less simple.",
+      "item_ids": [
+        "LSN-C2-05",
+        "LSN-C2-06"
+      ],
+      "speakers": "Three speakers",
+      "target_wpm": 166,
+      "domain": "public",
+      "word_count": 68,
+      "est_duration_sec": 24.6,
+      "speaker_count": 3,
+      "admin_only": true
+    }
+  ],
+  "items": [
+    {
+      "item_id": "LSN-PRE-01",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "Where does the bus go?",
+      "evidence_focus": "explicit place",
+      "stimulus_id": "LSN-PRE-S1",
+      "options": [
+        {
+          "option_id": "opt_bf1945b96c",
+          "text": "Town centre"
+        },
+        {
+          "option_id": "opt_1c69d3a3e6",
+          "text": "Airport"
+        },
+        {
+          "option_id": "opt_8d11e8d6f4",
+          "text": "School"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-PRE-02",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "Which stop is used?",
+      "evidence_focus": "explicit number",
+      "stimulus_id": "LSN-PRE-S1",
+      "options": [
+        {
+          "option_id": "opt_72f4e67048",
+          "text": "Stop one"
+        },
+        {
+          "option_id": "opt_dfc05b72cb",
+          "text": "Stop three"
+        },
+        {
+          "option_id": "opt_9c70b29784",
+          "text": "Stop five"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-PRE-03",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "What does the second speaker want?",
+      "evidence_focus": "explicit choice",
+      "stimulus_id": "LSN-PRE-S2",
+      "options": [
+        {
+          "option_id": "opt_fa58dd394e",
+          "text": "Tea"
+        },
+        {
+          "option_id": "opt_6627a54de7",
+          "text": "Coffee"
+        },
+        {
+          "option_id": "opt_37d877c8cd",
+          "text": "Water"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-PRE-04",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "How many people speak?",
+      "evidence_focus": "basic listening",
+      "stimulus_id": "LSN-PRE-S2",
+      "options": [
+        {
+          "option_id": "opt_aefaa9770a",
+          "text": "One"
+        },
+        {
+          "option_id": "opt_0eb4348360",
+          "text": "Two"
+        },
+        {
+          "option_id": "opt_52329b0d2d",
+          "text": "Three"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-PRE-05",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "Which room is the class in?",
+      "evidence_focus": "explicit place",
+      "stimulus_id": "LSN-PRE-S3",
+      "options": [
+        {
+          "option_id": "opt_799ec6acdb",
+          "text": "Room six"
+        },
+        {
+          "option_id": "opt_53bcfe01b3",
+          "text": "Room four"
+        },
+        {
+          "option_id": "opt_e4b9cfae4c",
+          "text": "Room eight"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-PRE-06",
+      "module": "LSN",
+      "band": "Pre-A1",
+      "stem": "When does the class start?",
+      "evidence_focus": "explicit time",
+      "stimulus_id": "LSN-PRE-S3",
+      "options": [
+        {
+          "option_id": "opt_0ce30ceb0e",
+          "text": "Six o clock"
+        },
+        {
+          "option_id": "opt_ce84971626",
+          "text": "Five o clock"
+        },
+        {
+          "option_id": "opt_420c6a292d",
+          "text": "Four o clock"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-01",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "Who is the gift for?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "LSN-A1-S1",
+      "options": [
+        {
+          "option_id": "opt_c4b11d9faa",
+          "text": "The speaker's sister"
+        },
+        {
+          "option_id": "opt_8d610c86d0",
+          "text": "A friend"
+        },
+        {
+          "option_id": "opt_e1a062313c",
+          "text": "A teacher"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-02",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "What does the sister like?",
+      "evidence_focus": "explicit detail",
+      "stimulus_id": "LSN-A1-S1",
+      "options": [
+        {
+          "option_id": "opt_73ecdab7ec",
+          "text": "Running"
+        },
+        {
+          "option_id": "opt_e3f298517b",
+          "text": "Cooking"
+        },
+        {
+          "option_id": "opt_2acff67982",
+          "text": "Painting"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-03",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "When is the appointment?",
+      "evidence_focus": "explicit time",
+      "stimulus_id": "LSN-A1-S2",
+      "options": [
+        {
+          "option_id": "opt_5cc27e3b5b",
+          "text": "Tuesday at 2:30"
+        },
+        {
+          "option_id": "opt_062b93dd98",
+          "text": "Thursday at 3:30"
+        },
+        {
+          "option_id": "opt_3fa01e26ee",
+          "text": "Thursday at 2:30"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-04",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "What should the listener do?",
+      "evidence_focus": "instruction",
+      "stimulus_id": "LSN-A1-S2",
+      "options": [
+        {
+          "option_id": "opt_7ab75d4c4b",
+          "text": "Phone ten minutes early"
+        },
+        {
+          "option_id": "opt_d79149fab2",
+          "text": "Arrive ten minutes early"
+        },
+        {
+          "option_id": "opt_7dc89d642a",
+          "text": "Bring two people"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-05",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "Why might the second speaker be late?",
+      "evidence_focus": "simple reason",
+      "stimulus_id": "LSN-A1-S3",
+      "options": [
+        {
+          "option_id": "opt_114357cf05",
+          "text": "The bus arrives at 6:40"
+        },
+        {
+          "option_id": "opt_270a5d4d43",
+          "text": "The class starts at 6:40"
+        },
+        {
+          "option_id": "opt_12b5dbb460",
+          "text": "The speaker has no bus"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A1-06",
+      "module": "LSN",
+      "band": "A1",
+      "stem": "When does the class start?",
+      "evidence_focus": "explicit time",
+      "stimulus_id": "LSN-A1-S3",
+      "options": [
+        {
+          "option_id": "opt_4ace25e52f",
+          "text": "Six forty"
+        },
+        {
+          "option_id": "opt_045f856749",
+          "text": "Eight o clock"
+        },
+        {
+          "option_id": "opt_416571bf4d",
+          "text": "Seven o clock"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-01",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "What has changed?",
+      "evidence_focus": "explicit change",
+      "stimulus_id": "LSN-A2-S1",
+      "options": [
+        {
+          "option_id": "opt_bf09dbb780",
+          "text": "The departure time"
+        },
+        {
+          "option_id": "opt_529765950c",
+          "text": "The destination"
+        },
+        {
+          "option_id": "opt_fd4e5bd383",
+          "text": "The platform"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-02",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "What has not changed?",
+      "evidence_focus": "contrast/detail",
+      "stimulus_id": "LSN-A2-S1",
+      "options": [
+        {
+          "option_id": "opt_e8c71767e8",
+          "text": "The delay"
+        },
+        {
+          "option_id": "opt_1da374ee5b",
+          "text": "The platform"
+        },
+        {
+          "option_id": "opt_0f8e34c061",
+          "text": "The reason"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-03",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "When will they probably meet?",
+      "evidence_focus": "simple inference",
+      "stimulus_id": "LSN-A2-S2",
+      "options": [
+        {
+          "option_id": "opt_18e1fba559",
+          "text": "Friday morning"
+        },
+        {
+          "option_id": "opt_43a1c46d50",
+          "text": "Thursday at 3:30"
+        },
+        {
+          "option_id": "opt_f4a495597e",
+          "text": "Friday at 3:30"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-04",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "Why is Friday morning unsuitable?",
+      "evidence_focus": "reason",
+      "stimulus_id": "LSN-A2-S2",
+      "options": [
+        {
+          "option_id": "opt_0d635be789",
+          "text": "The office is closed"
+        },
+        {
+          "option_id": "opt_9f426cedf1",
+          "text": "One speaker is not free"
+        },
+        {
+          "option_id": "opt_936e7a7439",
+          "text": "The call is cancelled"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-05",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "What should people do before 7:30?",
+      "evidence_focus": "instruction",
+      "stimulus_id": "LSN-A2-S3",
+      "options": [
+        {
+          "option_id": "opt_4d48405f81",
+          "text": "Buy food"
+        },
+        {
+          "option_id": "opt_d663fca0f8",
+          "text": "Enter the main hall"
+        },
+        {
+          "option_id": "opt_efdbc43692",
+          "text": "Leave the event"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-A2-06",
+      "module": "LSN",
+      "band": "A2",
+      "stem": "What will happen if it rains?",
+      "evidence_focus": "simple condition",
+      "stimulus_id": "LSN-A2-S3",
+      "options": [
+        {
+          "option_id": "opt_03496a4ca8",
+          "text": "The film will start earlier"
+        },
+        {
+          "option_id": "opt_43d639b92a",
+          "text": "The cafe will stay open"
+        },
+        {
+          "option_id": "opt_4e81a71e90",
+          "text": "The film will move indoors"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-01",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "What is the main difficulty for first-time users?",
+      "evidence_focus": "main point",
+      "stimulus_id": "LSN-B1-S1",
+      "options": [
+        {
+          "option_id": "opt_df8aa2ee6b",
+          "text": "Choosing the correct service"
+        },
+        {
+          "option_id": "opt_bedef32a49",
+          "text": "Making the payment"
+        },
+        {
+          "option_id": "opt_6dfac54cb2",
+          "text": "Creating a password"
+        },
+        {
+          "option_id": "opt_8983889192",
+          "text": "Finding the building"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-02",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "What does the second speaker imply about payment?",
+      "evidence_focus": "simple inference",
+      "stimulus_id": "LSN-B1-S1",
+      "options": [
+        {
+          "option_id": "opt_66faef979d",
+          "text": "It is impossible for new users"
+        },
+        {
+          "option_id": "opt_d3d7d218f8",
+          "text": "It is not the main source of delay"
+        },
+        {
+          "option_id": "opt_cfc1ed8f3d",
+          "text": "It should be removed entirely"
+        },
+        {
+          "option_id": "opt_48d0d325fc",
+          "text": "It takes longer than choosing"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-03",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "What is the speaker's main advice?",
+      "evidence_focus": "gist",
+      "stimulus_id": "LSN-B1-S2",
+      "options": [
+        {
+          "option_id": "opt_57e8c883fa",
+          "text": "Include as many facts as possible"
+        },
+        {
+          "option_id": "opt_7d4bbfb12a",
+          "text": "Avoid giving examples"
+        },
+        {
+          "option_id": "opt_ce9f50e41a",
+          "text": "Build the presentation around one clear message"
+        },
+        {
+          "option_id": "opt_deae823d2a",
+          "text": "Answer questions before presenting"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-04",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "Why might a speaker leave out an interesting detail?",
+      "evidence_focus": "reason",
+      "stimulus_id": "LSN-B1-S2",
+      "options": [
+        {
+          "option_id": "opt_82b0b58173",
+          "text": "It may be too short"
+        },
+        {
+          "option_id": "opt_830d11ff84",
+          "text": "Questions are not allowed"
+        },
+        {
+          "option_id": "opt_a3ae9133b2",
+          "text": "Examples are unnecessary"
+        },
+        {
+          "option_id": "opt_c9f522789f",
+          "text": "It may not support the main message"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-05",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "What arrangement do they make for noon?",
+      "evidence_focus": "turn tracking",
+      "stimulus_id": "LSN-B1-S3",
+      "options": [
+        {
+          "option_id": "opt_fabc2a03ee",
+          "text": "Speaker A will leave"
+        },
+        {
+          "option_id": "opt_cb09d0d92a",
+          "text": "Speaker C will take over"
+        },
+        {
+          "option_id": "opt_947c3f9b00",
+          "text": "Speaker B will return"
+        },
+        {
+          "option_id": "opt_6c8f0ee323",
+          "text": "Nobody will be at the entrance"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B1-06",
+      "module": "LSN",
+      "band": "B1",
+      "stem": "What is Speaker A prepared to do?",
+      "evidence_focus": "pragmatic function",
+      "stimulus_id": "LSN-B1-S3",
+      "options": [
+        {
+          "option_id": "opt_41c14d62f8",
+          "text": "Work the whole day"
+        },
+        {
+          "option_id": "opt_16c45c52d9",
+          "text": "Cancel the entrance role"
+        },
+        {
+          "option_id": "opt_cb9457d3bf",
+          "text": "Cover briefly if someone is late"
+        },
+        {
+          "option_id": "opt_81060e7ad6",
+          "text": "Arrive after noon"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-01",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "What risk does Speaker A identify?",
+      "evidence_focus": "attitude/risk",
+      "stimulus_id": "LSN-B2-S1",
+      "options": [
+        {
+          "option_id": "opt_5651b76ae4",
+          "text": "Written updates may be ignored"
+        },
+        {
+          "option_id": "opt_e425f5525b",
+          "text": "Meetings may become longer"
+        },
+        {
+          "option_id": "opt_6dd1b96032",
+          "text": "Decisions may be undocumented"
+        },
+        {
+          "option_id": "opt_721969d08a",
+          "text": "Questions may be banned"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-02",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "Why does Speaker A accept the revised idea?",
+      "evidence_focus": "inference",
+      "stimulus_id": "LSN-B2-S1",
+      "options": [
+        {
+          "option_id": "opt_3a6b2e7b3b",
+          "text": "It removes all written communication"
+        },
+        {
+          "option_id": "opt_66d0b00227",
+          "text": "It balances a written record with focused meetings"
+        },
+        {
+          "option_id": "opt_6abf29aa5d",
+          "text": "It guarantees everyone will read every message"
+        },
+        {
+          "option_id": "opt_5c02ec2740",
+          "text": "It makes meetings unnecessary"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-03",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "Why has the council commissioned a study?",
+      "evidence_focus": "purpose",
+      "stimulus_id": "LSN-B2-S2",
+      "options": [
+        {
+          "option_id": "opt_1a7dca3e02",
+          "text": "To select new office staff"
+        },
+        {
+          "option_id": "opt_9466f0545d",
+          "text": "To change the transport routes"
+        },
+        {
+          "option_id": "opt_3f20f5b437",
+          "text": "To test whether the conversion is practical"
+        },
+        {
+          "option_id": "opt_63da8bc37b",
+          "text": "To avoid discussing housing"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-04",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "What is the critics' main concern?",
+      "evidence_focus": "detail/stance",
+      "stimulus_id": "LSN-B2-S2",
+      "options": [
+        {
+          "option_id": "opt_61302ca5a3",
+          "text": "Distance from transport"
+        },
+        {
+          "option_id": "opt_4cbc77e770",
+          "text": "Lack of public interest"
+        },
+        {
+          "option_id": "opt_ad6dc90583",
+          "text": "The age of the council"
+        },
+        {
+          "option_id": "opt_daf23f9575",
+          "text": "Suitability of the building layout"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-05",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "What problem do they identify?",
+      "evidence_focus": "discourse",
+      "stimulus_id": "LSN-B2-S3",
+      "options": [
+        {
+          "option_id": "opt_ee4834a77b",
+          "text": "The research topics are too similar"
+        },
+        {
+          "option_id": "opt_311c0bc51b",
+          "text": "The report lacks a unified argument"
+        },
+        {
+          "option_id": "opt_089a84d12d",
+          "text": "No one completed a section"
+        },
+        {
+          "option_id": "opt_510bf0e9bf",
+          "text": "The group has too many sources"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-B2-06",
+      "module": "LSN",
+      "band": "B2",
+      "stem": "What does Speaker C add?",
+      "evidence_focus": "qualification",
+      "stimulus_id": "LSN-B2-S3",
+      "options": [
+        {
+          "option_id": "opt_cbab9ff378",
+          "text": "Every section should use identical wording"
+        },
+        {
+          "option_id": "opt_3c7306e03d",
+          "text": "The report should have one author only"
+        },
+        {
+          "option_id": "opt_34c16ce139",
+          "text": "Consistency should not erase useful differences"
+        },
+        {
+          "option_id": "opt_b70bd72151",
+          "text": "Different perspectives should be removed"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-01",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "What problem can precise numbers create?",
+      "evidence_focus": "qualification",
+      "stimulus_id": "LSN-C1-S1",
+      "options": [
+        {
+          "option_id": "opt_e34b9e3787",
+          "text": "They can imply more certainty than the evidence supports"
+        },
+        {
+          "option_id": "opt_789598c9f9",
+          "text": "They are always harder to understand than words"
+        },
+        {
+          "option_id": "opt_445b209f38",
+          "text": "They remove uncertainty from models"
+        },
+        {
+          "option_id": "opt_632ff36e45",
+          "text": "They prevent organisations from making decisions"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-02",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "Why is uncertainty sometimes difficult to communicate?",
+      "evidence_focus": "pragmatic reason",
+      "stimulus_id": "LSN-C1-S1",
+      "options": [
+        {
+          "option_id": "opt_b5884c8d8e",
+          "text": "Models never include uncertainty"
+        },
+        {
+          "option_id": "opt_e8df084d9b",
+          "text": "People may interpret it as lack of competence"
+        },
+        {
+          "option_id": "opt_072c2fc264",
+          "text": "Audiences prefer longer explanations"
+        },
+        {
+          "option_id": "opt_b64e0fbb35",
+          "text": "Organisations are not allowed to mention it"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-03",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "What unintended effect did longer feedback have?",
+      "evidence_focus": "inference",
+      "stimulus_id": "LSN-C1-S2",
+      "options": [
+        {
+          "option_id": "opt_52474d7e56",
+          "text": "Students stopped reading all feedback"
+        },
+        {
+          "option_id": "opt_945856973c",
+          "text": "Teachers gave fewer examples"
+        },
+        {
+          "option_id": "opt_38948b81a8",
+          "text": "Students lost sight of the main priorities"
+        },
+        {
+          "option_id": "opt_dbfee1e570",
+          "text": "Students made no corrections"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-04",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "What change are the speakers considering?",
+      "evidence_focus": "decision",
+      "stimulus_id": "LSN-C1-S2",
+      "options": [
+        {
+          "option_id": "opt_1605b609e8",
+          "text": "Removing all detailed comments"
+        },
+        {
+          "option_id": "opt_fb975cc8c0",
+          "text": "Giving feedback only once a year"
+        },
+        {
+          "option_id": "opt_c88d9c5d44",
+          "text": "Letting students choose their own grades"
+        },
+        {
+          "option_id": "opt_68893e22a4",
+          "text": "Distinguishing essential from optional feedback"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-05",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "What concern does Speaker B raise?",
+      "evidence_focus": "context qualification",
+      "stimulus_id": "LSN-C1-S3",
+      "options": [
+        {
+          "option_id": "opt_5e2380d3f7",
+          "text": "The pilot failed in the city office"
+        },
+        {
+          "option_id": "opt_1466e32e87",
+          "text": "Different sites have different staffing conditions"
+        },
+        {
+          "option_id": "opt_86acaef34c",
+          "text": "Leadership does not want to expand"
+        },
+        {
+          "option_id": "opt_91f3e46539",
+          "text": "The core steps are unclear"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C1-06",
+      "module": "LSN",
+      "band": "C1",
+      "stem": "What compromise do the speakers favour?",
+      "evidence_focus": "synthesis",
+      "stimulus_id": "LSN-C1-S3",
+      "options": [
+        {
+          "option_id": "opt_9a8be6cca7",
+          "text": "One identical process everywhere"
+        },
+        {
+          "option_id": "opt_a1f3b432fd",
+          "text": "No expansion beyond the pilot site"
+        },
+        {
+          "option_id": "opt_0da57695fa",
+          "text": "Shared core steps with local flexibility"
+        },
+        {
+          "option_id": "opt_6693eb6e6f",
+          "text": "Let each site remove any core step"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-01",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "Why might a useful forecast appear inaccurate?",
+      "evidence_focus": "nuanced inference",
+      "stimulus_id": "LSN-C2-S1",
+      "options": [
+        {
+          "option_id": "opt_5387d35134",
+          "text": "The forecast may change behaviour and prevent the predicted outcome"
+        },
+        {
+          "option_id": "opt_ad862e102e",
+          "text": "Forecasts are never based on evidence"
+        },
+        {
+          "option_id": "opt_240044fc96",
+          "text": "People always ignore warnings"
+        },
+        {
+          "option_id": "opt_239b96e456",
+          "text": "Accuracy has no relevance in policy"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-02",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "What broader point does the speaker make?",
+      "evidence_focus": "main argument",
+      "stimulus_id": "LSN-C2-S1",
+      "options": [
+        {
+          "option_id": "opt_e49e9a1491",
+          "text": "Forecasts should never be published"
+        },
+        {
+          "option_id": "opt_d552a811f1",
+          "text": "Forecasts can influence the systems they describe"
+        },
+        {
+          "option_id": "opt_1c992be14b",
+          "text": "Only economic forecasts affect behaviour"
+        },
+        {
+          "option_id": "opt_7e8cf27ae6",
+          "text": "The best forecast is always the most precise"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-03",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "What does Speaker B identify as the deeper communication problem?",
+      "evidence_focus": "conceptual inference",
+      "stimulus_id": "LSN-C2-S2",
+      "options": [
+        {
+          "option_id": "opt_c1d9a18517",
+          "text": "Using any technical term at all"
+        },
+        {
+          "option_id": "opt_bfc62d157c",
+          "text": "Speaking too slowly"
+        },
+        {
+          "option_id": "opt_4d55fe6347",
+          "text": "Selecting the right distinctions for the audience"
+        },
+        {
+          "option_id": "opt_d4983e10c9",
+          "text": "Providing too many examples"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-04",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "What does Speaker A do in the third turn?",
+      "evidence_focus": "interaction/discourse",
+      "stimulus_id": "LSN-C2-S2",
+      "options": [
+        {
+          "option_id": "opt_a81cfa69e1",
+          "text": "Rejects Speaker B's point"
+        },
+        {
+          "option_id": "opt_265c965ce0",
+          "text": "Introduces an unrelated example"
+        },
+        {
+          "option_id": "opt_d266954716",
+          "text": "Asks for a definition of plain English"
+        },
+        {
+          "option_id": "opt_9018157c28",
+          "text": "Reformulates Speaker B's point"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-05",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "What assumption does Speaker C challenge?",
+      "evidence_focus": "pragmatic assumption",
+      "stimulus_id": "LSN-C2-S3",
+      "options": [
+        {
+          "option_id": "opt_258dc2e8cc",
+          "text": "That restoration affects visitor experience"
+        },
+        {
+          "option_id": "opt_e13d71ec18",
+          "text": "That only one historical period can count as authentic"
+        },
+        {
+          "option_id": "opt_fc5632febe",
+          "text": "That the hall has changed over time"
+        },
+        {
+          "option_id": "opt_0106e57c7b",
+          "text": "That transparency matters"
+        }
+      ]
+    },
+    {
+      "item_id": "LSN-C2-06",
+      "module": "LSN",
+      "band": "C2",
+      "stem": "How does Speaker A respond to Speaker C?",
+      "evidence_focus": "stance/interaction",
+      "stimulus_id": "LSN-C2-S3",
+      "options": [
+        {
+          "option_id": "opt_dc92a87d47",
+          "text": "Rejects it as historically inaccurate"
+        },
+        {
+          "option_id": "opt_7cb7d20273",
+          "text": "Changes the topic completely"
+        },
+        {
+          "option_id": "opt_59f62215ba",
+          "text": "Accepts the idea but notes a trade-off"
+        },
+        {
+          "option_id": "opt_f411bb11ba",
+          "text": "Says visitors prefer simple facts only"
+        }
+      ]
+    }
+  ]
+}

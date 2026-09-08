@@ -1,0 +1,1387 @@
+{
+  "RESTRICTED": "SERVER-ONLY. Never ship to client bundle, never return in any API response, never log.",
+  "source_pdf": "GEPA_Master_Draft_v2_All_in_One_Review.pdf",
+  "authoring_key_distribution": {
+    "LS": {
+      "A": 15,
+      "B": 16,
+      "C": 13,
+      "D": 8
+    },
+    "RD": {
+      "A": 10,
+      "B": 14,
+      "C": 14,
+      "D": 4
+    },
+    "LSN": {
+      "A": 10,
+      "B": 14,
+      "C": 14,
+      "D": 4
+    }
+  },
+  "key_identity_rule": "keys are stored by opaque option_id, not by displayed letter",
+  "keys": {
+    "LS-PRE-01": {
+      "module": "LS",
+      "band": "Pre-A1",
+      "key_option_id": "opt_418ddc98a5",
+      "authoring_letter": "A",
+      "answer_text": "door",
+      "option_count": 3,
+      "evidence_focus": "word recognition",
+      "rationale": "Recognises a very common concrete noun."
+    },
+    "LS-PRE-02": {
+      "module": "LS",
+      "band": "Pre-A1",
+      "key_option_id": "opt_d4b9f820a9",
+      "authoring_letter": "B",
+      "answer_text": "you",
+      "option_count": 3,
+      "evidence_focus": "basic phrase",
+      "rationale": "Recognises a highly frequent social phrase."
+    },
+    "LS-PRE-03": {
+      "module": "LS",
+      "band": "Pre-A1",
+      "key_option_id": "opt_410ab1142b",
+      "authoring_letter": "C",
+      "answer_text": "water",
+      "option_count": 3,
+      "evidence_focus": "word recognition",
+      "rationale": "Recognises a common everyday noun."
+    },
+    "LS-PRE-04": {
+      "module": "LS",
+      "band": "Pre-A1",
+      "key_option_id": "opt_d0d144161b",
+      "authoring_letter": "B",
+      "answer_text": "late",
+      "option_count": 3,
+      "evidence_focus": "basic phrase",
+      "rationale": "Recognises a common adjective in a simple message."
+    },
+    "LS-A1-01": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_ca875fd283",
+      "authoring_letter": "A",
+      "answer_text": "am",
+      "option_count": 3,
+      "evidence_focus": "present simple be",
+      "rationale": "Basic first-person form of be."
+    },
+    "LS-A1-02": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_a0adfe1fbd",
+      "authoring_letter": "B",
+      "answer_text": "on",
+      "option_count": 3,
+      "evidence_focus": "time preposition",
+      "rationale": "Basic preposition with days."
+    },
+    "LS-A1-03": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_6a30102a67",
+      "authoring_letter": "C",
+      "answer_text": "are",
+      "option_count": 3,
+      "evidence_focus": "there is/are",
+      "rationale": "Basic plural agreement."
+    },
+    "LS-A1-04": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_783eaff3b5",
+      "authoring_letter": "B",
+      "answer_text": "help",
+      "option_count": 3,
+      "evidence_focus": "modal + base verb",
+      "rationale": "Basic functional modal construction."
+    },
+    "LS-A1-05": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_b6a548a688",
+      "authoring_letter": "A",
+      "answer_text": "any",
+      "option_count": 3,
+      "evidence_focus": "determiner",
+      "rationale": "Basic negative determiner."
+    },
+    "LS-A1-06": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_2e9ca19e99",
+      "authoring_letter": "C",
+      "answer_text": "expensive",
+      "option_count": 3,
+      "evidence_focus": "common adjective",
+      "rationale": "High-frequency lexical contrast."
+    },
+    "LS-A1-07": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_e163f09602",
+      "authoring_letter": "A",
+      "answer_text": "has",
+      "option_count": 3,
+      "evidence_focus": "present simple",
+      "rationale": "Basic third-person"
+    },
+    "LS-A1-08": {
+      "module": "LS",
+      "band": "A1",
+      "key_option_id": "opt_1316ecb7ca",
+      "authoring_letter": "B",
+      "answer_text": "Her",
+      "option_count": 3,
+      "evidence_focus": "possessive",
+      "rationale": "Basic possessive determiner."
+    },
+    "LS-A2-01": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_ef9e8acdeb",
+      "authoring_letter": "A",
+      "answer_text": "since",
+      "option_count": 3,
+      "evidence_focus": "present perfect + since",
+      "rationale": "Common duration marker with a starting point."
+    },
+    "LS-A2-02": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_a04f687285",
+      "authoring_letter": "B",
+      "answer_text": "was making",
+      "option_count": 3,
+      "evidence_focus": "past continuous",
+      "rationale": "Background action in past narrative."
+    },
+    "LS-A2-03": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_6a52287692",
+      "authoring_letter": "C",
+      "answer_text": "faster",
+      "option_count": 3,
+      "evidence_focus": "comparative",
+      "rationale": "Comparative adjective in context."
+    },
+    "LS-A2-04": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_ec938a45ce",
+      "authoring_letter": "B",
+      "answer_text": "will stay",
+      "option_count": 3,
+      "evidence_focus": "first conditional",
+      "rationale": "Simple future consequence."
+    },
+    "LS-A2-05": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_3218ac54b4",
+      "authoring_letter": "A",
+      "answer_text": "is",
+      "option_count": 3,
+      "evidence_focus": "embedded question",
+      "rationale": "Word order in a common polite question."
+    },
+    "LS-A2-06": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_aadb032fa9",
+      "authoring_letter": "C",
+      "answer_text": "to lock",
+      "option_count": 3,
+      "evidence_focus": "verb pattern",
+      "rationale": "Common infinitive complement."
+    },
+    "LS-A2-07": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_2090ae512e",
+      "authoring_letter": "A",
+      "answer_text": "postponed",
+      "option_count": 3,
+      "evidence_focus": "phrasal verb meaning",
+      "rationale": "Common phrasal verb in context."
+    },
+    "LS-A2-08": {
+      "module": "LS",
+      "band": "A2",
+      "key_option_id": "opt_d59af96618",
+      "authoring_letter": "B",
+      "answer_text": "yet",
+      "option_count": 3,
+      "evidence_focus": "adverb position",
+      "rationale": "Common perfect-time adverb."
+    },
+    "LS-B1-01": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_7cca0d4843",
+      "authoring_letter": "A",
+      "answer_text": "had left",
+      "option_count": 4,
+      "evidence_focus": "third conditional",
+      "rationale": "Past unreal condition."
+    },
+    "LS-B1-02": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_e3e401270f",
+      "authoring_letter": "B",
+      "answer_text": "make",
+      "option_count": 4,
+      "evidence_focus": "collocation",
+      "rationale": "High-frequency verb- noun collocation."
+    },
+    "LS-B1-03": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_9303e68435",
+      "authoring_letter": "C",
+      "answer_text": "whose",
+      "option_count": 4,
+      "evidence_focus": "relative clause",
+      "rationale": "Possessive relative pronoun."
+    },
+    "LS-B1-04": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_56eec0063d",
+      "authoring_letter": "D",
+      "answer_text": "had",
+      "option_count": 4,
+      "evidence_focus": "wish + past",
+      "rationale": "Present regret with wish."
+    },
+    "LS-B1-05": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_ba4d3c1dd9",
+      "authoring_letter": "B",
+      "answer_text": "being",
+      "option_count": 4,
+      "evidence_focus": "preposition + gerund",
+      "rationale": "Concessive phrase with gerund."
+    },
+    "LS-B1-06": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_5eb6b90670",
+      "authoring_letter": "C",
+      "answer_text": "expected",
+      "option_count": 4,
+      "evidence_focus": "past expectation",
+      "rationale": "Natural past comparison."
+    },
+    "LS-B1-07": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_e945a3192f",
+      "authoring_letter": "D",
+      "answer_text": "to switch",
+      "option_count": 4,
+      "evidence_focus": "passive infinitive",
+      "rationale": "Verb pattern after passive reporting."
+    },
+    "LS-B1-08": {
+      "module": "LS",
+      "band": "B1",
+      "key_option_id": "opt_feab9507d6",
+      "authoring_letter": "A",
+      "answer_text": "launch",
+      "option_count": 4,
+      "evidence_focus": "lexical precision",
+      "rationale": "Common abstract verb in a business- neutral context."
+    },
+    "LS-B2-01": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_5de5ab3cf6",
+      "authoring_letter": "A",
+      "answer_text": "with the aim of",
+      "option_count": 4,
+      "evidence_focus": "purpose phrase",
+      "rationale": "Purpose expressed through a formal phrase."
+    },
+    "LS-B2-02": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_7df9263bfe",
+      "authoring_letter": "B",
+      "answer_text": "which",
+      "option_count": 4,
+      "evidence_focus": "non-defining relative",
+      "rationale": "Non-defining relative clause; meaning"
+    },
+    "LS-B2-03": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_eaabd846c1",
+      "authoring_letter": "C",
+      "answer_text": "convincing",
+      "option_count": 4,
+      "evidence_focus": "lexical precision",
+      "rationale": "Adjective meaning and form in a meaningful contrast."
+    },
+    "LS-B2-04": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_1c5aba1764",
+      "authoring_letter": "D",
+      "answer_text": "into",
+      "option_count": 4,
+      "evidence_focus": "collocation",
+      "rationale": "Fixed collocation in formal discussion."
+    },
+    "LS-B2-05": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_7b4b16779e",
+      "authoring_letter": "B",
+      "answer_text": "should be",
+      "option_count": 4,
+      "evidence_focus": "modal passive",
+      "rationale": "Modal passive with an explicit reason."
+    },
+    "LS-B2-06": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_24a0fe4e03",
+      "authoring_letter": "C",
+      "answer_text": "had already started",
+      "option_count": 4,
+      "evidence_focus": "past perfect sequencing",
+      "rationale": "Narrative sequencing at upper-intermediate level."
+    },
+    "LS-B2-07": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_b81918c083",
+      "authoring_letter": "D",
+      "answer_text": "being excluded",
+      "option_count": 4,
+      "evidence_focus": "preposition + gerund",
+      "rationale": "Gerund passive after preposition."
+    },
+    "LS-B2-08": {
+      "module": "LS",
+      "band": "B2",
+      "key_option_id": "opt_220ab53710",
+      "authoring_letter": "A",
+      "answer_text": "without",
+      "option_count": 4,
+      "evidence_focus": "condition/constraint",
+      "rationale": "Constraint expressed concisely."
+    },
+    "LS-C1-01": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_c1773fd058",
+      "authoring_letter": "A",
+      "answer_text": "do",
+      "option_count": 4,
+      "evidence_focus": "inversion",
+      "rationale": "One controlled inversion item at C1."
+    },
+    "LS-C1-02": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_d1d9fcc058",
+      "authoring_letter": "B",
+      "answer_text": "provisional",
+      "option_count": 4,
+      "evidence_focus": "lexical precision",
+      "rationale": "Evaluative adjective with calibrated certainty."
+    },
+    "LS-C1-03": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_21f4baa973",
+      "authoring_letter": "C",
+      "answer_text": "resolving",
+      "option_count": 4,
+      "evidence_focus": "concessive structure",
+      "rationale": "Formal concessive construction."
+    },
+    "LS-C1-04": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_66792b2d5e",
+      "authoring_letter": "D",
+      "answer_text": "repercussions",
+      "option_count": 4,
+      "evidence_focus": "lexical precision",
+      "rationale": "High-level abstract lexis in context."
+    },
+    "LS-C1-05": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_8c6e2a912a",
+      "authoring_letter": "B",
+      "answer_text": "tentative",
+      "option_count": 4,
+      "evidence_focus": "hedging",
+      "rationale": "Academic hedging without specialist knowledge."
+    },
+    "LS-C1-06": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_f646bf70ee",
+      "authoring_letter": "C",
+      "answer_text": "acknowledge",
+      "option_count": 4,
+      "evidence_focus": "discourse verb",
+      "rationale": "Evaluative discourse verb."
+    },
+    "LS-C1-07": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_5221c7e1e4",
+      "authoring_letter": "D",
+      "answer_text": "clarity",
+      "option_count": 4,
+      "evidence_focus": "nominalisation/collocation",
+      "rationale": "Nominal form in formal prose."
+    },
+    "LS-C1-08": {
+      "module": "LS",
+      "band": "C1",
+      "key_option_id": "opt_e64306fbfa",
+      "authoring_letter": "A",
+      "answer_text": "although",
+      "option_count": 4,
+      "evidence_focus": "qualification",
+      "rationale": "Qualification of a claim."
+    },
+    "LS-C2-01": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_f56eac68fa",
+      "authoring_letter": "A",
+      "answer_text": "equivocal",
+      "option_count": 4,
+      "evidence_focus": "pragmatic precision",
+      "rationale": "Nuanced stance and responsibility."
+    },
+    "LS-C2-02": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_232143f266",
+      "authoring_letter": "B",
+      "answer_text": "tenable",
+      "option_count": 4,
+      "evidence_focus": "lexical precision",
+      "rationale": "Abstract evaluative lexis."
+    },
+    "LS-C2-03": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_d16b428133",
+      "authoring_letter": "C",
+      "answer_text": "undermine",
+      "option_count": 4,
+      "evidence_focus": "semantic relation",
+      "rationale": "Precise verb for consequence and contradiction."
+    },
+    "LS-C2-04": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_d6a015208c",
+      "authoring_letter": "D",
+      "answer_text": "claiming",
+      "option_count": 4,
+      "evidence_focus": "stance verb",
+      "rationale": "Pragmatic restraint in an evaluative statement."
+    },
+    "LS-C2-05": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_a14a3076cc",
+      "authoring_letter": "B",
+      "answer_text": "far from trivial",
+      "option_count": 4,
+      "evidence_focus": "idiomatic precision",
+      "rationale": "High-level idiomatic precision without an ambiguous tense cue."
+    },
+    "LS-C2-06": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_a6b7408845",
+      "authoring_letter": "C",
+      "answer_text": "compatible",
+      "option_count": 4,
+      "evidence_focus": "compatibility/interpretation",
+      "rationale": "Nuanced relation between evidence and interpretations."
+    },
+    "LS-C2-07": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_b099e6add8",
+      "authoring_letter": "D",
+      "answer_text": "questioning",
+      "option_count": 4,
+      "evidence_focus": "stance/contrast",
+      "rationale": "Parallel discourse relation."
+    },
+    "LS-C2-08": {
+      "module": "LS",
+      "band": "C2",
+      "key_option_id": "opt_493dc1923d",
+      "authoring_letter": "A",
+      "answer_text": "cautiously sceptical",
+      "option_count": 4,
+      "evidence_focus": "tone",
+      "rationale": "Pragmatic tone recognition."
+    },
+    "RD-PRE-01": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_bbe9d0ca62",
+      "authoring_letter": "A",
+      "answer_text": "Workers",
+      "option_count": 3,
+      "evidence_focus": "literal recognition",
+      "rationale": null
+    },
+    "RD-PRE-02": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_5e7d192e4c",
+      "authoring_letter": "B",
+      "answer_text": "A restriction",
+      "option_count": 3,
+      "evidence_focus": "basic purpose",
+      "rationale": null
+    },
+    "RD-PRE-03": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_40d3823444",
+      "authoring_letter": "C",
+      "answer_text": "City centre",
+      "option_count": 3,
+      "evidence_focus": "literal recognition",
+      "rationale": null
+    },
+    "RD-PRE-04": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_fffba362e3",
+      "authoring_letter": "B",
+      "answer_text": "08:40",
+      "option_count": 3,
+      "evidence_focus": "number recognition",
+      "rationale": null
+    },
+    "RD-PRE-05": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_38aacadfcc",
+      "authoring_letter": "A",
+      "answer_text": "A passport and a pen",
+      "option_count": 3,
+      "evidence_focus": "literal recognition",
+      "rationale": null
+    },
+    "RD-PRE-06": {
+      "module": "RD",
+      "band": "Pre-A1",
+      "key_option_id": "opt_3590069852",
+      "authoring_letter": "C",
+      "answer_text": "A pen",
+      "option_count": 3,
+      "evidence_focus": "word recognition",
+      "rationale": null
+    },
+    "RD-A1-01": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_4ec6cf752c",
+      "authoring_letter": "A",
+      "answer_text": "Tuesday evening",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-A1-02": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_165e1f9604",
+      "authoring_letter": "B",
+      "answer_text": "Saturday afternoon",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-A1-03": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_ad93270551",
+      "authoring_letter": "C",
+      "answer_text": "Sunday",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-A1-04": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_ab013d069c",
+      "authoring_letter": "B",
+      "answer_text": "10:00",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-A1-05": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_f2a95c882b",
+      "authoring_letter": "A",
+      "answer_text": "Room 4",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-A1-06": {
+      "module": "RD",
+      "band": "A1",
+      "key_option_id": "opt_13616ba824",
+      "authoring_letter": "C",
+      "answer_text": "The lesson starts at 6:00",
+      "option_count": 3,
+      "evidence_focus": "simple reason",
+      "rationale": null
+    },
+    "RD-A2-01": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_fd3a8a8f77",
+      "authoring_letter": "A",
+      "answer_text": "Beginners as well as experienced learners",
+      "option_count": 3,
+      "evidence_focus": "simple purpose/detail",
+      "rationale": null
+    },
+    "RD-A2-02": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_6cd6454ae9",
+      "authoring_letter": "B",
+      "answer_text": "Only four places are left",
+      "option_count": 3,
+      "evidence_focus": "simple inference",
+      "rationale": null
+    },
+    "RD-A2-03": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_444599e50c",
+      "authoring_letter": "C",
+      "answer_text": "The platform number",
+      "option_count": 3,
+      "evidence_focus": "explicit change",
+      "rationale": null
+    },
+    "RD-A2-04": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_8cbf22d48b",
+      "authoring_letter": "B",
+      "answer_text": "10:25",
+      "option_count": 3,
+      "evidence_focus": "explicit temporal detail",
+      "rationale": null
+    },
+    "RD-A2-05": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_4a69b93148",
+      "authoring_letter": "A",
+      "answer_text": "Send the update by Thursday afternoon",
+      "option_count": 3,
+      "evidence_focus": "sequence",
+      "rationale": null
+    },
+    "RD-A2-06": {
+      "module": "RD",
+      "band": "A2",
+      "key_option_id": "opt_e376d06b37",
+      "authoring_letter": "C",
+      "answer_text": "By the end of Friday",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "RD-B1-01": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_a3732a1887",
+      "authoring_letter": "A",
+      "answer_text": "Staff were not always available at the same time",
+      "option_count": 4,
+      "evidence_focus": "reason",
+      "rationale": null
+    },
+    "RD-B1-02": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_d802207bad",
+      "authoring_letter": "B",
+      "answer_text": "They improved coordination",
+      "option_count": 4,
+      "evidence_focus": "simple inference",
+      "rationale": null
+    },
+    "RD-B1-03": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_bb36b85c45",
+      "authoring_letter": "C",
+      "answer_text": "Festival visitor support",
+      "option_count": 4,
+      "evidence_focus": "cross-text matching",
+      "rationale": null
+    },
+    "RD-B1-04": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_a1c008b9cd",
+      "authoring_letter": "D",
+      "answer_text": "Community kitchen",
+      "option_count": 4,
+      "evidence_focus": "cross-text matching",
+      "rationale": null
+    },
+    "RD-B1-05": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_1c47a5fd13",
+      "authoring_letter": "B",
+      "answer_text": "The idea that shorter sessions can be effective",
+      "option_count": 4,
+      "evidence_focus": "reference resolution",
+      "rationale": null
+    },
+    "RD-B1-06": {
+      "module": "RD",
+      "band": "B1",
+      "key_option_id": "opt_32356b021a",
+      "authoring_letter": "C",
+      "answer_text": "Quality of study matters more than time alone",
+      "option_count": 4,
+      "evidence_focus": "gist",
+      "rationale": null
+    },
+    "RD-B2-01": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_b4807c3fcf",
+      "authoring_letter": "A",
+      "answer_text": "The business effects were inconsistent",
+      "option_count": 4,
+      "evidence_focus": "inference",
+      "rationale": null
+    },
+    "RD-B2-02": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_84a82a33ae",
+      "authoring_letter": "B",
+      "answer_text": "The scheme shows promise but evidence is still incomplete",
+      "option_count": 4,
+      "evidence_focus": "stance",
+      "rationale": null
+    },
+    "RD-B2-03": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_48f8a12961",
+      "authoring_letter": "C",
+      "answer_text": "Learners can choose when to watch them and can pause or repeat difficult sections.",
+      "option_count": 4,
+      "evidence_focus": "cohesion/sentence insertion",
+      "rationale": null
+    },
+    "RD-B2-04": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_0b62208b3a",
+      "authoring_letter": "D",
+      "answer_text": "Flexibility versus the need for self-management",
+      "option_count": 4,
+      "evidence_focus": "discourse relation",
+      "rationale": null
+    },
+    "RD-B2-05": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_858c2af46a",
+      "authoring_letter": "B",
+      "answer_text": "Accessibility for general visitors",
+      "option_count": 4,
+      "evidence_focus": "cross-text synthesis",
+      "rationale": null
+    },
+    "RD-B2-06": {
+      "module": "RD",
+      "band": "B2",
+      "key_option_id": "opt_d92d29c336",
+      "authoring_letter": "C",
+      "answer_text": "In why the guide may be limited",
+      "option_count": 4,
+      "evidence_focus": "comparison",
+      "rationale": null
+    },
+    "RD-C1-01": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_846c4ee683",
+      "authoring_letter": "A",
+      "answer_text": "A simple message can still be unclear about uncertainty",
+      "option_count": 4,
+      "evidence_focus": "argument/qualification",
+      "rationale": null
+    },
+    "RD-C1-02": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_c554db01f0",
+      "authoring_letter": "B",
+      "answer_text": "It illustrates the principle stated earlier",
+      "option_count": 4,
+      "evidence_focus": "discourse function",
+      "rationale": null
+    },
+    "RD-C1-03": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_e59460e554",
+      "authoring_letter": "C",
+      "answer_text": "The independent performance task in Abstract B",
+      "option_count": 4,
+      "evidence_focus": "evidence evaluation",
+      "rationale": null
+    },
+    "RD-C1-04": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_2f6f884944",
+      "authoring_letter": "D",
+      "answer_text": "No comparison group is mentioned",
+      "option_count": 4,
+      "evidence_focus": "cross-text detail",
+      "rationale": null
+    },
+    "RD-C1-05": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_f07f47ed4c",
+      "authoring_letter": "B",
+      "answer_text": "The same rule applies even if its effects differ",
+      "option_count": 4,
+      "evidence_focus": "pragmatic meaning",
+      "rationale": null
+    },
+    "RD-C1-06": {
+      "module": "RD",
+      "band": "C1",
+      "key_option_id": "opt_e8b6f1aac2",
+      "authoring_letter": "C",
+      "answer_text": "Keep shared principles but permit some context-sensitive flexibility",
+      "option_count": 4,
+      "evidence_focus": "main argument",
+      "rationale": null
+    },
+    "RD-C2-01": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_6f1138c920",
+      "authoring_letter": "A",
+      "answer_text": "That recommendation systems only discover pre-existing preferences",
+      "option_count": 4,
+      "evidence_focus": "unstated assumption",
+      "rationale": null
+    },
+    "RD-C2-02": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_1afc2c183d",
+      "authoring_letter": "B",
+      "answer_text": "It allows people to imagine influence can be separated neatly from prediction",
+      "option_count": 4,
+      "evidence_focus": "rhetorical purpose",
+      "rationale": null
+    },
+    "RD-C2-03": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_89b10c7230",
+      "authoring_letter": "C",
+      "answer_text": "Whether frequency is sufficient evidence for all kinds of dictionary decisions",
+      "option_count": 4,
+      "evidence_focus": "cross-text nuance",
+      "rationale": null
+    },
+    "RD-C2-04": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_f7245636c2",
+      "authoring_letter": "D",
+      "answer_text": "Actual usage is relevant evidence, but it may require interpretation",
+      "option_count": 4,
+      "evidence_focus": "synthesis",
+      "rationale": null
+    },
+    "RD-C2-05": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_9a0cf9b245",
+      "authoring_letter": "B",
+      "answer_text": "It can hide a value judgement unless its meaning is specified",
+      "option_count": 4,
+      "evidence_focus": "pragmatic/argumentative meaning",
+      "rationale": null
+    },
+    "RD-C2-06": {
+      "module": "RD",
+      "band": "C2",
+      "key_option_id": "opt_fdfd224b7a",
+      "authoring_letter": "C",
+      "answer_text": "The word can carry a position within a debate",
+      "option_count": 4,
+      "evidence_focus": "lexical nuance",
+      "rationale": null
+    },
+    "LSN-PRE-01": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_bf1945b96c",
+      "authoring_letter": "A",
+      "answer_text": "Town centre",
+      "option_count": 3,
+      "evidence_focus": "explicit place",
+      "rationale": null
+    },
+    "LSN-PRE-02": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_dfc05b72cb",
+      "authoring_letter": "B",
+      "answer_text": "Stop three",
+      "option_count": 3,
+      "evidence_focus": "explicit number",
+      "rationale": null
+    },
+    "LSN-PRE-03": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_37d877c8cd",
+      "authoring_letter": "C",
+      "answer_text": "Water",
+      "option_count": 3,
+      "evidence_focus": "explicit choice",
+      "rationale": null
+    },
+    "LSN-PRE-04": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_0eb4348360",
+      "authoring_letter": "B",
+      "answer_text": "Two",
+      "option_count": 3,
+      "evidence_focus": "basic listening",
+      "rationale": null
+    },
+    "LSN-PRE-05": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_799ec6acdb",
+      "authoring_letter": "A",
+      "answer_text": "Room six",
+      "option_count": 3,
+      "evidence_focus": "explicit place",
+      "rationale": null
+    },
+    "LSN-PRE-06": {
+      "module": "LSN",
+      "band": "Pre-A1",
+      "key_option_id": "opt_420c6a292d",
+      "authoring_letter": "C",
+      "answer_text": "Four o clock",
+      "option_count": 3,
+      "evidence_focus": "explicit time",
+      "rationale": null
+    },
+    "LSN-A1-01": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_c4b11d9faa",
+      "authoring_letter": "A",
+      "answer_text": "The speaker's sister",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "LSN-A1-02": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_e3f298517b",
+      "authoring_letter": "B",
+      "answer_text": "Cooking",
+      "option_count": 3,
+      "evidence_focus": "explicit detail",
+      "rationale": null
+    },
+    "LSN-A1-03": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_3fa01e26ee",
+      "authoring_letter": "C",
+      "answer_text": "Thursday at 2:30",
+      "option_count": 3,
+      "evidence_focus": "explicit time",
+      "rationale": null
+    },
+    "LSN-A1-04": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_d79149fab2",
+      "authoring_letter": "B",
+      "answer_text": "Arrive ten minutes early",
+      "option_count": 3,
+      "evidence_focus": "instruction",
+      "rationale": null
+    },
+    "LSN-A1-05": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_114357cf05",
+      "authoring_letter": "A",
+      "answer_text": "The bus arrives at 6:40",
+      "option_count": 3,
+      "evidence_focus": "simple reason",
+      "rationale": null
+    },
+    "LSN-A1-06": {
+      "module": "LSN",
+      "band": "A1",
+      "key_option_id": "opt_416571bf4d",
+      "authoring_letter": "C",
+      "answer_text": "Seven o clock",
+      "option_count": 3,
+      "evidence_focus": "explicit time",
+      "rationale": null
+    },
+    "LSN-A2-01": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_bf09dbb780",
+      "authoring_letter": "A",
+      "answer_text": "The departure time",
+      "option_count": 3,
+      "evidence_focus": "explicit change",
+      "rationale": null
+    },
+    "LSN-A2-02": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_1da374ee5b",
+      "authoring_letter": "B",
+      "answer_text": "The platform",
+      "option_count": 3,
+      "evidence_focus": "contrast/detail",
+      "rationale": null
+    },
+    "LSN-A2-03": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_f4a495597e",
+      "authoring_letter": "C",
+      "answer_text": "Friday at 3:30",
+      "option_count": 3,
+      "evidence_focus": "simple inference",
+      "rationale": null
+    },
+    "LSN-A2-04": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_9f426cedf1",
+      "authoring_letter": "B",
+      "answer_text": "One speaker is not free",
+      "option_count": 3,
+      "evidence_focus": "reason",
+      "rationale": null
+    },
+    "LSN-A2-05": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_4d48405f81",
+      "authoring_letter": "A",
+      "answer_text": "Buy food",
+      "option_count": 3,
+      "evidence_focus": "instruction",
+      "rationale": null
+    },
+    "LSN-A2-06": {
+      "module": "LSN",
+      "band": "A2",
+      "key_option_id": "opt_4e81a71e90",
+      "authoring_letter": "C",
+      "answer_text": "The film will move indoors",
+      "option_count": 3,
+      "evidence_focus": "simple condition",
+      "rationale": null
+    },
+    "LSN-B1-01": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_df8aa2ee6b",
+      "authoring_letter": "A",
+      "answer_text": "Choosing the correct service",
+      "option_count": 4,
+      "evidence_focus": "main point",
+      "rationale": null
+    },
+    "LSN-B1-02": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_d3d7d218f8",
+      "authoring_letter": "B",
+      "answer_text": "It is not the main source of delay",
+      "option_count": 4,
+      "evidence_focus": "simple inference",
+      "rationale": null
+    },
+    "LSN-B1-03": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_ce9f50e41a",
+      "authoring_letter": "C",
+      "answer_text": "Build the presentation around one clear message",
+      "option_count": 4,
+      "evidence_focus": "gist",
+      "rationale": null
+    },
+    "LSN-B1-04": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_c9f522789f",
+      "authoring_letter": "D",
+      "answer_text": "It may not support the main message",
+      "option_count": 4,
+      "evidence_focus": "reason",
+      "rationale": null
+    },
+    "LSN-B1-05": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_cb09d0d92a",
+      "authoring_letter": "B",
+      "answer_text": "Speaker C will take over",
+      "option_count": 4,
+      "evidence_focus": "turn tracking",
+      "rationale": null
+    },
+    "LSN-B1-06": {
+      "module": "LSN",
+      "band": "B1",
+      "key_option_id": "opt_cb9457d3bf",
+      "authoring_letter": "C",
+      "answer_text": "Cover briefly if someone is late",
+      "option_count": 4,
+      "evidence_focus": "pragmatic function",
+      "rationale": null
+    },
+    "LSN-B2-01": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_5651b76ae4",
+      "authoring_letter": "A",
+      "answer_text": "Written updates may be ignored",
+      "option_count": 4,
+      "evidence_focus": "attitude/risk",
+      "rationale": null
+    },
+    "LSN-B2-02": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_66d0b00227",
+      "authoring_letter": "B",
+      "answer_text": "It balances a written record with focused meetings",
+      "option_count": 4,
+      "evidence_focus": "inference",
+      "rationale": null
+    },
+    "LSN-B2-03": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_3f20f5b437",
+      "authoring_letter": "C",
+      "answer_text": "To test whether the conversion is practical",
+      "option_count": 4,
+      "evidence_focus": "purpose",
+      "rationale": null
+    },
+    "LSN-B2-04": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_daf23f9575",
+      "authoring_letter": "D",
+      "answer_text": "Suitability of the building layout",
+      "option_count": 4,
+      "evidence_focus": "detail/stance",
+      "rationale": null
+    },
+    "LSN-B2-05": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_311c0bc51b",
+      "authoring_letter": "B",
+      "answer_text": "The report lacks a unified argument",
+      "option_count": 4,
+      "evidence_focus": "discourse",
+      "rationale": null
+    },
+    "LSN-B2-06": {
+      "module": "LSN",
+      "band": "B2",
+      "key_option_id": "opt_34c16ce139",
+      "authoring_letter": "C",
+      "answer_text": "Consistency should not erase useful differences",
+      "option_count": 4,
+      "evidence_focus": "qualification",
+      "rationale": null
+    },
+    "LSN-C1-01": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_e34b9e3787",
+      "authoring_letter": "A",
+      "answer_text": "They can imply more certainty than the evidence supports",
+      "option_count": 4,
+      "evidence_focus": "qualification",
+      "rationale": null
+    },
+    "LSN-C1-02": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_e8df084d9b",
+      "authoring_letter": "B",
+      "answer_text": "People may interpret it as lack of competence",
+      "option_count": 4,
+      "evidence_focus": "pragmatic reason",
+      "rationale": null
+    },
+    "LSN-C1-03": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_38948b81a8",
+      "authoring_letter": "C",
+      "answer_text": "Students lost sight of the main priorities",
+      "option_count": 4,
+      "evidence_focus": "inference",
+      "rationale": null
+    },
+    "LSN-C1-04": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_68893e22a4",
+      "authoring_letter": "D",
+      "answer_text": "Distinguishing essential from optional feedback",
+      "option_count": 4,
+      "evidence_focus": "decision",
+      "rationale": null
+    },
+    "LSN-C1-05": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_1466e32e87",
+      "authoring_letter": "B",
+      "answer_text": "Different sites have different staffing conditions",
+      "option_count": 4,
+      "evidence_focus": "context qualification",
+      "rationale": null
+    },
+    "LSN-C1-06": {
+      "module": "LSN",
+      "band": "C1",
+      "key_option_id": "opt_0da57695fa",
+      "authoring_letter": "C",
+      "answer_text": "Shared core steps with local flexibility",
+      "option_count": 4,
+      "evidence_focus": "synthesis",
+      "rationale": null
+    },
+    "LSN-C2-01": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_5387d35134",
+      "authoring_letter": "A",
+      "answer_text": "The forecast may change behaviour and prevent the predicted outcome",
+      "option_count": 4,
+      "evidence_focus": "nuanced inference",
+      "rationale": null
+    },
+    "LSN-C2-02": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_d552a811f1",
+      "authoring_letter": "B",
+      "answer_text": "Forecasts can influence the systems they describe",
+      "option_count": 4,
+      "evidence_focus": "main argument",
+      "rationale": null
+    },
+    "LSN-C2-03": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_4d55fe6347",
+      "authoring_letter": "C",
+      "answer_text": "Selecting the right distinctions for the audience",
+      "option_count": 4,
+      "evidence_focus": "conceptual inference",
+      "rationale": null
+    },
+    "LSN-C2-04": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_9018157c28",
+      "authoring_letter": "D",
+      "answer_text": "Reformulates Speaker B's point",
+      "option_count": 4,
+      "evidence_focus": "interaction/discourse",
+      "rationale": null
+    },
+    "LSN-C2-05": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_e13d71ec18",
+      "authoring_letter": "B",
+      "answer_text": "That only one historical period can count as authentic",
+      "option_count": 4,
+      "evidence_focus": "pragmatic assumption",
+      "rationale": null
+    },
+    "LSN-C2-06": {
+      "module": "LSN",
+      "band": "C2",
+      "key_option_id": "opt_59f62215ba",
+      "authoring_letter": "C",
+      "answer_text": "Accepts the idea but notes a trade-off",
+      "option_count": 4,
+      "evidence_focus": "stance/interaction",
+      "rationale": null
+    }
+  }
+}
