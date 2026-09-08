@@ -1,6 +1,6 @@
-# 03 — Data Model (zod schemas are the single source of types)
+# 03 — Data Model (Rust Serde Models on Backend & zod Schemas on Astro Frontend)
 
-Implements blueprint §15. Put these in `shared/schemas/*.ts`. Field names below are binding; add fields only via
+Implements blueprint §15. Canonical domain models are defined in Rust (`shared/engine` / `server/schemas`) with `serde::{Serialize, Deserialize}`, and mirrored as zod schemas in the Astro client (`client/src/schemas/api.ts`). Field names below are binding; add fields only via
 `DECISIONS.md`. Seed files in `/seed` already conform to the *seed* shapes; the loader maps them into these schemas.
 
 ## 1. Enums

@@ -1,31 +1,31 @@
 # 10 — Testing and QA
 
-`npm run verify` must be green at the end of every milestone. Tests are specifications: if a rule in `04`/`05` has no
+The `verify` suite (`cargo test` + `cargo clippy` + Astro build + Playwright e2e) must be green at the end of every milestone. Tests are specifications: if a rule in `04`/`05` has no
 test, the milestone is not done.
 
-## 1. Unit tests (Vitest) — `shared/engine` ≥95% branch coverage
-- `routing.spec.ts` — every case in `04 §4` (locator, confirmation, productive route) + property tests:
+## 1. Unit tests (`cargo test`) — `shared/engine` (Rust crate) ≥95% branch coverage
+- `routing_test.rs` — every case in `04 §4` (locator, confirmation, productive route) + property tests:
   never >8 locator items; no item reuse; outcome band ∈ {L−1, L, U}; no numeric level; deterministic with seeded RNG.
-- `objectiveScoring.spec.ts` — key identity, permutation stored, omissions, shuffle determinism per (session,item).
-- `evidenceRules.spec.ts` — Speaking/Writing decisions: fixtures for lower-only, upper, below_route, insufficient (<3 / <2
+- `objective_scoring_test.rs` — key identity, permutation stored, omissions, shuffle determinism per (session,item).
+- `evidence_rules_test.rs` — Speaking/Writing decisions: fixtures for lower-only, upper, below_route, insufficient (<3 / <2
   usable), core-trait floor (grammar 1 blocks upper), independent-response count (INT turns count once), diagnostic tasks
   never change band, listen-to-write never changes band.
-- `resultAssembly.spec.ts` — headline: even (lower median), uneven (range), one skill insufficient → none, foundation-only →
+- `result_assembly_test.rs` — headline: even (lower median), uneven (range), one skill insufficient → none, foundation-only →
   none + label; cap invariant `headline ≤ min + 1`; confidence: every trigger yields Low; never High; readiness text per
   target; wording guard throws on forbidden phrase.
-- `formAssembler.spec.ts` — enemy high-severity avoidance, conflict logging when unavoidable, domain coverage, least-exposed
+- `form_assembler_test.rs` — enemy high-severity avoidance, conflict logging when unavoidable, domain coverage, least-exposed
   preference, pretest insertion when flag on, ≤1 inversion.
-- `payloadSchemas.spec.ts` — candidate item/stimulus/task payload schemas reject any object containing keys:
+- `payload_schemas_test.rs` — candidate item/stimulus/task payload schemas reject any object containing keys:
   `key`, `key_option_id`, `correct`, `authoring_letter`, `rationale`, `script`, `answer_text`, listening `text`.
-- `copyLint.spec.ts` — fixtures of forbidden and allowed strings (`05 §4`).
+- `copy_lint_test.rs` — fixtures of forbidden and allowed strings (`05 §4`).
 
 ## 2. Seed validation (`seed:validate`)
 Schemas, checksums, counts (52/21+42/21+42/48/24), 3/4-option rule, key↔option existence, key-letter distributions
 equal manifest, Speaking weight caps, Writing weights, enemy group members exist, route coverage (6 routes × 8 speaking,
 6 × 4 writing). Fails the build on any deviation.
 
-## 3. Server tests
-- Route handlers with supertest: auth required; zod rejections (400); idempotency; `responses` rejects an item that is not
+## 3. Server tests (Rust / Axum)
+- Route handlers with `axum::test` / `tower::ServiceExt`: auth required; Serde/validator rejections (400); idempotency; `responses` rejects an item that is not
   current (409); listening URL third-play refusal; rate limiting; no `correct` in any response body (regex over JSON).
 - Firestore rules tests (emulator): candidate cannot read `restricted_keys`, `stimulus_admin`, `ratings`, other sessions,
   `responses`; can read own session and result.

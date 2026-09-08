@@ -54,20 +54,21 @@ or a policy question (list those in `QUESTIONS.md` and keep working on everythin
 
 ## 4. Hard technical constraints
 
-- **Runtime:** Google AI Studio full-stack app → React 19 + TypeScript (strict) + Vite + Tailwind on the client;
-  Node.js (≥20) + TypeScript server; deploy target Cloud Run. Keep three logical layers even if the
-  runtime dictates folder names: `client/`, `server/`, `shared/` (types, zod schemas, **pure engine**).
+- **Runtime:** Frontend: Astro.js + TypeScript (strict) + Tailwind CSS on the client (with accessible interactive
+  islands for timer countdown, audio recording, audio playback without scrub, and writing editor); Backend & APIs:
+  Rust (Tokio async runtime + Axum HTTP framework + Serde typed models); deploy target Cloud Run. Keep three logical
+  layers: `client/` (Astro.js), `server/` (Rust Axum API & services), `shared/` (Rust pure engine crate & shared schemas).
 - **Engine purity:** `shared/engine/` (routing, objective scoring, evidence rules, headline/confidence rules)
-  is pure TypeScript with zero I/O and **≥95% branch coverage**. Every rule in `04_ROUTING_ENGINE.md` and
-  `05_SCORING_RESULTS_CLAIMS.md` has a named unit test.
+  is a pure Rust library crate with zero I/O and **≥95% branch coverage** (`cargo test`). Every rule in `04_ROUTING_ENGINE.md`
+  and `05_SCORING_RESULTS_CLAIMS.md` has a named unit test.
 - **Data:** Firestore (via AI Studio Firebase integration) + Firebase Auth (anonymous sign-in for free mode,
   Google sign-in for admin/reviewer). Cloud Storage for audio. Security rules: candidates read only their own
   session; `restricted_keys`, `stimulus_admin` (listening scripts) and `scoring` collections deny all
   client access (server uses Admin SDK). See `02_ARCHITECTURE.md`, `03_DATA_MODEL.md`, `09_SECURITY…md`.
-- **Gemini API:** server-side only, via `@google/genai`, using the `GEMINI_API_KEY` secret. Model IDs are
+- **Gemini API:** server-side only in Rust via HTTP client (`reqwest` with Tokio), using the `GEMINI_API_KEY` secret. Model IDs are
   config (`MODEL_RATER`, `MODEL_FAST`, `MODEL_TTS`) — run `models.list` on first setup, pick the current
   Pro-class model for rating and Flash-class for transcription/quality checks, record the IDs in
-  `DECISIONS.md`. Use structured output (JSON schema) for every rating call. Version every prompt.
+  `DECISIONS.md`. Use structured output (JSON schema) with Serde deserialization for every rating call. Version every prompt.
 - **Option shuffling:** per session, per item, server-side; store the delivered permutation; keys are stored
   by opaque `option_id`, never by letter.
 - **Persistence:** every response is written server-side on submit (not at module end). Autosave for Writing.
@@ -102,12 +103,11 @@ Never rewrite a working file wholesale when a surgical edit will do. Never delet
 
 ## 6. Coding standards (summary — full list in AGENTS.md)
 
-- TypeScript `strict`, ESLint + Prettier, Vitest for unit tests, Playwright for e2e, zod for all boundaries.
-- One source of truth for types: `shared/schemas/*.ts` (zod) → inferred types. Firestore documents and API
-  payloads validate through them on both sides.
-- Feature folders in the client (`features/listening`, `features/speaking`…), thin route handlers on the
-  server that call services; services call the pure engine.
-- Every server endpoint: auth check → zod parse → service → zod-validated response. Errors are typed,
+- Rust strict typing (`cargo clippy -- -D warnings`), Astro TypeScript `strict`, `cargo test` for engine and server, Playwright for e2e.
+- Canonical types defined in Rust (`shared/engine` / `server/schemas`) with `serde::{Serialize, Deserialize}`, mirrored by client zod schemas (`client/src/schemas/`) for Astro forms and API payloads.
+- Astro client features and interactive islands (`src/components/`, `src/pages/`), thin Axum route handlers on the
+  server that call services; services call the pure Rust engine crate.
+- Every server endpoint: auth check → Serde/validator parse → service → typed JSON response (`Result<Json<T>, AppError>`). Errors are typed,
   never leak stack traces or item data.
 - Logging: structured JSON; **never log item keys, option ids marked correct, transcripts or candidate audio URLs**.
 - UI copy comes from `client/src/copy/*.ts` and must pass the forbidden-wording lint in `10_TESTING_QA.md`.
@@ -115,7 +115,7 @@ Never rewrite a working file wholesale when a surgical edit will do. Never delet
 
 ## 7. Definition of done (whole project)
 
-- All milestones report DONE; `npm run verify` (typecheck + lint + unit + e2e smoke + seed validation +
+- All milestones report DONE; verification (`verify` script: Rust `cargo test` + `cargo clippy` + Astro build + e2e smoke + seed validation +
   forbidden-wording scan) is green.
 - A candidate can complete: Start → worked example → LS → RD → LSN → receptive result → Speaking → Writing →
   full result, on desktop and mobile widths, with keyboard only.

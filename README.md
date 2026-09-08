@@ -11,15 +11,15 @@ specifications, agent operating rules, and machine-readable seed data parsed and
 | `00_MASTER_SYSTEM_PROMPT.md` | Paste into AI Studio Build **System Instructions**. Governs everything. |
 | `AGENTS.md` | Agent operating rules, commands, conventions (also usable as `GEMINI.md`). |
 | `01_PRD.md` | Product requirements, journey, modes, claims policy, out-of-scope. |
-| `02_ARCHITECTURE.md` | Stack, layers, folder layout, API surface, deployment. |
-| `03_DATA_MODEL.md` | zod/TypeScript schemas, Firestore collections, security boundaries. |
+| `02_ARCHITECTURE.md` | Stack (Astro.js + Rust), layers, folder layout, API surface, deployment. |
+| `03_DATA_MODEL.md` | Rust Serde & Astro zod schemas, Firestore collections, security boundaries. |
 | `04_ROUTING_ENGINE.md` | Exact adaptive-bracketing algorithm + confirmation + productive route, with test cases. |
 | `05_SCORING_RESULTS_CLAIMS.md` | Objective scoring, evidence rules, headline/confidence rules, wording lint. |
 | `06_MODULE_UX_SPECS.md` | Screen-by-screen behaviour for every module incl. pause/resume and timers. |
 | `07_AI_SCORING_SPEC.md` | Gemini rating pipeline, prompts, JSON schemas, versioning, review queue. |
 | `08_ITEM_BANK_AND_SEED.md` | Seed file schemas, loader, form assembly, exposure, key balance. |
 | `09_SECURITY_PRIVACY_ACCESSIBILITY.md` | Threat model, Firestore rules, privacy, WCAG 2.2 AA, accommodations. |
-| `10_TESTING_QA.md` | Test matrix, fixtures, forbidden-wording lint, `npm run verify`. |
+| `10_TESTING_QA.md` | Test matrix, fixtures, forbidden-wording lint, `verify` command. |
 | `11_MILESTONES_TASKS.md` | M0–M12 backlog with acceptance criteria — the agent's work order. |
 | `12_AUDIO_PRODUCTION.md` | Listening/Speaking audio generation spec (TTS, loudness, WPM checks). |
 | `DECISIONS.md` | Pre-seeded interpretation decisions; agent appends. |

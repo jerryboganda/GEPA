@@ -62,7 +62,7 @@ verbatim reduces task fulfilment and vocabulary evidence. Do not attempt to dete
 Prompt text changes → bump version; store `promptVersion` on every rating; keep a `benchmarks/` folder with fixture
 inputs and expected score ranges (regression test in `test:ai:benchmarks`, run manually / nightly, not in `verify`).
 
-## 3. Structured output schema (`server/ai/schemas/rating.ts`, mirrored as zod)
+## 3. Structured output schema (Rust Serde structs in `server/src/ai/rating.rs`, JSON schema for Gemini)
 ```json
 { "type":"object", "required":["usable","atLower","atUpper","rationale","flags"], "properties":{
   "usable":{"type":"boolean"}, "unusableReason":{"type":["string","null"]},

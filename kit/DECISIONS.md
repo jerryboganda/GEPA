@@ -54,5 +54,11 @@ Firestore client reads limited to own `sessions/{id}` and `results/{id}`. Status
 Context: the PDF tags topic_family for objective items only. Decision: the kit assigns topic families to Speaking/Writing
 tasks and lists 22 enemy groups in `seed/enemy_groups.json`; reviewers may rename/merge. Status: proposed.
 
+## D-011 · Architecture stack update: Astro.js frontend and Rust backend & APIs
+Context: The product owner specified that the frontend stack will be Astro.js, the backend stack will be Rust, and all APIs will also be written in Rust.
+Decision: Standardize on Astro.js (TypeScript strict + Tailwind CSS + accessible interactive client islands for timers, audio recording, audio playback without scrub, and writing editor) for the client application (`client/`), and Rust (Tokio async runtime + Axum HTTP framework + Serde typed data models + Tower middleware) for the backend and APIs (`server/`). The pure diagnostic engine (`shared/engine`) is implemented as a pure Rust crate with zero I/O and ≥95% branch coverage. Canonical data models are defined in Rust with Serde and mirrored as zod schemas in the Astro client for form and request validation.
+Spec: 00, 02, 03, 07, 10, 11, AGENTS.md, GEMINI.md. Status: approved.
+
 ---
-<!-- Agent appends from here. Next id: D-011 -->
+<!-- Agent appends from here. Next id: D-012 -->
+

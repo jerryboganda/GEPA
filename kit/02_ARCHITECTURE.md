@@ -4,16 +4,16 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| Client | React 19 + TypeScript strict + Vite + Tailwind + React Router; Zustand for session state | AI Studio Build default; small, testable |
-| Server | Node ≥20 + TypeScript; Express (or Hono) inside the AI Studio full-stack runtime | Server-side secrets, npm, Cloud Run deploy |
-| Shared | zod schemas + pure engine package | One type source; engine testable without I/O |
-| Data | Firestore (AI Studio Firebase integration) | Provisioned by the agent; rules-based isolation |
-| Auth | Firebase Auth: anonymous (candidates), Google (reviewer/admin with custom claims `role`) | Low friction; role gating |
-| Media | Cloud Storage for Firebase: `audio/stimuli/*` (served via short-lived signed URLs), `audio/responses/{session}/*` (private) | Private by default |
-| AI | Gemini API via `@google/genai`, server-only, structured output | Rating, transcription, quality checks, TTS |
+| Client | Astro.js + TypeScript strict + Tailwind CSS; interactive islands for timer, audio recorder, audio player, editor | Modern, lightweight, fast content delivery with accessible client islands |
+| Server | Rust (Tokio async runtime + Axum HTTP framework) + Serde + Tower middleware | High performance, memory safety, zero-cost abstractions, robust type safety |
+| Shared | Rust core domain crate (`shared/engine`) + client TypeScript/zod schemas | Pure deterministic engine, single canonical domain model, testable without I/O |
+| Data | Firestore (Google Cloud SDK / Firestore REST API in Rust) | Provisioned by the agent; rules-based isolation |
+| Auth | Firebase Auth: anonymous (candidates), Google (reviewer/admin with custom claims `role`) | Low friction; role gating verified via JWT validation |
+| Media | Cloud Storage: `audio/stimuli/*` (served via short-lived signed URLs), `audio/responses/{session}/*` (private) | Private by default |
+| AI | Gemini API via HTTP client (`reqwest` with Tokio in Rust), server-only, structured JSON output | Rating, transcription, quality checks, TTS |
 | TTS | Gemini multi-speaker TTS (default) or ElevenLabs adapter (optional) | Dialogue scripts, accent rotation |
-| Deploy | Cloud Run from AI Studio; secrets in Secrets panel | One click; scale to zero |
-| Tests | Vitest, Playwright, axe-core | Engine coverage + journey + a11y |
+| Deploy | Cloud Run containerized deployment; secrets in Secrets panel | Scalable, containerized Rust binary + Astro build |
+| Tests | `cargo test` (engine & API integration), Playwright, axe-core | Engine coverage (≥95%) + journey + a11y |
 
 Model configuration (env): `MODEL_RATER` (Pro-class, multimodal, structured output), `MODEL_FAST` (Flash-class for
 transcription/quality/consistency checks), `MODEL_TTS` (multi-speaker TTS). Discover with `models.list` at setup;
@@ -22,11 +22,11 @@ pin exact IDs in `.env.example` and `DECISIONS.md`. Never hardcode a model ID in
 ## 2. Layer boundaries
 
 ```
-client ──HTTPS/JSON──▶ server/api ──▶ server/services ──▶ shared/engine (pure)
-                                   │                    ▲
-                                   ├──▶ server/repos ───┘ (Firestore Admin SDK; only layer touching restricted data)
-                                   ├──▶ server/ai   (Gemini; prompts versioned)
-                                   └──▶ storage     (signed URLs, uploads)
+client (Astro) ──HTTPS/JSON──▶ server/api (Rust / Axum) ──▶ server/services (Rust) ──▶ shared/engine (Rust pure crate)
+                                                         │                          ▲
+                                                         ├──▶ server/repos ─────────┘ (Firestore SDK; only layer touching restricted data)
+                                                         ├──▶ server/ai   (Gemini via reqwest; prompts versioned)
+                                                         └──▶ storage     (signed URLs, uploads)
 ```
 
 Rules: the client never reads Firestore collections that hold items, keys or scripts directly — all item delivery is
@@ -79,7 +79,7 @@ Admin: `POST /api/admin/seed/load`, `POST /api/admin/forms/check`, `POST /api/ad
 `GET /api/admin/reports/exposure`, `GET /api/admin/reports/telemetry`. Role checked via custom claims.
 
 ## 4. API contract rules
-- All request/response bodies validated with the zod schemas in `shared/schemas/api.ts`.
+- All request/response bodies validated with Serde schemas in the Rust server and mirrored by zod schemas in the Astro client (`client/src/schemas/api.ts`).
 - Idempotency: `responses` and `submit` endpoints accept an `Idempotency-Key` header; duplicate = same result.
 - Concurrency: session documents updated in Firestore transactions; router state versioned (`stateVersion`).
 - Rate limits: per-session token bucket on `responses` (max 1 per 750 ms) — rapid clicking still accepted but flagged.

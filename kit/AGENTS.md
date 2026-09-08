@@ -10,37 +10,36 @@ what to log, what never to do. Also copied as `GEMINI.md` for Gemini CLI / Antig
 /seed                      ← item bank + config. Read-only. RESTRICTED_* files are server-only assets.
 /scripts                   ← PDF→seed parser, seed loader, audio production job, exposure report
 /shared
-  /schemas                 ← zod schemas = single source of types (Item, Stimulus, Session, Response, Scoring…)
-  /engine                  ← PURE functions: routing, objectiveScoring, evidenceRules, headline, confidence
+  /schemas                 ← Rust Serde models & client zod schemas (Item, Stimulus, Session, Response, Scoring…)
+  /engine                  ← Rust PURE functions (crate): routing, objective_scoring, evidence_rules, headline, confidence
   /copy-policy             ← forbidden/allowed wording lists (from seed/results_and_claims.json)
-/server
-  /api                     ← route handlers (thin): sessions, items, responses, media, results, admin, review
-  /services                ← sessionService, formAssembler, ratingService, audioService, exposureService
-  /repos                   ← Firestore access (Admin SDK) — the only place that touches restricted collections
-  /ai                      ← Gemini client, prompt registry (versioned), JSON schemas for structured output
+/server                    ← Rust backend & APIs (Tokio + Axum)
+  /src/api                 ← route handlers (thin): sessions, items, responses, media, results, admin, review
+  /src/services            ← session_service, form_assembler, rating_service, audio_service, exposure_service
+  /src/repos               ← Firestore access (Google Cloud / Admin SDK) — only place touching restricted collections
+  /src/ai                  ← Gemini client (reqwest / Google GenAI), prompt registry, JSON schemas for structured output
   /rules                   ← firestore.rules, storage.rules
-/client
-  /src/features            ← start, worked-example, language-systems, reading, listening, speaking, writing,
-                             results, review (reviewer UI), admin
-  /src/components          ← accessible primitives (Button, RadioGroup, Timer, AudioPlayer, Recorder, Editor)
+/client                    ← Astro.js application
+  /src/pages               ← Astro routes: index, session, exam modules, results, review, admin
+  /src/components          ← accessible primitives & islands (Timer, AudioPlayer, Recorder, Editor, Button, RadioGroup)
   /src/copy                ← all user-facing strings (lint-checked)
   /src/a11y                ← focus management, live regions, preferences (contrast, spacing, text size)
 /tests
-  /unit                    ← engine + services (Vitest)
+  /unit                    ← Rust cargo test for engine + services
   /fixtures                ← routing traces, rating fixtures, forbidden-wording cases
   /e2e                     ← Playwright journeys + axe scans
 ```
 
-## 2. Commands you must provide (package.json scripts)
+## 2. Commands you must provide (workspace scripts)
 
 | Script | Does |
 |---|---|
-| `dev` | client + server with hot reload |
-| `typecheck` | `tsc --noEmit` across all packages |
-| `lint` | ESLint + Prettier check + `copy-lint` (forbidden wording scan of `client/src/copy` and results templates) |
-| `test` | Vitest unit tests with coverage; fails if `shared/engine` branch coverage < 95% |
+| `dev` | Astro client (`astro dev`) + Rust API server (`cargo watch -x run` or `cargo run`) |
+| `typecheck` | `cargo check --workspace && tsc --noEmit` across all packages |
+| `lint` | `cargo clippy` + ESLint + Prettier check + `copy-lint` (forbidden wording scan of `client/src/copy` and results templates) |
+| `test` | `cargo test --workspace` with coverage; fails if `shared/engine` branch coverage < 95% |
 | `test:e2e` | Playwright smoke journey + axe-core WCAG 2.2 AA scan on every screen |
-| `seed:validate` | validates `/seed/*.json` against zod schemas + manifest checksums + count/key-balance invariants |
+| `seed:validate` | validates `/seed/*.json` against schemas + manifest checksums + count/key-balance invariants |
 | `seed:load` | loads seed into Firestore (candidate-safe collections + restricted collections separately) |
 | `audio:produce` | generates listening/speaking audio assets per `12_AUDIO_PRODUCTION.md`, writes QC report |
 | `forms:check` | key-position balance, domain coverage, enemy-group conflicts for the assembled beta form |
@@ -49,12 +48,11 @@ what to log, what never to do. Also copied as `GEMINI.md` for Gemini CLI / Antig
 
 ## 3. Conventions
 
-- **Types:** define once in `shared/schemas` with zod; export `type X = z.infer<typeof XSchema>`. No duplicate
-  interfaces on server or client. No `any`; use `unknown` + parse.
-- **Engine:** pure, deterministic, synchronous. Inputs are plain objects; randomness (shuffling) is injected as a
+- **Types:** define canonical models in Rust (`shared/engine` / `server/schemas`) with `serde::{Serialize, Deserialize}`; export/mirror client zod schemas in `client/src/schemas`. No `any`; use strict types.
+- **Engine:** pure, deterministic, synchronous Rust crate. Inputs are plain structs; randomness (shuffling) is injected as a
   seeded RNG so tests are reproducible. Every branch in `04_ROUTING_ENGINE.md` and `05_SCORING…md` maps to a
-  test named after the rule (e.g. `locator.oneOfTwo.tieCorrect.bracketsCurrentNext`).
-- **Server handlers:** `auth → zod.parse(body) → service → zod.parse(response)`. Never return raw Firestore docs.
+  test named after the rule (e.g. `locator_one_of_two_tie_correct_brackets_current_next`).
+- **Server handlers:** `auth → Serde/validator parse → service → Result<Json<T>, AppError>`. Never return raw Firestore docs.
 - **Candidate item payload** contains exactly: `item_id, module, band(hidden from UI), stem, options[{option_id,text}]`
   in the **session's shuffled order**, plus stimulus text (Reading) or a **signed audio URL** (Listening —
   never the script). A unit test asserts the payload schema has no `key`, `correct`, `authoring_letter`,
