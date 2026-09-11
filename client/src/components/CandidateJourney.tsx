@@ -1316,8 +1316,13 @@ export const CandidateJourney: React.FC = () => {
               </p>
             </div>
 
-            {/* Recorder Island */}
+            {/* Recorder Island — keyed by task_id so React remounts a fresh
+                instance per task; without a key, the same instance (and its
+                internal 'review' phase from the previous task) persisted
+                across tasks and every task after the first was permanently
+                stuck showing "Response Captured" with no way to record. */}
             <AudioRecorder
+              key={speakingTasks[currentSpeakingIdx].task_id}
               prepSeconds={speakingTasks[currentSpeakingIdx].prepSeconds || 15}
               maxSpeakSeconds={speakingTasks[currentSpeakingIdx].maxSpeakSeconds || 45}
               allowsRerecord={speakingTasks[currentSpeakingIdx].allowsRerecord !== false}
@@ -1421,7 +1426,13 @@ export const CandidateJourney: React.FC = () => {
 
               {/* Editor Island */}
               <div className="lg:col-span-7 flex flex-col space-y-4">
+                {/* Keyed by task_id so React remounts a fresh instance per
+                    task — WritingEditor only seeds its internal `text` from
+                    `initialValue` at mount, so without a key the previous
+                    task's draft (and paste/focus-loss telemetry) leaked
+                    into every task after the first. */}
                 <WritingEditor
+                  key={writingTasks[currentWritingIdx].task_id}
                   wordGuidance={writingTasks[currentWritingIdx].word_guidance}
                   initialValue={currentWritingText}
                   onChange={setCurrentWritingText}
