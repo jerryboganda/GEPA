@@ -22,7 +22,12 @@ RUN cargo build --release --bin server
 FROM debian:bullseye-slim AS runner
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# -o Acquire::Check-Valid-Until=false: bullseye is Debian's old-stable now,
+# and its security repo's Release file signature has a validity window that
+# eventually expires as time passes past end-of-support — this bypasses that
+# staleness check rather than failing the build outright. Packages still get
+# signature-verified; only the "is this metadata too old" check is skipped.
+RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     && rm -rf /var/lib/apt/lists/*
