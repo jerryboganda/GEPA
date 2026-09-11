@@ -10,7 +10,11 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
   // wait) — the default 30s test timeout is tuned for the shorter specs.
   test.setTimeout(150_000);
   // TEMPORARY diagnostic for the full-result stall — remove once root-caused.
+  page.on('console', (msg) => console.log(`[browser]`, msg.text()));
   page.on('pageerror', (err) => console.log('[pageerror]', err.message, err.stack));
+  page.on('request', (req) => {
+    if (req.url().includes('/writing/') || req.url().includes('/results/full')) console.log('[req]', req.method(), req.url());
+  });
   page.on('requestfailed', (req) => {
     if (req.url().includes('/api/sessions/')) console.log('[reqfailed]', req.url(), req.failure()?.errorText);
   });
