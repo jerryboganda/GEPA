@@ -272,7 +272,18 @@ pub async fn get_session_state(
         "lsn_status": session.lsn_state.status,
         "spk_status": session.spk_state.status,
         "wrt_status": session.wrt_state.status,
-        "has_result": session.result_report.is_some()
+        // `result_report` holds whichever profile was assembled most
+        // recently — "foundation_receptive" or "full" (services.rs::
+        // compute_receptive_profile / compute_full_result both write into
+        // the same slot). `has_result` must mean "the *full* result exists"
+        // (the client uses it to decide whether to show full_result instead
+        // of resuming into an earlier module), so it has to check
+        // profile_type too, not just presence — same discriminator already
+        // used by the admin analytics aggregation below. Without this,
+        // finishing the receptive stage alone made has_result true and every
+        // later resume jumped straight to full_result instead of
+        // receptive_result.
+        "has_result": session.result_report.as_ref().map(|r| r.profile_type == "full").unwrap_or(false)
     })))
 }
 
@@ -1101,15 +1112,6 @@ pub async fn e2e_seed_session(
         .jwt
         .issue(&candidate_uid, None, chrono::Duration::days(auth::CANDIDATE_TOKEN_TTL_DAYS))
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-
-    // TEMPORARY diagnostic for the e2e "receptive" resume timeout — remove
-    // once root-caused. Piped to CI via playwright.config.ts's stdout:'pipe'.
-    if let Ok(Some(fetched)) = state.session_repo.get(&session_id).await {
-        eprintln!(
-            "[e2e_seed_session diag] stop_after={} ls={} rd={} lsn={}",
-            req.stop_after, fetched.session.ls_state.status, fetched.session.rd_state.status, fetched.session.lsn_state.status
-        );
-    }
 
     Ok(Json(json!({ "session_id": session_id, "token": token, "reached": req.stop_after })))
 }

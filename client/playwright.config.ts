@@ -41,10 +41,6 @@ export default defineConfig({
       timeout: 180_000,
       reuseExistingServer: !process.env.CI,
       env: { E2E_MODE: 'true', PORT: '8080', CLIENT_DIST: path.resolve(__dirname, 'dist') },
-      // TEMPORARY: surfaces the [e2e_seed_session diag] eprintln! into the
-      // CI log while root-causing the receptive-result resume timeout.
-      stdout: 'pipe',
-      stderr: 'pipe',
     },
     {
       command: 'npm run dev',
