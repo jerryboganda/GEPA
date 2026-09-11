@@ -9,6 +9,22 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
   // round-trips throughout, 7 speaking tasks each with a 5s quality-gate
   // wait) — the default 30s test timeout is tuned for the shorter specs.
   test.setTimeout(150_000);
+  // TEMPORARY diagnostic for the full-result stall — remove once root-caused.
+  page.on('pageerror', (err) => console.log('[pageerror]', err.message, err.stack));
+  page.on('requestfailed', (req) => {
+    if (req.url().includes('/api/sessions/')) console.log('[reqfailed]', req.url(), req.failure()?.errorText);
+  });
+  page.on('response', async (res) => {
+    if (res.url().includes('/writing/') || res.url().includes('/results/full')) {
+      let body = '';
+      try {
+        body = (await res.text()).slice(0, 500);
+      } catch {
+        /* ignore */
+      }
+      console.log('[res]', res.status(), res.url(), body);
+    }
+  });
   await page.goto('/');
 
   // 1. Start screen
