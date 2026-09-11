@@ -9,6 +9,19 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
   // round-trips throughout) — the default 30s test timeout is tuned for
   // the shorter specs, not this one.
   test.setTimeout(90_000);
+  // TEMPORARY diagnostic for the objective-module stall — remove once
+  // root-caused.
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' || msg.type() === 'warning') console.log(`[browser ${msg.type()}]`, msg.text());
+  });
+  page.on('pageerror', (err) => console.log('[pageerror]', err.message));
+  let reqCount = 0;
+  page.on('request', (req) => {
+    if (req.url().includes('/api/sessions/') && reqCount < 60) {
+      reqCount++;
+      console.log('[req]', req.method(), req.url());
+    }
+  });
   await page.goto('/');
 
   // 1. Start screen
