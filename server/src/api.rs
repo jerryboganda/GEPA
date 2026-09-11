@@ -1102,5 +1102,14 @@ pub async fn e2e_seed_session(
         .issue(&candidate_uid, None, chrono::Duration::days(auth::CANDIDATE_TOKEN_TTL_DAYS))
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
+    // TEMPORARY diagnostic for the e2e "receptive" resume timeout — remove
+    // once root-caused. Piped to CI via playwright.config.ts's stdout:'pipe'.
+    if let Ok(Some(fetched)) = state.session_repo.get(&session_id).await {
+        eprintln!(
+            "[e2e_seed_session diag] stop_after={} ls={} rd={} lsn={}",
+            req.stop_after, fetched.session.ls_state.status, fetched.session.rd_state.status, fetched.session.lsn_state.status
+        );
+    }
+
     Ok(Json(json!({ "session_id": session_id, "token": token, "reached": req.stop_after })))
 }
