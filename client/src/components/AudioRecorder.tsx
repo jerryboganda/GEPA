@@ -31,6 +31,15 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const recordedBlobRef = useRef<Blob | null>(null);
+  // recorder.onstop below is a closure fixed at recorder-creation time, so
+  // reading the `speakTimeRemaining` *state* from inside it would always
+  // see the value from that one moment (its initial maxSpeakSeconds, since
+  // the countdown effect hasn't ticked yet) -- every real recording would
+  // compute recordedSecs=0 and always fail the >=3s quality gate,
+  // regardless of how long the candidate actually spoke. A ref's `.current`
+  // is read fresh at call time even from a stale closure, so this measures
+  // real elapsed wall-clock time instead.
+  const recordingStartedAtRef = useRef<number>(0);
 
   // Prep Countdown
   useEffect(() => {
@@ -117,7 +126,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           setRecordedUrl(url);
 
           // Quality gate check: duration >= 3s
-          const recordedSecs = maxSpeakSeconds - speakTimeRemaining;
+          const recordedSecs = (Date.now() - recordingStartedAtRef.current) / 1000;
           if (recordedSecs < 3) {
             setPhase('quality_failed');
             setErrorMessage('We could not capture that clearly. Recording duration was under 3 seconds.');
@@ -128,6 +137,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         };
 
         mediaRecorderRef.current = recorder;
+        recordingStartedAtRef.current = Date.now();
         recorder.start(250);
       } else {
         simulateRecording();
