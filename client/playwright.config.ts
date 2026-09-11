@@ -15,6 +15,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false, // shares one server process; sessions are independent, but keep runs predictable
+  // `fullyParallel: false` only serialises tests *within* a file — the
+  // chromium-desktop and chromium-mobile projects still ran as separate
+  // concurrent workers by default, so their journey.full instances (each
+  // dozens of real sequential Postgres round-trips) contended for the same
+  // one shared dev server, and whichever request lost that race timed out
+  // at a different, seemingly random step each run. One worker matches
+  // this suite's actual "one shared server" design.
+  workers: 1,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {

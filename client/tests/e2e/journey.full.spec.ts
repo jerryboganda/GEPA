@@ -6,22 +6,9 @@ import { answerAllObjectiveModules } from './utils/answerKeys';
 
 test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -> speaking -> writing -> full result', async ({ page }) => {
   // The longest single journey in the suite (every module, real network
-  // round-trips throughout) — the default 30s test timeout is tuned for
-  // the shorter specs, not this one.
-  test.setTimeout(90_000);
-  // TEMPORARY diagnostic for the objective-module stall — remove once
-  // root-caused.
-  page.on('console', (msg) => {
-    if (msg.type() === 'error' || msg.type() === 'warning') console.log(`[browser ${msg.type()}]`, msg.text());
-  });
-  page.on('pageerror', (err) => console.log('[pageerror]', err.message));
-  let reqCount = 0;
-  page.on('request', (req) => {
-    if (req.url().includes('/api/sessions/') && reqCount < 60) {
-      reqCount++;
-      console.log('[req]', req.method(), req.url());
-    }
-  });
+  // round-trips throughout, 7 speaking tasks each with a 5s quality-gate
+  // wait) — the default 30s test timeout is tuned for the shorter specs.
+  test.setTimeout(150_000);
   await page.goto('/');
 
   // 1. Start screen
