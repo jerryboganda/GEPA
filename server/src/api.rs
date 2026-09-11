@@ -1046,10 +1046,23 @@ pub async fn e2e_seed_session(
                     .collect()
             };
 
-            let _ = AssessmentService::submit_responses(&state, &session_id, module, &responses, 0).await;
+            let submit_result = AssessmentService::submit_responses(&state, &session_id, module, &responses, 0).await;
 
             if req.stop_after == module.to_lowercase() {
                 break 'modules;
+            }
+
+            // Natural completion: the routing engine has already confirmed a
+            // band for this module (a real candidate session ends here too,
+            // typically after ~6-14 items). Without this check the loop kept
+            // ignoring that signal and ground through the *entire* remaining
+            // item bank for every module it was just passing through — up to
+            // ~250 extra sequential Postgres round-trips per seed call, which
+            // is what was actually timing out the e2e suite on any
+            // `stop_after` past the first module (lsn/receptive/speaking/
+            // writing/full), not a client or routing bug.
+            if matches!(submit_result, Ok(Some(u)) if u.module_complete) {
+                break;
             }
         }
         if req.stop_after == module.to_lowercase() {

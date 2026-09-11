@@ -606,7 +606,7 @@ export const CandidateJourney: React.FC = () => {
 
           <div className="flex items-center gap-3 pr-40 sm:pr-44">
             {sessionId && (
-              <span className="hidden md:inline-block text-xs font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+              <span className="hidden md:inline-block text-xs font-mono text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
                 Session: {sessionId}
               </span>
             )}
@@ -681,10 +681,11 @@ export const CandidateJourney: React.FC = () => {
 
               {/* Language Selection */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-1">
+                <label htmlFor="start-language-select" className="block text-sm font-semibold text-slate-900 mb-1">
                   {UI_STRINGS.start_screen.language_label}
                 </label>
                 <select
+                  id="start-language-select"
                   data-testid="start-language-select"
                   value={uiLanguage}
                   onChange={(e) => setUiLanguage(e.target.value)}
@@ -1174,7 +1175,7 @@ export const CandidateJourney: React.FC = () => {
             {/* Confidence Badge */}
             <div className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
                   Diagnostic Confidence
                 </span>
                 <span className="text-base font-bold text-brand-900">
@@ -1532,7 +1533,7 @@ export const CandidateJourney: React.FC = () => {
                   <IconShield className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600">
                     Diagnostic Confidence
                   </div>
                   <div className="text-lg font-bold text-slate-900">
@@ -1609,7 +1610,7 @@ export const CandidateJourney: React.FC = () => {
                     ? `Indicative overall placement: ${fullResult.headline.band}`
                     : `Uneven Profile across range ${fullResult.headline.range?.[0]}–${fullResult.headline.range?.[1]}`}
                 </span>
-                <span className="text-slate-500">Lower median derivation</span>
+                <span className="text-slate-600">Lower median derivation</span>
               </div>
             )}
 
@@ -1703,7 +1704,7 @@ export const CandidateJourney: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+      <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-600">
         <div className="max-w-6xl mx-auto px-4 space-y-1">
           <p>
             GEPA Diagnostic Assessment Beta • Pre-calibration prototype •{' '}
@@ -1711,7 +1712,7 @@ export const CandidateJourney: React.FC = () => {
               Technical Manual & CEFR Scope
             </a>
           </p>
-          <p className="text-slate-400">Claims Policy Guard Active • Zero High-Stakes Certification</p>
+          <p className="text-slate-600">Claims Policy Guard Active • Zero High-Stakes Certification</p>
         </div>
       </footer>
 

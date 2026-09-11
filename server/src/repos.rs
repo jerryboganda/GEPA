@@ -210,3 +210,36 @@ impl ReviewQueueRepo {
         Ok(all.iter().any(|item| item.session_id == session_id && item.flag_type == flag_type))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use shared_engine::models::Band;
+
+    // Every new session's LocatorState starts at Band::B1 for every objective
+    // module (routing.rs::LocatorState::new). If any module's item bank has
+    // zero unused stimuli at B1, `get_next_unit` returns None on the very
+    // first call and the candidate silently skips straight past that module
+    // instead of seeing it (the bug behind the LSN e2e failures).
+    #[test]
+    fn every_module_has_a_usable_stimulus_at_the_default_starting_band() {
+        let seed_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../seed");
+        let bank = SeedBank::load_from_dir(seed_dir).expect("seed bank should load");
+
+        let lsn_b1 = bank.lsn_stimuli.iter().find(|s| s.band == Band::B1);
+        assert!(lsn_b1.is_some(), "no LSN stimulus at Band::B1 (the default starting band for a fresh session)");
+        for id in &lsn_b1.unwrap().item_ids {
+            assert!(
+                bank.lsn_items.iter().any(|i| &i.item_id == id),
+                "LSN stimulus {} references item {id} which is missing from lsn_items",
+                lsn_b1.unwrap().stimulus_id
+            );
+        }
+
+        let rd_b1 = bank.rd_stimuli.iter().find(|s| s.band == Band::B1);
+        assert!(rd_b1.is_some(), "no RD stimulus at Band::B1 (the default starting band for a fresh session)");
+
+        let ls_b1 = bank.ls_items.iter().any(|i| i.band == Band::B1);
+        assert!(ls_b1, "no LS item at Band::B1 (the default starting band for a fresh session)");
+    }
+}
