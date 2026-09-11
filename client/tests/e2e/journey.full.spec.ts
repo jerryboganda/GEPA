@@ -89,6 +89,11 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
     await page.getByTestId('writing-textarea').fill(
       'This is a deterministic end to end test response with enough words to satisfy the minimum guidance for this task and allow submission to proceed.'
     );
+    // writing-submit is disabled while currentWritingText is empty — fill()
+    // dispatches the input event, but React's onChange -> setCurrentWritingText
+    // needs a render to actually reach the parent's state. Wait for that
+    // instead of assuming it already landed by the time we click.
+    await expect(page.getByTestId('writing-submit')).toBeEnabled({ timeout: 5_000 });
 
     // Same click-succeeded-but-onClick-never-fired race as speaking-submit
     // above — verify the screen actually transitions and retry if not.
