@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { authedFetch } from '../lib/apiClient';
+import { saveCandidateToken } from '../lib/session';
 import { Timer } from './Timer';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioRecorder } from './AudioRecorder';
@@ -87,7 +89,7 @@ export const CandidateJourney: React.FC = () => {
     const devClass =
       typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop';
     try {
-      const res = await fetch('/api/sessions', {
+      const res = await authedFetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,6 +103,10 @@ export const CandidateJourney: React.FC = () => {
       const data = await res.json();
       setSessionId(data.session_id);
       if (typeof window !== 'undefined') {
+        // DECISIONS.md D-021: the server issues this session's bearer token
+        // right here (no external identity provider) — save it before any
+        // further authedFetch call, or those calls have nothing to send.
+        saveCandidateToken(data.token);
         localStorage.setItem('gepa_active_session', data.session_id);
         setSavedSessionId(data.session_id);
       }
@@ -120,7 +126,7 @@ export const CandidateJourney: React.FC = () => {
     if (!cleanId) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${cleanId}`);
+      const res = await authedFetch(`/api/sessions/${cleanId}`);
       if (!res.ok) {
         alert('Session record not found. Please start a new placement assessment.');
         return;
@@ -135,31 +141,31 @@ export const CandidateJourney: React.FC = () => {
       }
 
       if (data.has_result) {
-        const fRes = await fetch(`/api/sessions/${data.session_id}/results/full`);
+        const fRes = await authedFetch(`/api/sessions/${data.session_id}/results/full`);
         const report = await fRes.json();
         setFullResult(report);
         setCurrentStep('full_result');
       } else if (data.wrt_status === 'in_progress' || data.wrt_status === 'complete') {
-        const wRes = await fetch(`/api/sessions/${data.session_id}/writing/start`);
+        const wRes = await authedFetch(`/api/sessions/${data.session_id}/writing/start`);
         const tasks = await wRes.json();
         setWritingTasks(tasks);
         setCurrentWritingIdx(0);
         setCurrentWritingText('');
         setCurrentStep('writing_test');
       } else if (data.spk_status === 'in_progress') {
-        const sRes = await fetch(`/api/sessions/${data.session_id}/speaking/start`);
+        const sRes = await authedFetch(`/api/sessions/${data.session_id}/speaking/start`);
         const tasks = await sRes.json();
         setSpeakingTasks(tasks);
         setCurrentSpeakingIdx(0);
         setCurrentStep('speaking_test');
       } else if (data.rd_status === 'complete' && data.lsn_status === 'complete') {
-        const profRes = await fetch(`/api/sessions/${data.session_id}/results/receptive`);
+        const profRes = await authedFetch(`/api/sessions/${data.session_id}/results/receptive`);
         const report = await profRes.json();
         setReceptiveResult(report);
         setCurrentStep('receptive_result');
       } else if (data.rd_status === 'in_progress') {
         setActiveModule('RD');
-        const rRes = await fetch(`/api/sessions/${data.session_id}/modules/RD/start`, {
+        const rRes = await authedFetch(`/api/sessions/${data.session_id}/modules/RD/start`, {
           method: 'POST',
         });
         const unit = await rRes.json();
@@ -167,7 +173,7 @@ export const CandidateJourney: React.FC = () => {
         setCurrentStep('objective_test');
       } else if (data.lsn_status === 'in_progress') {
         setActiveModule('LSN');
-        const lRes = await fetch(`/api/sessions/${data.session_id}/modules/LSN/start`, {
+        const lRes = await authedFetch(`/api/sessions/${data.session_id}/modules/LSN/start`, {
           method: 'POST',
         });
         const unit = await lRes.json();
@@ -175,7 +181,7 @@ export const CandidateJourney: React.FC = () => {
         setCurrentStep('objective_test');
       } else {
         setActiveModule('LS');
-        const lsRes = await fetch(`/api/sessions/${data.session_id}/modules/LS/start`, {
+        const lsRes = await authedFetch(`/api/sessions/${data.session_id}/modules/LS/start`, {
           method: 'POST',
         });
         const unit = await lsRes.json();
@@ -195,7 +201,7 @@ export const CandidateJourney: React.FC = () => {
     setQuestionCount(1);
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/modules/LS/start`, { method: 'POST' });
+      const res = await authedFetch(`/api/sessions/${sessionId}/modules/LS/start`, { method: 'POST' });
       const unit = await res.json();
       setDeliveryUnit(unit);
       setSelectedAnswers({});
@@ -254,7 +260,7 @@ export const CandidateJourney: React.FC = () => {
         };
       }
 
-      const res = await fetch(`/api/sessions/${sessionId}/responses`, {
+      const res = await authedFetch(`/api/sessions/${sessionId}/responses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -268,7 +274,7 @@ export const CandidateJourney: React.FC = () => {
           setActiveModule('RD');
           setQuestionCount(1);
           setAudioReplayCount(0);
-          const rRes = await fetch(`/api/sessions/${sessionId}/modules/RD/start`, { method: 'POST' });
+          const rRes = await authedFetch(`/api/sessions/${sessionId}/modules/RD/start`, { method: 'POST' });
           const rUnit = await rRes.json();
           setDeliveryUnit(rUnit);
           setSelectedAnswers({});
@@ -278,14 +284,14 @@ export const CandidateJourney: React.FC = () => {
           setActiveModule('LSN');
           setQuestionCount(1);
           setAudioReplayCount(0);
-          const lRes = await fetch(`/api/sessions/${sessionId}/modules/LSN/start`, { method: 'POST' });
+          const lRes = await authedFetch(`/api/sessions/${sessionId}/modules/LSN/start`, { method: 'POST' });
           const lUnit = await lRes.json();
           setDeliveryUnit(lUnit);
           setSelectedAnswers({});
           setActiveTestletItemIdx(0);
         } else if (activeModule === 'LSN') {
           // Move to Receptive Profile!
-          const profRes = await fetch(`/api/sessions/${sessionId}/results/receptive`);
+          const profRes = await authedFetch(`/api/sessions/${sessionId}/results/receptive`);
           const report = await profRes.json();
           setReceptiveResult(report);
           setCurrentStep('receptive_result');
@@ -389,7 +395,7 @@ export const CandidateJourney: React.FC = () => {
   const handleProceedToSpeaking = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/speaking/start`);
+      const res = await authedFetch(`/api/sessions/${sessionId}/speaking/start`);
       const tasks = await res.json();
       setSpeakingTasks(tasks);
       setCurrentSpeakingIdx(0);
@@ -430,7 +436,7 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await fetch(`/api/sessions/${sessionId}/speaking/${currentTask.task_id}/submit`, {
+      await authedFetch(`/api/sessions/${sessionId}/speaking/${currentTask.task_id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storage_path: 'local://sample_rec.webm' }),
@@ -457,7 +463,7 @@ export const CandidateJourney: React.FC = () => {
   const handleProceedToWriting = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/writing/start`);
+      const res = await authedFetch(`/api/sessions/${sessionId}/writing/start`);
       const tasks = await res.json();
       setWritingTasks(tasks);
       setCurrentWritingIdx(0);
@@ -493,7 +499,7 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await fetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
+      await authedFetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: currentWritingText }),
@@ -504,7 +510,7 @@ export const CandidateJourney: React.FC = () => {
         setCurrentWritingText('');
       } else {
         // Fetch Full Result!
-        const fRes = await fetch(`/api/sessions/${sessionId}/results/full`);
+        const fRes = await authedFetch(`/api/sessions/${sessionId}/results/full`);
         const report = await fRes.json();
         setFullResult(report);
         setCurrentStep('full_result');
@@ -546,7 +552,7 @@ export const CandidateJourney: React.FC = () => {
   const handleDeleteData = async () => {
     if (confirm('Are you sure you want to delete all diagnostic records from this session?')) {
       try {
-        await fetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
+        await authedFetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
       } catch {}
       if (typeof window !== 'undefined') {
         localStorage.removeItem('gepa_active_session');
@@ -1121,8 +1127,9 @@ export const CandidateJourney: React.FC = () => {
                   {receptiveResult.confidence} Confidence
                 </span>
               </div>
-              <div className="text-xs text-slate-500 max-w-md text-right">
-                {receptiveResult.confidence_reasons && receptiveResult.confidence_reasons.join(' ')}
+              <div className="text-xs text-slate-600 max-w-sm">
+                {(receptiveResult.confidenceReasons || receptiveResult.confidence_reasons) &&
+                  (receptiveResult.confidenceReasons || receptiveResult.confidence_reasons).join(' ')}
               </div>
             </div>
 
@@ -1357,7 +1364,7 @@ export const CandidateJourney: React.FC = () => {
                   initialValue={currentWritingText}
                   onChange={setCurrentWritingText}
                   onAutosave={(txt) => {
-                    fetch(`/api/sessions/${sessionId}/writing/${writingTasks[currentWritingIdx].task_id}/draft`, {
+                    authedFetch(`/api/sessions/${sessionId}/writing/${writingTasks[currentWritingIdx].task_id}/draft`, {
                       method: 'PUT',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text: txt }),
@@ -1471,9 +1478,9 @@ export const CandidateJourney: React.FC = () => {
                 </div>
               </div>
               <div className="text-xs text-slate-600 max-w-lg">
-                {fullResult.confidence_reasons && (
+                {(fullResult.confidenceReasons || fullResult.confidence_reasons) && (
                   <ul className="list-disc list-inside space-y-1">
-                    {fullResult.confidence_reasons.map((r: string, i: number) => (
+                    {(fullResult.confidenceReasons || fullResult.confidence_reasons).map((r: string, i: number) => (
                       <li key={i}>{r}</li>
                     ))}
                   </ul>
@@ -1490,16 +1497,20 @@ export const CandidateJourney: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <span className="font-bold text-slate-900 block">Grammar & Vocabulary Observed</span>
-                    {fullResult.diagnostics.language_systems.constructs_strong && (
+                    {((fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructsStrong ||
+                      (fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructs_strong) && (
                       <div>
                         <span className="font-semibold text-emerald-700">Strengths:</span>{' '}
-                        {fullResult.diagnostics.language_systems.constructs_strong.join(', ')}
+                        {((fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructsStrong ||
+                          (fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructs_strong).join(', ')}
                       </div>
                     )}
-                    {fullResult.diagnostics.language_systems.constructs_weak && (
+                    {((fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructsWeak ||
+                      (fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructs_weak) && (
                       <div>
                         <span className="font-semibold text-amber-700">Growth Areas:</span>{' '}
-                        {fullResult.diagnostics.language_systems.constructs_weak.join(', ')}
+                        {((fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructsWeak ||
+                          (fullResult.diagnostics.languageSystems || fullResult.diagnostics.language_systems)?.constructs_weak).join(', ')}
                       </div>
                     )}
                   </div>
@@ -1507,10 +1518,10 @@ export const CandidateJourney: React.FC = () => {
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <span className="font-bold text-slate-900 block">Fluency & Spoken Performance</span>
                     <p className="text-slate-600">
-                      {fullResult.diagnostics.fluency_notes && fullResult.diagnostics.fluency_notes[0]}
+                      {(fullResult.diagnostics.fluencyNotes || fullResult.diagnostics.fluency_notes)?.[0]}
                     </p>
                     <p className="text-slate-600">
-                      {fullResult.diagnostics.pronunciation_notes && fullResult.diagnostics.pronunciation_notes[0]}
+                      {(fullResult.diagnostics.pronunciationNotes || fullResult.diagnostics.pronunciation_notes)?.[0]}
                     </p>
                   </div>
                 </div>
@@ -1541,12 +1552,14 @@ export const CandidateJourney: React.FC = () => {
                 <p className="text-sm text-slate-800 leading-relaxed font-medium">
                   {fullResult.readiness.text}
                 </p>
-                {(fullResult.readiness.currency_note ||
+                {(fullResult.readiness.currencyNote ||
+                  fullResult.readiness.currency_note ||
                   READINESS_TARGETS[fullResult.readiness.target]?.currencyNote) && (
                   <div className="p-3 bg-white rounded-lg border border-brand-300 text-brand-900 text-xs flex items-center gap-2">
                     <IconShield className="w-4 h-4 text-brand-700 shrink-0" />
                     <span>
-                      {fullResult.readiness.currency_note ||
+                      {fullResult.readiness.currencyNote ||
+                        fullResult.readiness.currency_note ||
                         READINESS_TARGETS[fullResult.readiness.target]?.currencyNote}
                     </span>
                   </div>
@@ -1562,7 +1575,7 @@ export const CandidateJourney: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-200 shadow-soft">
               <div className="text-xs text-slate-600 max-w-md">
                 <span className="font-bold text-slate-900 block mb-0.5">{UI_STRINGS.results.retest_title}</span>
-                <span>{fullResult.retest_advice}</span>
+                <span>{fullResult.retestAdvice || fullResult.retest_advice}</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -1578,6 +1591,37 @@ export const CandidateJourney: React.FC = () => {
                 >
                   Print Profile
                 </button>
+              </div>
+            </div>
+
+            {/* 7. WHAT THIS RESULT IS AND IS NOT (CLAIMS POLICY) */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-soft space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                {UI_STRINGS.results.claims_title}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                  <span className="font-bold text-emerald-900 block">{UI_STRINGS.results.claims_is_title}</span>
+                  <ul className="space-y-1.5 text-slate-700">
+                    {UI_STRINGS.results.claims_is_points.map((pt, i) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <IconCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <span className="font-bold text-slate-900 block">{UI_STRINGS.results.claims_not_title}</span>
+                  <ul className="space-y-1.5 text-slate-700">
+                    {UI_STRINGS.results.claims_not_points.map((pt, i) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <IconAlert className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

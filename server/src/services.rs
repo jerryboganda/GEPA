@@ -19,15 +19,50 @@ pub struct CreateSessionParams {
     pub proctoring_metadata: Option<serde_json::Value>,
 }
 
+/// Fetch a session by id, or a candidate-safe `"Session not found"` error.
+/// Returns the owned `SessionState` plus the Postgres `version` counter
+/// needed to write it back as a compare-and-swap (see `store_session`).
+async fn load_session(state: &AppState, session_id: &str) -> Result<(SessionState, i64), String> {
+    let fetched = state
+        .session_repo
+        .get(session_id)
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or_else(|| "Session not found".to_string())?;
+    Ok((fetched.session, fetched.version))
+}
+
+/// Write a session back with the optimistic-concurrency precondition from
+/// its last read. A `Conflict` here means another request mutated the same
+/// session in between (e.g. a rapid double-submit) — surfaced to the caller
+/// as an error rather than silently clobbering the other write.
+async fn store_session(state: &AppState, session: &SessionState, version: i64) -> Result<(), String> {
+    state
+        .session_repo
+        .set(session, version)
+        .await
+        .map_err(|e| match e {
+            crate::db::DbError::Conflict => {
+                "Session was updated concurrently — please retry".to_string()
+            }
+            other => other.to_string(),
+        })
+}
+
 pub struct AssessmentService;
 
 impl AssessmentService {
-    pub fn create_session(
+    /// `candidate_uid` comes from the caller's verified token (see
+    /// `auth.rs`) — self-issued at session creation (DECISIONS.md D-021,
+    /// no external identity provider) — not invented per-call. This is what
+    /// makes the server-side `assert_owns_or_staff` ownership check mean
+    /// something.
+    pub async fn create_session(
         state: &AppState,
+        candidate_uid: String,
         params: CreateSessionParams,
-    ) -> String {
+    ) -> Result<String, String> {
         let session_id = format!("ses_{}", &Uuid::new_v4().to_string().replace('-', "")[..16]);
-        let candidate_uid = format!("usr_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]);
 
         let session = SessionState {
             session_id: session_id.clone(),
@@ -43,164 +78,180 @@ impl AssessmentService {
             last_response_time: None,
             identity_metadata: params.identity_metadata,
             proctoring_metadata: params.proctoring_metadata,
-            ls_state: ObjectiveModuleState::new("LS"),
-            rd_state: ObjectiveModuleState::new("RD"),
-            lsn_state: ObjectiveModuleState::new("LSN"),
-            spk_state: ProductiveModuleState::new("SPK"),
-            wrt_state: ProductiveModuleState::new("WRT"),
+            ls_state: RuntimeObjectiveState::new("LS"),
+            rd_state: RuntimeObjectiveState::new("RD"),
+            lsn_state: RuntimeObjectiveState::new("LSN"),
+            spk_state: RuntimeProductiveState::new("SPK"),
+            wrt_state: RuntimeProductiveState::new("WRT"),
             productive_route: None,
             result_report: None,
+            previous_reports: Vec::new(),
         };
 
-        state.sessions.write().insert(session_id.clone(), session);
-        session_id
+        state.session_repo.create(&session).await.map_err(|e| e.to_string())?;
+        Ok(session_id)
     }
 
-    pub fn get_next_unit(
+    pub async fn get_next_unit(
         state: &AppState,
         session_id: &str,
         module_name: &str,
     ) -> Option<CandidateDeliveryUnit> {
-        let mut sessions = state.sessions.write();
-        let session = sessions.get_mut(session_id)?;
-
-        let bank = state.seed_bank.read();
+        let (mut session, version) = load_session(state, session_id).await.ok()?;
         let mult = if session.accommodations.extended_time { 1.5 } else { 1.0 };
 
-        match module_name {
-            "LS" => {
-                let mod_state = &mut session.ls_state;
-                mod_state.status = "in_progress".to_string();
+        // `bank` (a non-Send `RwLockReadGuard`) and the immediately-invoked
+        // closure that borrows it are both confined to this block, so the
+        // guard is provably dropped at the closing `}` — well before the
+        // `store_session(...).await` below. (An explicit mid-function
+        // `drop(bank)` is not reliably recognised by the async-fn Send
+        // checker across a closure boundary; block-scoping is.)
+        let unit_opt: Option<CandidateDeliveryUnit> = {
+            let bank = state.seed_bank.read();
+            // Wrapped in an immediately-invoked closure so the `?`-heavy
+            // lookups below can short-circuit to `None` for this arm without
+            // skipping the session persistence at the bottom of the function.
+            (|| -> Option<CandidateDeliveryUnit> {
+            match module_name {
+                "LS" => {
+                    let mod_state = &mut session.ls_state;
+                    mod_state.status = "in_progress".to_string();
 
-                let band = mod_state.locator.band;
-                let unused_item = bank.ls_items.iter().find(|i| {
-                    i.band == band && !mod_state.used_item_ids.contains(&i.item_id)
-                })?;
+                    let band = mod_state.locator.band;
+                    let unused_item = bank
+                        .ls_items
+                        .iter()
+                        .find(|i| i.band == band && !mod_state.used_item_ids.contains(&i.item_id))?;
 
-                mod_state.used_item_ids.insert(unused_item.item_id.clone());
+                    mod_state.used_item_ids.insert(unused_item.item_id.clone());
 
-                let (shuffled, _) = shuffle_options(unused_item, session_id);
-                let payload = CandidateItemPayload {
-                    item_id: unused_item.item_id.clone(),
-                    module: "LS".to_string(),
-                    stem: unused_item.stem.clone(),
-                    options: shuffled,
-                };
+                    let (shuffled, _) = shuffle_options(unused_item, session_id);
+                    let payload = CandidateItemPayload {
+                        item_id: unused_item.item_id.clone(),
+                        module: "LS".to_string(),
+                        stem: unused_item.stem.clone(),
+                        options: shuffled,
+                    };
 
-                let seconds = if band == Band::PreA1 || band == Band::A1 { 75.0 * mult } else { 60.0 * mult };
-                let deadline = chrono::Utc::now() + chrono::Duration::seconds(seconds as i64);
+                    let seconds = if band == Band::PreA1 || band == Band::A1 { 75.0 * mult } else { 60.0 * mult };
+                    let deadline = chrono::Utc::now() + chrono::Duration::seconds(seconds as i64);
 
-                let unit = CandidateDeliveryUnit {
-                    stimulus_id: None,
-                    stimulus_text: None,
-                    stimulus_type: None,
-                    audio_url: None,
-                    items: vec![payload],
-                    deadline_at: deadline.to_rfc3339(),
-                    module_complete: false,
-                };
+                    let unit = CandidateDeliveryUnit {
+                        stimulus_id: None,
+                        stimulus_text: None,
+                        stimulus_type: None,
+                        audio_url: None,
+                        items: vec![payload],
+                        deadline_at: deadline.to_rfc3339(),
+                        module_complete: false,
+                    };
 
-                mod_state.current_delivery_unit = Some(unit.clone());
-                Some(unit)
-            }
-            "RD" => {
-                let mod_state = &mut session.rd_state;
-                mod_state.status = "in_progress".to_string();
-
-                let band = mod_state.locator.band;
-                let unused_stimulus = bank.rd_stimuli.iter().find(|s| {
-                    s.band == band
-                        && s.item_ids.iter().all(|id| !mod_state.used_item_ids.contains(id))
-                })?;
-
-                for id in &unused_stimulus.item_ids {
-                    mod_state.used_item_ids.insert(id.clone());
+                    mod_state.current_delivery_unit = Some(unit.clone());
+                    Some(unit)
                 }
+                "RD" => {
+                    let mod_state = &mut session.rd_state;
+                    mod_state.status = "in_progress".to_string();
 
-                let mut items = Vec::new();
-                for id in &unused_stimulus.item_ids {
-                    if let Some(it) = bank.rd_items.iter().find(|i| &i.item_id == id) {
-                        let (shuffled, _) = shuffle_options(it, session_id);
-                        items.push(CandidateItemPayload {
-                            item_id: it.item_id.clone(),
-                            module: "RD".to_string(),
-                            stem: it.stem.clone(),
-                            options: shuffled,
-                        });
+                    let band = mod_state.locator.band;
+                    let unused_stimulus = bank.rd_stimuli.iter().find(|s| {
+                        s.band == band
+                            && s.item_ids.iter().all(|id| !mod_state.used_item_ids.contains(id))
+                    })?;
+
+                    for id in &unused_stimulus.item_ids {
+                        mod_state.used_item_ids.insert(id.clone());
                     }
-                }
 
-                let base_sec = match band {
-                    Band::PreA1 | Band::A1 => 120.0,
-                    Band::A2 => 180.0,
-                    Band::B1 => 240.0,
-                    Band::B2 => 300.0,
-                    Band::C1 | Band::C2 => 360.0,
-                };
-                let deadline = chrono::Utc::now() + chrono::Duration::seconds((base_sec * mult) as i64);
-
-                let unit = CandidateDeliveryUnit {
-                    stimulus_id: Some(unused_stimulus.stimulus_id.clone()),
-                    stimulus_text: Some(unused_stimulus.text.clone()),
-                    stimulus_type: Some(unused_stimulus.stimulus_type.clone()),
-                    audio_url: None,
-                    items,
-                    deadline_at: deadline.to_rfc3339(),
-                    module_complete: false,
-                };
-
-                mod_state.current_delivery_unit = Some(unit.clone());
-                Some(unit)
-            }
-            "LSN" => {
-                let mod_state = &mut session.lsn_state;
-                mod_state.status = "in_progress".to_string();
-
-                let band = mod_state.locator.band;
-                let unused_stimulus = bank.lsn_stimuli.iter().find(|s| {
-                    s.band == band
-                        && s.item_ids.iter().all(|id| !mod_state.used_item_ids.contains(id))
-                })?;
-
-                for id in &unused_stimulus.item_ids {
-                    mod_state.used_item_ids.insert(id.clone());
-                }
-
-                let mut items = Vec::new();
-                for id in &unused_stimulus.item_ids {
-                    if let Some(it) = bank.lsn_items.iter().find(|i| &i.item_id == id) {
-                        let (shuffled, _) = shuffle_options(it, session_id);
-                        items.push(CandidateItemPayload {
-                            item_id: it.item_id.clone(),
-                            module: "LSN".to_string(),
-                            stem: it.stem.clone(),
-                            options: shuffled,
-                        });
+                    let mut items = Vec::new();
+                    for id in &unused_stimulus.item_ids {
+                        if let Some(it) = bank.rd_items.iter().find(|i| &i.item_id == id) {
+                            let (shuffled, _) = shuffle_options(it, session_id);
+                            items.push(CandidateItemPayload {
+                                item_id: it.item_id.clone(),
+                                module: "RD".to_string(),
+                                stem: it.stem.clone(),
+                                options: shuffled,
+                            });
+                        }
                     }
+
+                    let base_sec = match band {
+                        Band::PreA1 | Band::A1 => 120.0,
+                        Band::A2 => 180.0,
+                        Band::B1 => 240.0,
+                        Band::B2 => 300.0,
+                        Band::C1 | Band::C2 => 360.0,
+                    };
+                    let deadline = chrono::Utc::now() + chrono::Duration::seconds((base_sec * mult) as i64);
+
+                    let unit = CandidateDeliveryUnit {
+                        stimulus_id: Some(unused_stimulus.stimulus_id.clone()),
+                        stimulus_text: Some(unused_stimulus.text.clone()),
+                        stimulus_type: Some(unused_stimulus.stimulus_type.clone()),
+                        audio_url: None,
+                        items,
+                        deadline_at: deadline.to_rfc3339(),
+                        module_complete: false,
+                    };
+
+                    mod_state.current_delivery_unit = Some(unit.clone());
+                    Some(unit)
                 }
+                "LSN" => {
+                    let mod_state = &mut session.lsn_state;
+                    mod_state.status = "in_progress".to_string();
 
-                let audio_url = format!("/api/media/audio/{}.mp3", unused_stimulus.stimulus_id);
-                let deadline = chrono::Utc::now() + chrono::Duration::seconds((120.0 * mult) as i64);
+                    let band = mod_state.locator.band;
+                    let unused_stimulus = bank.lsn_stimuli.iter().find(|s| {
+                        s.band == band
+                            && s.item_ids.iter().all(|id| !mod_state.used_item_ids.contains(id))
+                    })?;
 
-                let unit = CandidateDeliveryUnit {
-                    stimulus_id: Some(unused_stimulus.stimulus_id.clone()),
-                    stimulus_text: None, // Script is strictly hidden from candidate!
-                    stimulus_type: Some("Conversation".to_string()),
-                    audio_url: Some(audio_url),
-                    items,
-                    deadline_at: deadline.to_rfc3339(),
-                    module_complete: false,
-                };
+                    for id in &unused_stimulus.item_ids {
+                        mod_state.used_item_ids.insert(id.clone());
+                    }
 
-                mod_state.current_delivery_unit = Some(unit.clone());
-                Some(unit)
+                    let mut items = Vec::new();
+                    for id in &unused_stimulus.item_ids {
+                        if let Some(it) = bank.lsn_items.iter().find(|i| &i.item_id == id) {
+                            let (shuffled, _) = shuffle_options(it, session_id);
+                            items.push(CandidateItemPayload {
+                                item_id: it.item_id.clone(),
+                                module: "LSN".to_string(),
+                                stem: it.stem.clone(),
+                                options: shuffled,
+                            });
+                        }
+                    }
+
+                    let audio_url = format!("/api/media/audio/{}.mp3", unused_stimulus.stimulus_id);
+                    let deadline = chrono::Utc::now() + chrono::Duration::seconds((120.0 * mult) as i64);
+
+                    let unit = CandidateDeliveryUnit {
+                        stimulus_id: Some(unused_stimulus.stimulus_id.clone()),
+                        stimulus_text: None, // Script is strictly hidden from candidate!
+                        stimulus_type: Some("Conversation".to_string()),
+                        audio_url: Some(audio_url),
+                        items,
+                        deadline_at: deadline.to_rfc3339(),
+                        module_complete: false,
+                    };
+
+                    mod_state.current_delivery_unit = Some(unit.clone());
+                    Some(unit)
+                }
+                _ => None,
             }
-            _ => None,
-        }
+            })()
+        };
+
+        let _ = store_session(state, &session, version).await;
+        unit_opt
     }
 
     #[allow(dead_code)]
-    pub fn submit_response(
+    pub async fn submit_response(
         state: &AppState,
         session_id: &str,
         module_name: &str,
@@ -214,69 +265,85 @@ impl AssessmentService {
             selected_option_id,
             response_ms,
         }];
-        Self::submit_responses(state, session_id, module_name, &single, replay_count)
+        Self::submit_responses(state, session_id, module_name, &single, replay_count).await
     }
 
-    pub fn submit_responses(
+    pub async fn submit_responses(
         state: &AppState,
         session_id: &str,
         module_name: &str,
         items: &[crate::api::SingleItemResponse],
         replay_count: u32,
     ) -> Result<Option<CandidateDeliveryUnit>, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+        let (mut session, version) = load_session(state, session_id).await?;
 
-        let now = std::time::Instant::now();
+        let now = chrono::Utc::now();
         if let Some(prev) = session.last_response_time {
-            if now.duration_since(prev).as_millis() < 750 {
+            if (now - prev).num_milliseconds() < 750 {
                 session.flags.push("rapid_response_burst".to_string());
             }
         }
         session.last_response_time = Some(now);
         session.state_version += 1;
 
-        let mod_state = match module_name {
-            "LS" => &mut session.ls_state,
-            "RD" => &mut session.rd_state,
-            "LSN" => &mut session.lsn_state,
-            _ => return Err("Invalid objective module".to_string()),
-        };
+        {
+            let mod_state = match module_name {
+                "LS" => &mut session.ls_state,
+                "RD" => &mut session.rd_state,
+                "LSN" => &mut session.lsn_state,
+                _ => return Err("Invalid objective module".to_string()),
+            };
 
-        let bank = state.seed_bank.read();
-        for item_resp in items {
-            let key = bank
-                .restricted_keys
-                .get(&item_resp.item_id)
-                .ok_or_else(|| format!("Restricted key not found for item {}", item_resp.item_id))?;
+            let bank = state.seed_bank.read();
+            for item_resp in items {
+                let key = bank
+                    .restricted_keys
+                    .get(&item_resp.item_id)
+                    .ok_or_else(|| format!("Restricted key not found for item {}", item_resp.item_id))?;
 
-            let scoring = score_response(
-                &item_resp.item_id,
-                item_resp.selected_option_id.as_deref(),
-                key,
-                item_resp.response_ms,
-            );
+                let permutation = if let Some(it) = bank.ls_items.iter().find(|i| i.item_id == item_resp.item_id)
+                    .or_else(|| bank.rd_items.iter().find(|i| i.item_id == item_resp.item_id))
+                    .or_else(|| bank.lsn_items.iter().find(|i| i.item_id == item_resp.item_id))
+                {
+                    let (_, p) = shuffle_options(it, session_id);
+                    p
+                } else {
+                    Vec::new()
+                };
 
-            mod_state.responses.push(ObjectiveResponseRecord {
-                response_id: format!("resp_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]),
-                session_id: session_id.to_string(),
-                item_id: item_resp.item_id.clone(),
-                module: module_name.to_string(),
-                band: key.band,
-                permutation: Vec::new(),
-                selected_option_id: item_resp.selected_option_id.clone(),
-                omitted: scoring.omitted,
-                correct: scoring.correct,
-                response_ms: item_resp.response_ms,
-                replay_count,
-                submitted_at: chrono::Utc::now().to_rfc3339(),
-                purpose: "adaptive_routing".to_string(),
-            });
+                let scoring = score_response(
+                    &item_resp.item_id,
+                    item_resp.selected_option_id.as_deref(),
+                    key,
+                    item_resp.response_ms,
+                );
 
-            mod_state.current_pair_scores.push(scoring.correct);
+                mod_state.responses.push(ObjectiveResponseRecord {
+                    response_id: format!("resp_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]),
+                    session_id: session_id.to_string(),
+                    item_id: item_resp.item_id.clone(),
+                    module: module_name.to_string(),
+                    band: key.band,
+                    permutation,
+                    selected_option_id: item_resp.selected_option_id.clone(),
+                    omitted: scoring.omitted,
+                    correct: scoring.correct,
+                    response_ms: item_resp.response_ms,
+                    replay_count,
+                    submitted_at: chrono::Utc::now().to_rfc3339(),
+                    purpose: "adaptive_routing".to_string(),
+                });
+
+                mod_state.current_pair_scores.push(scoring.correct);
+            }
         }
+
+        let mod_state = match module_name {
+            "LS" => &session.ls_state,
+            "RD" => &session.rd_state,
+            "LSN" => &session.lsn_state,
+            _ => unreachable!("validated above"),
+        };
 
         // Determine if locator unit is complete:
         // In LS: 2 items per pair (or 1 if waiting_tie)
@@ -288,26 +355,30 @@ impl AssessmentService {
                 mod_state.current_pair_scores.len() >= 2
             }
         } else {
-            // RD / LSN: 2 items per stimulus unit, or 1 item if tie
             mod_state.current_pair_scores.len() >= 2
                 || (mod_state.locator.waiting_tie && !mod_state.current_pair_scores.is_empty())
         };
 
         if !is_unit_complete {
-            drop(sessions);
-            return Ok(Self::get_next_unit(state, session_id, module_name));
+            store_session(state, &session, version).await?;
+            return Ok(Self::get_next_unit(state, session_id, module_name).await);
         }
 
-        // Compute score c for the locator unit
+        let mod_state = match module_name {
+            "LS" => &mut session.ls_state,
+            "RD" => &mut session.rd_state,
+            "LSN" => &mut session.lsn_state,
+            _ => unreachable!("validated above"),
+        };
+
+        // Score c for the locator unit.
         let score_val = if mod_state.locator.waiting_tie {
-            // For tie: 1 if first item correct, else 0
             if mod_state.current_pair_scores.first().copied().unwrap_or(false) {
                 1
             } else {
                 0
             }
         } else {
-            // For locator pair: sum of correct (0, 1, or 2)
             let mut c = 0u32;
             for &correct in mod_state.current_pair_scores.iter().take(2) {
                 if correct {
@@ -321,10 +392,10 @@ impl AssessmentService {
 
         let locator_res = step_locator(&mut mod_state.locator, score_val);
 
-        match locator_res {
+        let result = match locator_res {
             LocatorStepResult::NextPair(_) | LocatorStepResult::NextTie(_) => {
-                drop(sessions);
-                Ok(Self::get_next_unit(state, session_id, module_name))
+                store_session(state, &session, version).await?;
+                return Ok(Self::get_next_unit(state, session_id, module_name).await);
             }
             LocatorStepResult::Bracket(bracket_outcome) => {
                 mod_state.bracket = Some(bracket_outcome.bracket);
@@ -340,7 +411,6 @@ impl AssessmentService {
                     confidence_cap: None,
                 });
 
-                // Check effort flags
                 let scorings: Vec<_> = mod_state
                     .responses
                     .iter()
@@ -354,7 +424,7 @@ impl AssessmentService {
                 let effort_flags = check_effort_flags(&scorings);
                 session.flags.extend(effort_flags);
 
-                Ok(Some(CandidateDeliveryUnit {
+                Some(CandidateDeliveryUnit {
                     stimulus_id: None,
                     stimulus_text: None,
                     stimulus_type: None,
@@ -362,19 +432,16 @@ impl AssessmentService {
                     items: Vec::new(),
                     deadline_at: chrono::Utc::now().to_rfc3339(),
                     module_complete: true,
-                }))
+                })
             }
-        }
+        };
+
+        store_session(state, &session, version).await?;
+        Ok(result)
     }
 
-    pub fn compute_receptive_profile(
-        state: &AppState,
-        session_id: &str,
-    ) -> Result<ResultReport, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+    pub async fn compute_receptive_profile(state: &AppState, session_id: &str) -> Result<ResultReport, String> {
+        let (mut session, version) = load_session(state, session_id).await?;
 
         let ls_out = session.ls_state.outcome.clone().unwrap_or(ConfirmationOutcome {
             band: Some(Band::B1),
@@ -419,16 +486,8 @@ impl AssessmentService {
                 } else {
                     "measured".to_string()
                 },
-                band: if session.accommodations.transcript_access {
-                    None
-                } else {
-                    lsn_out.band
-                },
-                range: if session.accommodations.transcript_access {
-                    None
-                } else {
-                    lsn_out.range
-                },
+                band: if session.accommodations.transcript_access { None } else { lsn_out.band },
+                range: if session.accommodations.transcript_access { None } else { lsn_out.range },
                 notes: if session.accommodations.transcript_access {
                     vec!["Listening reported not measured under transcript-access accommodation pathway".to_string()]
                 } else {
@@ -454,11 +513,16 @@ impl AssessmentService {
             },
         ];
 
+        let (strong_constructs, weak_constructs) = {
+            let bank = state.seed_bank.read();
+            Self::ls_construct_diagnostics(&session, &bank)
+        };
+
         let ls_diagnostic = LanguageSystemsDiagnostic {
             band: ls_out.band,
             range: ls_out.range,
-            constructs_strong: vec!["Lexical recognition in contextual discourse".to_string(), "Core clause structure".to_string()],
-            constructs_weak: vec!["Complex relative clauses".to_string(), "Hypothetical conditionality".to_string()],
+            constructs_strong: strong_constructs,
+            constructs_weak: weak_constructs,
         };
 
         let assembly_input = AssemblyInput {
@@ -472,20 +536,50 @@ impl AssessmentService {
         };
 
         let report = assemble_result_report(assembly_input)?;
+        if let Some(old_report) = session.result_report.take() {
+            session.previous_reports.push(old_report);
+        }
         session.result_report = Some(report.clone());
+        store_session(state, &session, version).await?;
         Ok(report)
     }
 
-    pub fn get_speaking_tasks(
-        state: &AppState,
-        session_id: &str,
-    ) -> Result<Vec<SpeakingTask>, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+    /// Shared LS construct strengths/weaknesses lookup used by both the
+    /// receptive and full result assembly.
+    fn ls_construct_diagnostics(session: &SessionState, bank: &SeedBank) -> (Vec<String>, Vec<String>) {
+        let mut strong_constructs = Vec::new();
+        let mut weak_constructs = Vec::new();
+        for r in &session.ls_state.responses {
+            if let Some(it) = bank.ls_items.iter().find(|i| i.item_id == r.item_id) {
+                if let Some(ref c) = it.construct {
+                    if r.correct {
+                        if !strong_constructs.contains(c) {
+                            strong_constructs.push(c.clone());
+                        }
+                    } else if !weak_constructs.contains(c) {
+                        weak_constructs.push(c.clone());
+                    }
+                }
+            }
+        }
+        if strong_constructs.is_empty() {
+            strong_constructs = vec![
+                "Lexical recognition in contextual discourse".to_string(),
+                "Core clause structure".to_string(),
+            ];
+        }
+        if weak_constructs.is_empty() {
+            weak_constructs = vec![
+                "Complex relative clauses".to_string(),
+                "Hypothetical conditionality".to_string(),
+            ];
+        }
+        (strong_constructs, weak_constructs)
+    }
 
-        // Determine productive route if not already set
+    pub async fn get_speaking_tasks(state: &AppState, session_id: &str) -> Result<Vec<SpeakingTask>, String> {
+        let (mut session, version) = load_session(state, session_id).await?;
+
         if session.productive_route.is_none() {
             let outcomes = vec![
                 ModuleOutcomeSummary {
@@ -513,44 +607,34 @@ impl AssessmentService {
         session.spk_state.route = Some(route);
         session.spk_state.status = "in_progress".to_string();
 
-        let bank = state.seed_bank.read();
-        let mut tasks: Vec<SpeakingTask> = bank
-            .speaking_tasks
-            .iter()
-            .filter(|t| t.route == route)
-            .cloned()
-            .collect();
+        let mut tasks: Vec<SpeakingTask> = {
+            let bank = state.seed_bank.read();
+            bank.speaking_tasks.iter().filter(|t| t.route == route).cloned().collect()
+        };
 
         if session.accommodations.oral_reading_alternative {
             tasks.retain(|t| t.task_type != "oral_reading");
         }
 
         session.spk_state.task_ids = tasks.iter().map(|t| t.task_id.clone()).collect();
+        store_session(state, &session, version).await?;
         Ok(tasks)
     }
 
-    pub fn get_writing_tasks(
-        state: &AppState,
-        session_id: &str,
-    ) -> Result<Vec<WritingTask>, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+    pub async fn get_writing_tasks(state: &AppState, session_id: &str) -> Result<Vec<WritingTask>, String> {
+        let (mut session, version) = load_session(state, session_id).await?;
 
         let route = session.productive_route.unwrap_or(Route::B1B2);
         session.wrt_state.route = Some(route);
         session.wrt_state.status = "in_progress".to_string();
 
-        let bank = state.seed_bank.read();
-        let tasks: Vec<WritingTask> = bank
-            .writing_tasks
-            .iter()
-            .filter(|t| t.route == route)
-            .cloned()
-            .collect();
+        let tasks: Vec<WritingTask> = {
+            let bank = state.seed_bank.read();
+            bank.writing_tasks.iter().filter(|t| t.route == route).cloned().collect()
+        };
 
         session.wrt_state.task_ids = tasks.iter().map(|t| t.task_id.clone()).collect();
+        store_session(state, &session, version).await?;
         Ok(tasks)
     }
 
@@ -561,10 +645,7 @@ impl AssessmentService {
         _audio_path: &str,
     ) -> Result<ProductiveRating, String> {
         let (route, prompt_text, task_type, audio_script) = {
-            let sessions = state.sessions.read();
-            let session = sessions
-                .get(session_id)
-                .ok_or_else(|| "Session not found".to_string())?;
+            let (session, _) = load_session(state, session_id).await?;
             let route = session.spk_state.route.unwrap_or(Route::B1B2);
             let bank = state.seed_bank.read();
             let task = bank.speaking_tasks.iter().find(|t| t.task_id == task_id);
@@ -591,64 +672,54 @@ impl AssessmentService {
             .map_err(|e| e.to_string())?;
 
         if !rating.flags.is_empty() || !rating.usable {
-            let mut queue = state.review_queue.write();
-            queue.push(FlaggedSessionReview {
-                session_id: session_id.to_string(),
-                flag_type: rating
-                    .flags
-                    .first()
-                    .cloned()
-                    .unwrap_or_else(|| "unusable_audio".to_string()),
-                module: "SPK".to_string(),
-                details: format!("Task {}: {}", task_id, rating.rationale),
-                timestamp: chrono::Utc::now().to_rfc3339(),
-            });
+            let flag_type = rating.flags.first().cloned().unwrap_or_else(|| "unusable_audio".to_string());
+            state
+                .review_queue_repo
+                .push(&FlaggedSessionReview {
+                    session_id: session_id.to_string(),
+                    flag_type,
+                    module: "SPK".to_string(),
+                    details: format!("Task {}: {}", task_id, rating.rationale),
+                    timestamp: chrono::Utc::now().to_rfc3339(),
+                })
+                .await
+                .map_err(|e| e.to_string())?;
         }
 
         let job_id = format!("job_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]);
-        let job = BackgroundJob {
-            id: job_id.clone(),
-            job_type: "speaking_rating".to_string(),
-            session_id: Some(session_id.to_string()),
-            task_id: Some(task_id.to_string()),
-            status: "completed".to_string(),
-            attempts: 1,
-            max_attempts: 5,
-            last_error: None,
-            created_at: chrono::Utc::now().to_rfc3339(),
-            updated_at: chrono::Utc::now().to_rfc3339(),
-        };
-        state.jobs.write().insert(job_id, job);
+        state
+            .job_repo
+            .create(&BackgroundJob {
+                id: job_id,
+                job_type: "speaking_rating".to_string(),
+                session_id: Some(session_id.to_string()),
+                task_id: Some(task_id.to_string()),
+                status: "completed".to_string(),
+                attempts: 1,
+                max_attempts: 5,
+                last_error: None,
+                created_at: chrono::Utc::now().to_rfc3339(),
+                updated_at: chrono::Utc::now().to_rfc3339(),
+            })
+            .await
+            .map_err(|e| e.to_string())?;
 
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
-
+        let (mut session, version) = load_session(state, session_id).await?;
         session.state_version += 1;
         session.spk_state.ratings.push(rating.clone());
         session.spk_state.submitted_tasks.insert(task_id.to_string());
-
         if session.spk_state.submitted_tasks.len() >= session.spk_state.task_ids.len().min(8) {
             session.spk_state.status = "complete".to_string();
         }
+        store_session(state, &session, version).await?;
 
         Ok(rating)
     }
 
-    pub fn save_writing_draft(
-        state: &AppState,
-        session_id: &str,
-        task_id: &str,
-        text: String,
-    ) -> Result<(), String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
-
+    pub async fn save_writing_draft(state: &AppState, session_id: &str, task_id: &str, text: String) -> Result<(), String> {
+        let (mut session, version) = load_session(state, session_id).await?;
         session.wrt_state.drafts.insert(task_id.to_string(), text);
-        Ok(())
+        store_session(state, &session, version).await
     }
 
     pub async fn submit_writing_task(
@@ -658,10 +729,7 @@ impl AssessmentService {
         text: String,
     ) -> Result<ProductiveRating, String> {
         let (route, prompt_text, task_type) = {
-            let sessions = state.sessions.read();
-            let session = sessions
-                .get(session_id)
-                .ok_or_else(|| "Session not found".to_string())?;
+            let (session, _) = load_session(state, session_id).await?;
             let route = session.wrt_state.route.unwrap_or(Route::B1B2);
             let bank = state.seed_bank.read();
             let task = bank.writing_tasks.iter().find(|t| t.task_id == task_id);
@@ -672,14 +740,7 @@ impl AssessmentService {
 
         let mut rating = state
             .gemini_client
-            .rate_writing(
-                session_id,
-                task_id,
-                route,
-                &task_type,
-                &prompt_text,
-                &text,
-            )
+            .rate_writing(session_id, task_id, route, &task_type, &prompt_text, &text)
             .await
             .map_err(|e| e.to_string())?;
 
@@ -692,125 +753,93 @@ impl AssessmentService {
         }
 
         if !rating.flags.is_empty() || !rating.usable {
-            let mut queue = state.review_queue.write();
-            queue.push(FlaggedSessionReview {
-                session_id: session_id.to_string(),
-                flag_type: rating
-                    .flags
-                    .first()
-                    .cloned()
-                    .unwrap_or_else(|| "flagged_writing".to_string()),
-                module: "WRT".to_string(),
-                details: format!("Task {}: {}", task_id, rating.rationale),
-                timestamp: chrono::Utc::now().to_rfc3339(),
-            });
+            let flag_type = rating.flags.first().cloned().unwrap_or_else(|| "flagged_writing".to_string());
+            state
+                .review_queue_repo
+                .push(&FlaggedSessionReview {
+                    session_id: session_id.to_string(),
+                    flag_type,
+                    module: "WRT".to_string(),
+                    details: format!("Task {}: {}", task_id, rating.rationale),
+                    timestamp: chrono::Utc::now().to_rfc3339(),
+                })
+                .await
+                .map_err(|e| e.to_string())?;
         }
 
         let job_id = format!("job_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]);
-        let job = BackgroundJob {
-            id: job_id.clone(),
-            job_type: "writing_rating".to_string(),
-            session_id: Some(session_id.to_string()),
-            task_id: Some(task_id.to_string()),
-            status: "completed".to_string(),
-            attempts: 1,
-            max_attempts: 5,
-            last_error: None,
-            created_at: chrono::Utc::now().to_rfc3339(),
-            updated_at: chrono::Utc::now().to_rfc3339(),
-        };
-        state.jobs.write().insert(job_id, job);
+        state
+            .job_repo
+            .create(&BackgroundJob {
+                id: job_id,
+                job_type: "writing_rating".to_string(),
+                session_id: Some(session_id.to_string()),
+                task_id: Some(task_id.to_string()),
+                status: "completed".to_string(),
+                attempts: 1,
+                max_attempts: 5,
+                last_error: None,
+                created_at: chrono::Utc::now().to_rfc3339(),
+                updated_at: chrono::Utc::now().to_rfc3339(),
+            })
+            .await
+            .map_err(|e| e.to_string())?;
 
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
-
+        let (mut session, version) = load_session(state, session_id).await?;
         session.state_version += 1;
         session.wrt_state.drafts.insert(task_id.to_string(), text);
         session.wrt_state.ratings.push(rating.clone());
         session.wrt_state.submitted_tasks.insert(task_id.to_string());
-
         if session.wrt_state.submitted_tasks.len() >= session.wrt_state.task_ids.len().min(4) {
             session.wrt_state.status = "complete".to_string();
         }
+        store_session(state, &session, version).await?;
 
         Ok(rating)
     }
 
-    pub fn compute_full_result(
-        state: &AppState,
-        session_id: &str,
-    ) -> Result<ResultReport, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+    pub async fn compute_full_result(state: &AppState, session_id: &str) -> Result<ResultReport, String> {
+        let (mut session, version) = load_session(state, session_id).await?;
 
         let route = session.productive_route.unwrap_or(Route::B1B2);
 
         let ls_out = session.ls_state.outcome.clone().unwrap_or(ConfirmationOutcome {
-            band: Some(Band::B2),
-            range: Some((Band::B1, Band::B2)),
-            notes: vec![],
-            flags: vec![],
-            evidence_shortfall: false,
-            confidence_cap: None,
+            band: Some(Band::B2), range: Some((Band::B1, Band::B2)), notes: vec![], flags: vec![],
+            evidence_shortfall: false, confidence_cap: None,
         });
-
         let rd_out = session.rd_state.outcome.clone().unwrap_or(ConfirmationOutcome {
-            band: Some(Band::B2),
-            range: Some((Band::B1, Band::B2)),
-            notes: vec![],
-            flags: vec![],
-            evidence_shortfall: false,
-            confidence_cap: None,
+            band: Some(Band::B2), range: Some((Band::B1, Band::B2)), notes: vec![], flags: vec![],
+            evidence_shortfall: false, confidence_cap: None,
         });
-
         let lsn_out = session.lsn_state.outcome.clone().unwrap_or(ConfirmationOutcome {
-            band: Some(Band::B2),
-            range: Some((Band::B1, Band::B2)),
-            notes: vec![],
-            flags: vec![],
-            evidence_shortfall: false,
-            confidence_cap: None,
+            band: Some(Band::B2), range: Some((Band::B1, Band::B2)), notes: vec![], flags: vec![],
+            evidence_shortfall: false, confidence_cap: None,
         });
 
-        // Evaluate speaking
-        let bank = state.seed_bank.read();
-        let spk_tasks = &bank.speaking_tasks;
-        let spk_pairs: Vec<_> = session
-            .spk_state
-            .ratings
-            .iter()
-            .filter(|r| r.superseded_by.is_none() && r.usable)
-            .filter_map(|r| {
-                spk_tasks
-                    .iter()
-                    .find(|t| t.task_id == r.task_id)
-                    .map(|t| (t, r))
-            })
-            .collect();
-        let spk_decision = shared_engine::evaluate_speaking(&spk_pairs, route);
+        let (spk_decision, wrt_decision, strong_constructs, weak_constructs) = {
+            let bank = state.seed_bank.read();
 
-        // Evaluate writing
-        let wrt_tasks = &bank.writing_tasks;
-        let wrt_pairs: Vec<_> = session
-            .wrt_state
-            .ratings
-            .iter()
-            .filter(|r| r.superseded_by.is_none() && r.usable)
-            .filter_map(|r| {
-                wrt_tasks
-                    .iter()
-                    .find(|t| t.task_id == r.task_id)
-                    .map(|t| (t, r))
-            })
-            .collect();
-        let wrt_decision = shared_engine::evaluate_writing(&wrt_pairs, route);
+            let spk_pairs: Vec<_> = session
+                .spk_state
+                .ratings
+                .iter()
+                .filter(|r| r.superseded_by.is_none() && r.usable)
+                .filter_map(|r| bank.speaking_tasks.iter().find(|t| t.task_id == r.task_id).map(|t| (t, r)))
+                .collect();
+            let spk_decision = shared_engine::evaluate_speaking(&spk_pairs, route);
 
-        let spk_band = spk_decision.band.unwrap_or(route.upper_band());
-        let wrt_band = wrt_decision.band.unwrap_or(route.upper_band());
+            let wrt_pairs: Vec<_> = session
+                .wrt_state
+                .ratings
+                .iter()
+                .filter(|r| r.superseded_by.is_none() && r.usable)
+                .filter_map(|r| bank.writing_tasks.iter().find(|t| t.task_id == r.task_id).map(|t| (t, r)))
+                .collect();
+            let wrt_decision = shared_engine::evaluate_writing(&wrt_pairs, route);
+
+            let (strong, weak) = Self::ls_construct_diagnostics(&session, &bank);
+            (spk_decision, wrt_decision, strong, weak)
+        };
 
         let skills = vec![
             SkillInput {
@@ -823,21 +852,9 @@ impl AssessmentService {
             },
             SkillInput {
                 skill: "LSN".to_string(),
-                status: if session.accommodations.transcript_access {
-                    "not_measured".to_string()
-                } else {
-                    "measured".to_string()
-                },
-                band: if session.accommodations.transcript_access {
-                    None
-                } else {
-                    lsn_out.band
-                },
-                range: if session.accommodations.transcript_access {
-                    None
-                } else {
-                    lsn_out.range
-                },
+                status: if session.accommodations.transcript_access { "not_measured".to_string() } else { "measured".to_string() },
+                band: if session.accommodations.transcript_access { None } else { lsn_out.band },
+                range: if session.accommodations.transcript_access { None } else { lsn_out.range },
                 notes: if session.accommodations.transcript_access {
                     vec!["Listening reported not measured under transcript-access accommodation pathway".to_string()]
                 } else {
@@ -847,38 +864,77 @@ impl AssessmentService {
             },
             SkillInput {
                 skill: "SPK".to_string(),
-                status: "measured".to_string(),
-                band: Some(spk_band),
+                status: spk_decision.status.clone(),
+                band: spk_decision.band,
                 range: None,
-                notes: spk_decision.notes,
-                flags: spk_decision.flags,
+                notes: spk_decision.notes.clone(),
+                flags: spk_decision.flags.clone(),
             },
             SkillInput {
                 skill: "WRT".to_string(),
-                status: "measured".to_string(),
-                band: Some(wrt_band),
+                status: wrt_decision.status.clone(),
+                band: wrt_decision.band,
                 range: None,
-                notes: wrt_decision.notes,
-                flags: wrt_decision.flags,
+                notes: wrt_decision.notes.clone(),
+                flags: wrt_decision.flags.clone(),
             },
         ];
+
+        // Productive vs receptive mismatch check per 05 §2.4.
+        let mut receptive_bands: Vec<Band> = Vec::new();
+        if let Some(b) = rd_out.band { receptive_bands.push(b); }
+        if let Some(b) = lsn_out.band { receptive_bands.push(b); }
+        if let Some(b) = ls_out.band { receptive_bands.push(b); }
+
+        let mut productive_bands: Vec<Band> = Vec::new();
+        if let Some(b) = spk_decision.band { productive_bands.push(b); }
+        if let Some(b) = wrt_decision.band { productive_bands.push(b); }
+
+        let mut has_mismatch = false;
+        for &rb in &receptive_bands {
+            for &pb in &productive_bands {
+                if (rb.index() as isize - pb.index() as isize).abs() >= 2 {
+                    has_mismatch = true;
+                    break;
+                }
+            }
+            if has_mismatch {
+                break;
+            }
+        }
+
+        if has_mismatch {
+            if !session.flags.contains(&"profile_inconsistency".to_string()) {
+                session.flags.push("profile_inconsistency".to_string());
+            }
+            let already_queued = state
+                .review_queue_repo
+                .exists(session_id, "profile_inconsistency")
+                .await
+                .map_err(|e| e.to_string())?;
+            if !already_queued {
+                state
+                    .review_queue_repo
+                    .push(&FlaggedSessionReview {
+                        session_id: session_id.to_string(),
+                        flag_type: "profile_inconsistency".to_string(),
+                        module: "FULL".to_string(),
+                        details: "Productive vs receptive mismatch >= 2 bands detected".to_string(),
+                        timestamp: chrono::Utc::now().to_rfc3339(),
+                    })
+                    .await
+                    .map_err(|e| e.to_string())?;
+            }
+        }
 
         let ls_diagnostic = LanguageSystemsDiagnostic {
             band: ls_out.band,
             range: ls_out.range,
-            constructs_strong: vec![
-                "Lexical recognition in contextual discourse".to_string(),
-                "Core clause structure".to_string(),
-            ],
-            constructs_weak: vec![
-                "Complex relative clauses".to_string(),
-                "Hypothetical conditionality".to_string(),
-            ],
+            constructs_strong: strong_constructs,
+            constructs_weak: weak_constructs,
         };
 
-        let listen_to_write = Some(ListenToWriteDiagnostic {
-            accuracy: "minor_errors".to_string(),
-        });
+        let listen_to_write = Some(ListenToWriteDiagnostic { accuracy: "minor_errors".to_string() });
 
         let assembly_input = AssemblyInput {
             session_id: session_id.to_string(),
@@ -891,13 +947,16 @@ impl AssessmentService {
         };
 
         let report = assemble_result_report(assembly_input)?;
+        if let Some(old_report) = session.result_report.take() {
+            session.previous_reports.push(old_report);
+        }
         session.result_report = Some(report.clone());
+        store_session(state, &session, version).await?;
         Ok(report)
     }
 
-    pub fn delete_candidate_data(state: &AppState, session_id: &str) -> bool {
-        let mut sessions = state.sessions.write();
-        sessions.remove(session_id).is_some()
+    pub async fn delete_candidate_data(state: &AppState, session_id: &str) -> bool {
+        state.session_repo.delete(session_id).await.unwrap_or(false)
     }
 
     pub async fn rescore_session(
@@ -910,10 +969,7 @@ impl AssessmentService {
         let rubric_v = rubric_version.unwrap_or_else(|| "2.1.0-review".to_string());
         let rescore_reason = reason.unwrap_or_else(|| "Reviewer requested rescore".to_string());
 
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
+        let (mut session, version) = load_session(state, session_id).await?;
 
         let target_task_id = task_id.unwrap_or_else(|| {
             session
@@ -958,8 +1014,7 @@ impl AssessmentService {
             }
         }
 
-        let new_rating =
-            new_rating_opt.ok_or_else(|| "No rating found for task to rescore".to_string())?;
+        let new_rating = new_rating_opt.ok_or_else(|| "No rating found for task to rescore".to_string())?;
 
         if new_rating.module == "SPK" {
             session.spk_state.ratings.push(new_rating.clone());
@@ -967,13 +1022,13 @@ impl AssessmentService {
             session.wrt_state.ratings.push(new_rating.clone());
         }
 
-        drop(sessions);
-        let _ = Self::compute_full_result(state, session_id)?;
+        store_session(state, &session, version).await?;
+        let _ = Self::compute_full_result(state, session_id).await?;
 
         Ok(new_rating)
     }
 
-    pub fn human_score_session(
+    pub async fn human_score_session(
         state: &AppState,
         session_id: &str,
         task_id: &str,
@@ -981,14 +1036,8 @@ impl AssessmentService {
         at_upper: HashMap<String, u32>,
         rationale: String,
     ) -> Result<ProductiveRating, String> {
-        let mut sessions = state.sessions.write();
-        let session = sessions
-            .get_mut(session_id)
-            .ok_or_else(|| "Session not found".to_string())?;
-        let new_rating_id = format!(
-            "rat_human_{}",
-            &Uuid::new_v4().to_string().replace('-', "")[..10]
-        );
+        let (mut session, version) = load_session(state, session_id).await?;
+        let new_rating_id = format!("rat_human_{}", &Uuid::new_v4().to_string().replace('-', "")[..10]);
 
         let mut module = "SPK".to_string();
         let mut route = Route::B1B2;
@@ -1041,28 +1090,40 @@ impl AssessmentService {
             session.wrt_state.ratings.push(human_rating.clone());
         }
 
-        drop(sessions);
-        let _ = Self::compute_full_result(state, session_id)?;
+        store_session(state, &session, version).await?;
+        let _ = Self::compute_full_result(state, session_id).await?;
 
         Ok(human_rating)
     }
 
-    pub fn run_retention_job(state: &AppState) -> (usize, usize) {
-        let mut sessions = state.sessions.write();
+    /// UK GDPR data-minimisation sweep (`09_SECURITY_PRIVACY_ACCESSIBILITY.md §3`):
+    /// prune sessions older than 30 days that carry no review flags.
+    /// Returns `(total_before, pruned)`.
+    pub async fn run_retention_job(state: &AppState) -> (usize, usize) {
+        let sessions = match state.session_repo.list_all().await {
+            Ok(s) => s,
+            Err(e) => {
+                tracing::warn!("retention job: failed to list sessions: {e}");
+                return (0, 0);
+            }
+        };
         let total_before = sessions.len();
         let now = chrono::Utc::now();
+        let mut pruned = 0usize;
 
-        // UK GDPR retention: delete sessions older than 30 days unless flagged for review
-        sessions.retain(|_id, s| {
-            if let Ok(created) = chrono::DateTime::parse_from_rfc3339(&s.created_at) {
-                let age_days = (now - created.with_timezone(&chrono::Utc)).num_days();
-                age_days <= 30 || !s.flags.is_empty()
-            } else {
-                true
+        for session in sessions {
+            let should_delete = match chrono::DateTime::parse_from_rfc3339(&session.created_at) {
+                Ok(created) => {
+                    let age_days = (now - created.with_timezone(&chrono::Utc)).num_days();
+                    age_days > 30 && session.flags.is_empty()
+                }
+                Err(_) => false,
+            };
+            if should_delete && state.session_repo.delete(&session.session_id).await.unwrap_or(false) {
+                pruned += 1;
             }
-        });
+        }
 
-        let pruned = total_before - sessions.len();
         (total_before, pruned)
     }
 

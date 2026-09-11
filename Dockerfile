@@ -32,7 +32,8 @@ COPY --from=server-builder /app/target/release/server /app/server
 COPY --from=client-builder /app/client/dist /app/client/dist
 COPY seed /app/seed
 COPY assets /app/assets
-COPY server/rules /app/server/rules
+# Migrations (server/migrations/001_init.sql) are embedded into the binary at
+# compile time via `include_str!` — nothing to copy for them at runtime.
 
 # Configure runtime environment
 ENV PORT=8080 \
