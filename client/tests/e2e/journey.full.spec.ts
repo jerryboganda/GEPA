@@ -53,8 +53,20 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
     await page.waitForTimeout(5_000);
     await page.getByTestId('recorder-finish-btn').click();
     await expect(page.getByTestId('recorder-review')).toBeVisible({ timeout: 10_000 });
-    await page.getByTestId('speaking-submit').click();
-    await page.waitForTimeout(300);
+
+    // A click Playwright reports as landed doesn't guarantee React's onClick
+    // actually fired (the same race fixed in answerKeys.ts for objective
+    // options) — verify the screen actually starts moving on and retry the
+    // click itself if it doesn't, instead of a fire-and-forget click.
+    for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
+      await page.getByTestId('speaking-submit').click({ timeout: 8_000 });
+      const moved = await page
+        .getByTestId('recorder-review')
+        .waitFor({ state: 'hidden', timeout: 4_000 })
+        .then(() => true)
+        .catch(() => false);
+      if (moved) break;
+    }
   }
 
   // 7. Writing break -> Writing tasks
@@ -66,8 +78,18 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
     await page.getByTestId('writing-textarea').fill(
       'This is a deterministic end to end test response with enough words to satisfy the minimum guidance for this task and allow submission to proceed.'
     );
-    await page.getByTestId('writing-submit').click();
-    await page.waitForTimeout(300);
+
+    // Same click-succeeded-but-onClick-never-fired race as speaking-submit
+    // above — verify the screen actually transitions and retry if not.
+    for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
+      await page.getByTestId('writing-submit').click({ timeout: 8_000 });
+      const moved = await page
+        .getByTestId('screen-writing-test')
+        .waitFor({ state: 'hidden', timeout: 4_000 })
+        .then(() => true)
+        .catch(() => false);
+      if (moved) break;
+    }
   }
 
   // 8. Full result
