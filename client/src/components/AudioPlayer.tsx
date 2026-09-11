@@ -39,11 +39,15 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     const audio = audioRef.current;
     if (audio) {
       audio.currentTime = 0;
-      audio.play().catch(() => {
-        // Fallback for mock/test environments
-        simulateAudioPlayback();
-      });
+      // A real network/decode failure fires the element's own `error` event
+      // (handled by onError below, which correctly shows the reconnecting
+      // state). Falling back to simulateAudioPlayback() here on *any*
+      // rejection used to mask that — it raced a fake "playing" progress
+      // bar against the real reconnect UI and could even award a play for
+      // audio that never played. Swallow the rejection; onError owns this.
+      audio.play().catch(() => {});
     } else {
+      // No <audio> element at all (audioUrl unset) — offline/demo fallback.
       simulateAudioPlayback();
     }
   };

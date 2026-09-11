@@ -9,6 +9,29 @@ async function pressSpace(page: import('@playwright/test').Page) {
   await page.keyboard.press('Space');
 }
 
+// LSN testlets lock their radio options until the stimulus audio has played
+// once (CandidateJourney.tsx's `isListeningLocked`). Activated via keyboard
+// (Tab+Enter) to keep this test's no-mouse guarantee, then the wait for
+// real playback is skipped by dispatching `ended` directly — some stimuli
+// run 20s+, which would blow the test timeout many times over.
+async function unlockListeningIfNeeded(page: import('@playwright/test').Page) {
+  const playBtn = page.getByTestId('audio-play-btn');
+  if (!(await playBtn.isVisible().catch(() => false))) return;
+  const firstOption = page.locator('[data-testid^="option-"]').first();
+  if (!(await firstOption.isDisabled().catch(() => false))) return;
+
+  await playBtn.focus();
+  await page.keyboard.press('Enter');
+  await page.evaluate(() => {
+    document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
+  });
+  await page
+    .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
+      timeout: 5_000,
+    })
+    .catch(() => {});
+}
+
 test('candidate can reach the receptive result using only the keyboard', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByTestId('screen-start')).toBeVisible();
@@ -40,6 +63,7 @@ test('candidate can reach the receptive result using only the keyboard', async (
     }
     expect(selectedIndex).toBeGreaterThanOrEqual(0);
 
+    await unlockListeningIfNeeded(page);
     await buttons.first().focus();
     for (let i = 0; i < selectedIndex; i++) {
       await page.keyboard.press('ArrowDown');

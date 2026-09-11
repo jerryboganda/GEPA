@@ -184,6 +184,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             Organise your ideas. Recording will automatically commence when the countdown reaches zero.
           </p>
           <button
+            data-testid="recorder-skip-prep-btn"
             onClick={startRecording}
             className="px-4 py-2 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
           >
@@ -218,6 +219,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
           <div>
             <button
+              data-testid="recorder-finish-btn"
               onClick={stopRecording}
               className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm rounded-xl shadow-soft focus:ring-4 focus:ring-rose-500/20 transition-all"
             >

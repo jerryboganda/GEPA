@@ -28,8 +28,35 @@ export function correctOptionIds(): Set<string> {
   return cachedCorrectOptionIds;
 }
 
+/**
+ * LSN testlets lock their answer options until the stimulus audio has
+ * played once (CandidateJourney.tsx's `isListeningLocked`), so option
+ * buttons render `disabled`. Waiting through real playback (some stimuli
+ * run 20s+) would blow the test timeout many times over across a full
+ * journey, so this drives the exact same onEnded -> finishPlayback ->
+ * onPlayCompleted path the real UI uses, just by dispatching `ended`
+ * directly on the <audio> element instead of waiting in real time.
+ */
+async function unlockListeningIfNeeded(page: Page): Promise<void> {
+  const playBtn = page.getByTestId('audio-play-btn');
+  if (!(await playBtn.isVisible().catch(() => false))) return; // not an LSN item
+  const firstOption = page.locator('[data-testid^="option-"]').first();
+  if (!(await firstOption.isDisabled().catch(() => false))) return; // already unlocked
+
+  await playBtn.click();
+  await page.evaluate(() => {
+    document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
+  });
+  await page
+    .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
+      timeout: 5_000,
+    })
+    .catch(() => {});
+}
+
 /** Clicks the one visible option button whose id is the correct answer. */
 export async function clickCorrectOption(page: Page): Promise<void> {
+  await unlockListeningIfNeeded(page);
   const correct = correctOptionIds();
   const buttons = page.locator('[data-testid^="option-"]');
   const count = await buttons.count();
