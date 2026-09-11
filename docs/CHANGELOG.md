@@ -1,5 +1,78 @@
 # GEPA Platform Changelog
 
+## [2.0.0-beta.4] - 2026-09-11 — Real persistence, real auth, real e2e, real audio
+
+### Correction to prior entries
+An independent audit on 2026-09-11 found this changelog's earlier "100%"/"PASS" claims did not hold against a clean
+checkout: the workspace did not compile (`server/src/services.rs` was missing a struct field), all persistence was an
+in-process `HashMap` despite `firestore.rules`/`storage.rules` existing as decoration, there was no authentication
+anywhere, no e2e/accessibility test of any kind existed despite being named repeatedly in the spec, and
+`tools/audio_producer` fabricated QC numbers without ever calling a TTS provider. This entry documents what was
+**actually built and verified** to close every one of those gaps. Treat entries before this one as the historical
+record of what was *attempted*, not a reliable statement of what works.
+
+### Architecture change: Postgres + self-issued JWT (no Firebase) — DECISIONS.md D-021
+Mid-fix, the product owner overrode the spec's Firestore/Firebase Auth design outright: no Firebase in any form,
+Postgres for storage, plain Rust for auth, and nothing DB-dependent runs on a local dev machine — only in GitHub
+Actions (a `postgres:16-alpine` service container, `.github/workflows/ci.yml`).
+- `server/src/db.rs` (new): `PostgresClient` over `tokio-postgres` + `deadpool-postgres` — no ORM/query-macro crate.
+  Three tables (`sessions`, `jobs`, `review_queue`) share one JSONB-document shape so the whole domain model
+  round-trips through `serde_json` unchanged; optimistic concurrency via an integer `version` column.
+- `server/src/auth.rs` (rewritten): self-issued HS256 JWTs (`JwtService`). Candidates get a token minted at session
+  creation (`POST /api/sessions` now returns `{session_id, token, next_step}`) — no external identity provider at
+  all. Reviewers/admins log in with email+password against a new `staff_users` table (Argon2 hashing,
+  `POST /api/auth/login`); `tools/create_staff_user` provisions accounts. `AuthUser`/`StaffAuth`/`AdminAuth` Axum
+  extractors gate every session/review/admin route — previously nothing did.
+- `server/migrations/001_init.sql` (new): schema, embedded into the binary via `include_str!`, run idempotently at
+  startup.
+- Fixed the compile-breaking missing `previous_reports` field and a non-Send `RwLockReadGuard`-held-across-`.await`
+  bug in `get_next_unit` (async-fn Send checker issue — fixed via block-scoping the guard).
+
+### Real e2e + accessibility suite (was: nothing)
+- `client/playwright.config.ts` + `client/tests/e2e/*`: the seven spec files named in `10_TESTING_QA.md §4`
+  (`journey.full`, `journey.keyboardOnly`, `journey.partial`, `resume`, `claims`, `a11y`, `security`), Chromium only.
+- `POST /api/test/e2e/sessions` (new, `E2E_MODE`-gated, 404s otherwise): drives the real `AssessmentService` to
+  fast-forward a session to any point, for deterministic seeding — never a mock of the engine.
+- `data-testid` retrofit across `CandidateJourney.tsx` and the shared components (`AudioPlayer`, `AudioRecorder`,
+  `Timer`, `WritingEditor`).
+- Real gap found and fixed while writing `journey.keyboardOnly.spec.ts`: the objective-item radio group had no
+  arrow-key navigation at all (06 §3 requires it) — added a proper roving-tabindex radiogroup.
+- Real gap found and fixed while writing `resume.spec.ts`: `AudioPlayer.tsx` had no `onError` handler — a network
+  failure mid-play left the player permanently stuck ("isPlaying" never reset). Added a reconnect state that resets
+  playback without consuming a play (06 §5: "resume replays the same audio, counts as first play").
+- Removed all `any` typing from `CandidateJourney.tsx` in favour of the existing zod-inferred types
+  (`client/src/schemas/api.ts`), which surfaced a real bug: the Speaking player read `prep_seconds`/
+  `max_speak_seconds`/`allows_rerecord` (snake_case) from tasks whose real wire format is camelCase
+  (`prepSeconds`/`maxSpeakSeconds`/`allowsRerecord` — `shared_engine::models::SpeakingTask` renames only those three
+  fields). The client was silently ignoring the server's real per-task timing and always using hardcoded defaults;
+  now fixed.
+
+### Real audio production (was: fabricated QC numbers, zero actual audio files)
+- `tools/audio_producer` rewritten: a real `TtsProvider` trait (`provider.rs`) with `FliteProvider` (ffmpeg's bundled
+  `flite` voices — zero cost, offline, no account) as the default, and a `GeminiTtsProvider` stub that auto-activates
+  the moment `GEMINI_API_KEY` is set (untested against a live key — logged in `QUESTIONS.md`).
+- Real ffmpeg pipeline (`ffmpeg.rs`): per-segment synthesis, inter-turn silence concatenation, silence trim, 0.5s/1.0s
+  lead/tail padding, two-pass `loudnorm` to -16 LUFS / -1.5 dBTP, opus + mp3 encoding, and a last-resort `atempo`
+  rate correction (±7% max, per spec §3) for the offline voice's fixed pace.
+- Produced real audio for all 52 assets. 33/52 land within the ±8% WPM tolerance; the remaining 19 are honestly
+  flagged (`in_tolerance: false` in `assets/qc_report.json`), concentrated in the deliberately slow Pre-A1/A1/A2
+  bands where flite's fixed speaking rate can't be brought within range by the spec's ±7% stretch limit — a real
+  content-engineering constraint (DECISIONS.md D-019, QUESTIONS.md Q-007), not a processing failure. The build no
+  longer fails on this; it only fails on a genuine synthesis/processing error.
+- `assets/media_manifest.json` (new) links real files to asset ids; `server/src/api.rs::serve_audio` and
+  `get_stimulus_audio_url` now serve the real produced files instead of always returning a synthetic tone.
+
+### Verification summary (run this session, on this machine, without touching a local database)
+- `cargo check/test/clippy --workspace`: clean, 47/47 engine tests, 0 clippy warnings.
+- `cargo run --bin copy_lint`: 0 forbidden-wording violations.
+- `npm --prefix client run typecheck` (`tsc --noEmit`): 0 errors.
+- `npm --prefix client run build`: production build succeeds.
+- `cargo run --bin audio_producer`: 52/52 real assets produced.
+- **Not yet verified**: anything requiring a live Postgres connection (session CRUD, auth end-to-end, rules
+  enforcement) or a real browser (the e2e suite itself) — these need the GitHub Actions Postgres service container,
+  which is currently blocked account-wide by a billing issue on the `jerryboganda` GitHub account (unrelated to this
+  work; see the open PR for status).
+
 ## [2.0.0-beta] - 2026-09-08
 
 ### Added & Fixed

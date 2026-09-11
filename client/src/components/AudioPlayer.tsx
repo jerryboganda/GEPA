@@ -17,6 +17,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [playCount, setPlayCount] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [reconnecting, setReconnecting] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       onPlayStarted();
     }
 
+    setReconnecting(false);
     setIsPlaying(true);
     const audio = audioRef.current;
     if (audio) {
@@ -75,7 +77,13 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const isLocked = playCount >= 2 || isPlaying;
 
   return (
-    <div className={`p-4 rounded-xl border border-slate-200 bg-slate-50/80 shadow-soft ${className}`}>
+    <div data-testid="audio-player" className={`p-4 rounded-xl border border-slate-200 bg-slate-50/80 shadow-soft ${className}`}>
+      {reconnecting && (
+        <div data-testid="audio-reconnecting" className="mb-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+          <div className="w-3.5 h-3.5 border-2 border-amber-400/40 border-t-amber-700 rounded-full animate-spin shrink-0" />
+          <span>Checking your connection… press Play to try again — this will not count as an extra play.</span>
+        </div>
+      )}
       {audioUrl && (
         <audio
           ref={audioRef}
@@ -87,6 +95,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             }
           }}
           onEnded={finishPlayback}
+          onError={() => {
+            // Disconnection/buffer failure mid-play (06 §5): resume replays
+            // the same audio and it still counts as the play that was
+            // interrupted, not a new one — so this resets playback state
+            // WITHOUT touching playCount, letting the candidate press Play
+            // again for the same play slot.
+            setIsPlaying(false);
+            setProgress(0);
+            setReconnecting(true);
+          }}
           className="hidden"
           preload="auto"
         />
@@ -115,6 +133,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
+            data-testid="audio-play-btn"
             onClick={handlePlay}
             disabled={isLocked}
             aria-label={

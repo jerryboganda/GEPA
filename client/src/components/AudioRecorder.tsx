@@ -172,10 +172,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className={`p-6 rounded-2xl border border-slate-200 bg-white shadow-soft ${className}`}>
+    <div data-testid="audio-recorder" className={`p-6 rounded-2xl border border-slate-200 bg-white shadow-soft ${className}`}>
       {/* Preparation Phase */}
       {phase === 'prep' && (
-        <div className="text-center py-6 space-y-4">
+        <div data-testid="recorder-prep" className="text-center py-6 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-800 text-xs font-semibold uppercase tracking-wider">
             Preparation Time
           </div>
@@ -194,7 +194,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Recording Phase */}
       {phase === 'recording' && (
-        <div className="text-center py-6 space-y-6">
+        <div data-testid="recorder-recording" className="text-center py-6 space-y-6">
           <div className="flex items-center justify-center gap-2">
             <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping" />
             <span className="text-sm font-semibold text-rose-700">Recording Live</span>
@@ -229,7 +229,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Quality Check Failed (Technical re-record) */}
       {phase === 'quality_failed' && (
-        <div className="text-center py-6 space-y-4">
+        <div data-testid="recorder-quality-failed" className="text-center py-6 space-y-4">
           <div className="w-12 h-12 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
             <IconAlert className="w-6 h-6" />
           </div>
@@ -248,7 +248,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Review Phase */}
       {phase === 'review' && (
-        <div className="text-center py-6 space-y-5">
+        <div data-testid="recorder-review" className="text-center py-6 space-y-5">
           <div className="w-10 h-10 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
             <IconCheck className="w-5 h-5" />
           </div>
@@ -266,6 +266,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           <div className="flex items-center justify-center gap-3 pt-2">
             {allowsRerecord && !rerecordUsed && (
               <button
+                data-testid="recorder-rerecord-btn"
                 onClick={handleRerecord}
                 className="px-4 py-2 border border-slate-300 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >

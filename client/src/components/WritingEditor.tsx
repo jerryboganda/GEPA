@@ -69,7 +69,7 @@ export const WritingEditor: React.FC<WritingEditorProps> = ({
                   : 'bg-amber-50 border-amber-300 text-amber-800'
               }`}
             >
-              <span>{wordCount} words</span>
+              <span data-testid="writing-word-count">{wordCount} words</span>
               <span className="text-slate-400 font-normal">|</span>
               <span className="font-normal text-slate-600">
                 Aim for {wordGuidance.min}–{wordGuidance.max} words
@@ -90,6 +90,7 @@ export const WritingEditor: React.FC<WritingEditorProps> = ({
       {/* Editor Area */}
       <div className="flex-1 p-4">
         <textarea
+          data-testid="writing-textarea"
           value={text}
           onChange={handleChange}
           onPaste={handlePaste}

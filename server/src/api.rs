@@ -981,7 +981,6 @@ pub async fn admin_metrics_report(_admin: AdminAuth, State(state): State<SharedS
 
 #[derive(Debug, Deserialize)]
 pub struct E2ESeedRequest {
-    pub candidate_uid: String,
     pub target_goal: Option<String>,
     pub answer_strategy: String,
     pub stop_after: String,
@@ -991,10 +990,10 @@ pub struct E2ESeedRequest {
 /// suite (`10_TESTING_QA.md §4`). 404s unless `E2E_MODE=true` — never
 /// reachable in a normal deployment. Drives the *real* `AssessmentService`
 /// functions (not a mock), so a passing e2e run exercises the real routing/
-/// scoring engine end to end. Takes the caller's `candidate_uid` (the
-/// anonymous uid the test browser already obtained from the Auth Emulator)
-/// so the fast-forwarded session and the live browser session are the same
-/// session — see docs/CHANGELOG.md Phase 2 notes.
+/// scoring engine end to end. Mints its own candidate identity and a real
+/// token for it (same as `create_session`) and returns both, so the test can
+/// `localStorage`-seed `gepa_active_session`/`gepa_token` and reload the
+/// real UI to continue the journey from exactly where this left off.
 pub async fn e2e_seed_session(
     State(state): State<SharedState>,
     Json(req): Json<E2ESeedRequest>,
@@ -1003,9 +1002,10 @@ pub async fn e2e_seed_session(
         return Err(StatusCode::NOT_FOUND);
     }
 
+    let candidate_uid = format!("usr_e2e_{}", &Uuid::new_v4().to_string().replace('-', "")[..12]);
     let session_id = AssessmentService::create_session(
         &state,
-        req.candidate_uid,
+        candidate_uid.clone(),
         crate::services::CreateSessionParams {
             target_goal: req.target_goal,
             ..Default::default()
@@ -1084,5 +1084,10 @@ pub async fn e2e_seed_session(
         let _ = AssessmentService::compute_full_result(&state, &session_id).await;
     }
 
-    Ok(Json(json!({ "session_id": session_id, "reached": req.stop_after })))
+    let token = state
+        .jwt
+        .issue(&candidate_uid, None, chrono::Duration::days(auth::CANDIDATE_TOKEN_TTL_DAYS))
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(Json(json!({ "session_id": session_id, "token": token, "reached": req.stop_after })))
 }

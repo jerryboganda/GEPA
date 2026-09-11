@@ -8,3 +8,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.10"
 chrono = { version = "0.4", features = ["serde"] }
+# Blocking client (not the async one already used by `server`): this is a
+# one-shot batch CLI, not worth pulling tokio into for one optional HTTP call.
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+base64 = "0.22"

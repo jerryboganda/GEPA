@@ -61,6 +61,7 @@ export const Timer: React.FC<TimerProps> = ({ deadlineAt, onTimeout, className =
             : 'bg-slate-50 border-slate-200 text-slate-700'
         }`}
         aria-label={`Time remaining: ${formatted}`}
+        data-testid="timer-countdown"
       >
         <IconClock className={`w-4 h-4 ${isUrgent ? 'text-rose-600' : isWarning ? 'text-amber-600' : 'text-slate-500'}`} />
         <span>{formatted}</span>
