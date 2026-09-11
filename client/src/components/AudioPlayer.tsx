@@ -27,6 +27,21 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     setProgress(0);
   }, [audioUrl]);
 
+  // Disconnection/buffer failure (06 §5): resume replays the same audio and
+  // it still counts as the play that was interrupted, not a new one — so
+  // this resets playback state WITHOUT touching playCount, letting the
+  // candidate press Play again for the same play slot. Two independent
+  // signals can mean "this play didn't happen": the element's own `error`
+  // DOM event (a fresh load genuinely failed), and play()'s promise
+  // rejecting (which also covers retrying play() on an element that's
+  // already in an error state, where the browser may not re-attempt
+  // loading or refire `error` at all). Both must land here, not just one.
+  const handlePlaybackFailure = () => {
+    setIsPlaying(false);
+    setProgress(0);
+    setReconnecting(true);
+  };
+
   const handlePlay = () => {
     if (playCount >= 2 || isPlaying) return;
 
@@ -39,13 +54,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     const audio = audioRef.current;
     if (audio) {
       audio.currentTime = 0;
-      // A real network/decode failure fires the element's own `error` event
-      // (handled by onError below, which correctly shows the reconnecting
-      // state). Falling back to simulateAudioPlayback() here on *any*
-      // rejection used to mask that — it raced a fake "playing" progress
-      // bar against the real reconnect UI and could even award a play for
-      // audio that never played. Swallow the rejection; onError owns this.
-      audio.play().catch(() => {});
+      audio.play().catch(handlePlaybackFailure);
     } else {
       // No <audio> element at all (audioUrl unset) — offline/demo fallback.
       simulateAudioPlayback();
@@ -99,16 +108,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             }
           }}
           onEnded={finishPlayback}
-          onError={() => {
-            // Disconnection/buffer failure mid-play (06 §5): resume replays
-            // the same audio and it still counts as the play that was
-            // interrupted, not a new one — so this resets playback state
-            // WITHOUT touching playCount, letting the candidate press Play
-            // again for the same play slot.
-            setIsPlaying(false);
-            setProgress(0);
-            setReconnecting(true);
-          }}
+          onError={handlePlaybackFailure}
           className="hidden"
           preload="auto"
         />

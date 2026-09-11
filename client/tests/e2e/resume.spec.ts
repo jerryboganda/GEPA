@@ -20,8 +20,12 @@ test('a play error shows the reconnect state and does not consume a play', async
   await page.getByTestId('resume-detected-btn').click();
   await expect(page.getByTestId('screen-objective-test')).toBeVisible({ timeout: 20_000 });
 
-  // Force the audio element to error out on this one response.
+  // Force the audio element to error out on this one response. The stimulus
+  // has `preload="auto"`, so by the time the screen is visible it may
+  // already be fully buffered — aborting only *future* requests wouldn't
+  // touch an already-downloaded clip, so force a fresh load attempt too.
   await page.route('**/api/media/audio/**', (route) => route.abort());
+  await page.evaluate(() => document.querySelector('audio')?.load());
   const playBtn = page.getByTestId('audio-play-btn');
   if (await playBtn.isVisible().catch(() => false)) {
     await playBtn.click();

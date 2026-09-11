@@ -46,7 +46,11 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
       await skipPrepBtn.click();
     }
     await expect(page.getByTestId('recorder-recording')).toBeVisible({ timeout: 10_000 });
-    await page.waitForTimeout(3_500); // clears the recorder's >=3s quality-gate floor
+    // The recorder's quality gate needs >=3s of *elapsed 1s ticks*, not wall
+    // clock time — 3.5s left no margin against tick-boundary jitter and
+    // occasionally landed on only 2 elapsed ticks, tripping quality_failed
+    // instead of review. 5s gives a full tick of headroom.
+    await page.waitForTimeout(5_000);
     await page.getByTestId('recorder-finish-btn').click();
     await expect(page.getByTestId('recorder-review')).toBeVisible({ timeout: 10_000 });
     await page.getByTestId('speaking-submit').click();
