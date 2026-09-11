@@ -94,6 +94,8 @@ export async function clickCorrectOption(page: Page): Promise<void> {
           .getAttribute('aria-checked')
           .then((v) => v === 'true')
           .catch(() => false);
+        // TEMPORARY diagnostic for the residual objective-answering flakiness.
+        console.log('[diag] click option', optionIds[matchIdx], 'idx', matchIdx, 'of', optionIds.length, 'attempt', clickAttempt, 'checked', checked);
         if (checked) return;
         await page.waitForTimeout(200);
       }
