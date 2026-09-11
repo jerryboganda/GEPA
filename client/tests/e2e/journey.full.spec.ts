@@ -86,25 +86,30 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
 
   for (let i = 0; i < 6; i++) {
     if (!(await page.getByTestId('screen-writing-test').isVisible().catch(() => false))) break;
-    await page.getByTestId('writing-textarea').fill(
-      'This is a deterministic end to end test response with enough words to satisfy the minimum guidance for this task and allow submission to proceed.'
-    );
-    // writing-submit is disabled while currentWritingText is empty — fill()
-    // dispatches the input event, but React's onChange -> setCurrentWritingText
-    // needs a render to actually reach the parent's state. Wait for that
-    // instead of assuming it already landed by the time we click.
-    await expect(page.getByTestId('writing-submit')).toBeEnabled({ timeout: 5_000 });
 
-    // Same click-succeeded-but-onClick-never-fired race as speaking-submit
-    // above — verify the screen actually transitions and retry if not.
-    for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
-      await page.getByTestId('writing-submit').click({ timeout: 8_000 });
-      const moved = await page
+    // Re-fills on every attempt rather than once up front: writing-submit
+    // is disabled while currentWritingText is empty, and a single fill()
+    // followed by a single wait-then-click left a gap where the enabled
+    // state could apparently flicker back to disabled between the wait and
+    // the click. Re-filling (a no-op if the value already stuck) and
+    // re-checking enabled immediately before every click attempt is more
+    // robust than assuming one fill holds for the whole retry loop.
+    let submitted = false;
+    for (let attempt = 0; attempt < 5 && !submitted; attempt++) {
+      await page.getByTestId('writing-textarea').fill(
+        'This is a deterministic end to end test response with enough words to satisfy the minimum guidance for this task and allow submission to proceed.'
+      );
+      try {
+        await expect(page.getByTestId('writing-submit')).toBeEnabled({ timeout: 3_000 });
+        await page.getByTestId('writing-submit').click({ timeout: 3_000 });
+      } catch {
+        continue;
+      }
+      submitted = await page
         .getByTestId('screen-writing-test')
         .waitFor({ state: 'hidden', timeout: 4_000 })
         .then(() => true)
         .catch(() => false);
-      if (moved) break;
     }
   }
 
