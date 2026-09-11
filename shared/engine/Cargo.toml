@@ -1,0 +1,13 @@
+[package]
+name = "shared_engine"
+version = "0.1.0"
+edition = "2021"
+description = "Pure deterministic diagnostic engine for GEPA v2"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.10"
+thiserror = "1.0"
+
+[dev-dependencies]
