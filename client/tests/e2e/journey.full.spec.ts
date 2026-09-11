@@ -73,29 +73,32 @@ test('candidate can complete start -> worked example -> LS/RD/LSN -> receptive -
   await expect(page.getByTestId('screen-writing-break')).toBeVisible({ timeout: 15_000 });
   await page.getByTestId('writing-break-begin').click();
 
+  // Unlike mic-check-begin-speaking (a plain synchronous setCurrentStep),
+  // writing-break-begin's handler awaits a real fetch (handleProceedToWriting)
+  // before transitioning. The loop's own isVisible() checks below are
+  // intentionally instant one-shot polls (used to detect "no more tasks,
+  // module already done" once we're actually in the loop) — but running
+  // that same instant check as the *first* one, right after the click, could
+  // race ahead of the fetch and wrongly conclude the module was already
+  // skipped, silently bypassing every writing task and hanging the rest of
+  // the test on a screen transition that was simply never triggered.
+  await expect(page.getByTestId('screen-writing-test')).toBeVisible({ timeout: 15_000 });
+
   for (let i = 0; i < 6; i++) {
     if (!(await page.getByTestId('screen-writing-test').isVisible().catch(() => false))) break;
     await page.getByTestId('writing-textarea').fill(
       'This is a deterministic end to end test response with enough words to satisfy the minimum guidance for this task and allow submission to proceed.'
     );
 
-    // TEMPORARY diagnostic: confirm the textarea value actually landed and
-    // the submit button is genuinely enabled before we ever click it.
-    const taVal = await page.getByTestId('writing-textarea').inputValue();
-    const disabled = await page.getByTestId('writing-submit').isDisabled();
-    console.log('[diag] writing textarea len', taVal.length, 'submit disabled', disabled);
-
     // Same click-succeeded-but-onClick-never-fired race as speaking-submit
     // above — verify the screen actually transitions and retry if not.
     for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
       await page.getByTestId('writing-submit').click({ timeout: 8_000 });
-      console.log('[diag] writing-submit clicked, attempt', clickAttempt);
       const moved = await page
         .getByTestId('screen-writing-test')
         .waitFor({ state: 'hidden', timeout: 4_000 })
         .then(() => true)
         .catch(() => false);
-      console.log('[diag] moved on?', moved);
       if (moved) break;
     }
   }
