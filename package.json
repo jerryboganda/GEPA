@@ -1,0 +1,22 @@
+{
+  "name": "gepa-v2-beta",
+  "version": "2.0.0-beta",
+  "private": true,
+  "scripts": {
+    "dev:server": "cargo run --bin server",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "npm run dev:server",
+    "build:client": "npm --prefix client run build",
+    "typecheck": "cargo check --workspace && npm --prefix client run typecheck",
+    "lint": "cargo clippy --workspace -- -D warnings && cargo run --bin copy_lint",
+    "copy-lint": "cargo run --bin copy_lint",
+    "seed:validate": "cargo run --bin seed_validator",
+    "seed:load": "cargo run --bin seed_loader",
+    "forms:check": "cargo run --bin forms_checker",
+    "audio:produce": "cargo run --bin audio_producer",
+    "report:exposure": "cargo run --bin exposure_reporter",
+    "retention:run": "cargo run --bin retention_runner",
+    "test": "cargo test --workspace",
+    "verify": "npm run seed:validate && npm run forms:check && npm run audio:produce && npm run report:exposure && npm run typecheck && npm run lint && npm run test && npm run build:client"
+  }
+}
