@@ -1,0 +1,9 @@
+﻿target/
+client/node_modules/
+client/dist/
+.git/
+.vscode/
+.gemini/
+reports/*.csv
+reports/*.json
+*.log

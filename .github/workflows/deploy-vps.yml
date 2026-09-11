@@ -1,0 +1,109 @@
+name: Deploy Pre-built Container (Production VPS Zero-Compute)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      vps_host:
+        description: 'Optional override for VPS host (IP or FQDN)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build & Package on GHA Runners
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/gepa-server
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || startsWith(github.ref, 'refs/tags/v') }}
+
+      - name: Build and Push Docker Image (Exclusively on GHA)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-to-vps:
+    name: Zero-Compute Deployment to Production VPS
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Check VPS Secrets Configuration
+        id: check-secrets
+        run: |
+          if [ -n "${{ secrets.VPS_HOST }}" ] && [ -n "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "configured=true" >> $GITHUB_OUTPUT
+          else
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "::notice::VPS secrets (VPS_HOST, VPS_SSH_KEY) are not set. Pre-built image is available in GHCR for immediate zero-compute pull."
+          fi
+
+      - name: SSH to Production VPS & Pull Pre-built Container
+        if: steps.check-secrets.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ github.event.inputs.vps_host || secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            echo "=== Zero-Compute VPS Deploy: Pulling Pre-built Container Image ==="
+            cd /opt/gepa || mkdir -p /opt/gepa && cd /opt/gepa
+            
+            # Authenticate with GHCR if needed
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            
+            # Pull pre-compiled runtime image directly (0 CPU build load on VPS)
+            export GEPA_IMAGE_REPO="${{ github.repository }}"
+            export GEPA_TAG="latest"
+            docker compose -f docker-compose.prod.yml pull
+            
+            # Restart service with zero-downtime recreation
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            
+            # Minimize disk usage on production host
+            docker image prune -f
+            
+            # Smoke test healthcheck
+            sleep 5
+            curl --fail --retry 5 --retry-connrefused http://localhost:8080/healthz || exit 1
+            echo "=== GEPA Production VPS Successfully Serving Application ==="

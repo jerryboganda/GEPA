@@ -1,0 +1,36 @@
+# Production Zero-Compute Deployment Configuration
+# All compilation, testing, asset validation, and container builds are offloaded to GitHub Actions.
+# The production VPS strictly pulls and executes the lightweight pre-built runtime container.
+# Reference: docs/02_ARCHITECTURE.md §1 & §8, D-016, D-018
+
+services:
+  gepa-server:
+    image: ghcr.io/${GEPA_IMAGE_REPO:-jerryboganda/gepa}/gepa-server:${GEPA_TAG:-latest}
+    container_name: gepa-server-prod
+    restart: always
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - PORT=8080
+      - CLIENT_DIST=/app/client/dist
+      - SEED_DIR=/app/seed
+      - RUST_LOG=server=info,tower_http=info
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SIGNED_URL_TTL_SECONDS=${SIGNED_URL_TTL_SECONDS:-600}
+      - FEATURE_PRETEST_ITEMS=${FEATURE_PRETEST_ITEMS:-false}
+      - FEATURE_AI_DETECTOR_FLAGS=${FEATURE_AI_DETECTOR_FLAGS:-false}
+      - BETA_CONFIDENCE_CAP=${BETA_CONFIDENCE_CAP:-Moderate}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 128M

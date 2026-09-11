@@ -1,0 +1,35 @@
+﻿name: Scheduled Maintenance & Telemetry (Offload)
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  maintenance:
+    name: GDPR Purge & Item Telemetry Batch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo Dependencies
+        uses: swatinem/rust-cache@v2
+
+      - name: Execute GDPR Data Retention Purge
+        run: cargo run --bin retention_runner
+
+      - name: Generate Item Exposure & Latency Report
+        run: cargo run --bin exposure_reporter
+
+      - name: Archive Exposure Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: exposure-telemetry-report
+          path: reports/gepa_exposure_report.csv
+          retention-days: 30

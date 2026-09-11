@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 .pnp
 .pnp.js
@@ -10,6 +10,11 @@ test-results/
 # Production build
 dist/
 build/
+target/
+client/dist/
+.astro/
+client/.astro/
+
 
 # Environment files
 .env
