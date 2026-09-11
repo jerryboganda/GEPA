@@ -48,7 +48,12 @@ export default defineConfig({
       url: 'http://localhost:8080/healthz',
       timeout: 180_000,
       reuseExistingServer: !process.env.CI,
-      env: { E2E_MODE: 'true', PORT: '8080', CLIENT_DIST: path.resolve(__dirname, 'dist') },
+      env: { E2E_MODE: 'true', PORT: '8080', CLIENT_DIST: path.resolve(__dirname, 'dist'), RUST_LOG: 'server=info,tower_http=debug' },
+      // TEMPORARY: surfaces per-request tower_http traces (already wired in
+      // main.rs, just below the default log level) for the journey.full
+      // writing/full-result stall.
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
     {
       command: 'npm run dev',
