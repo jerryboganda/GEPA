@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ReviewerDashboard } from '../components/ReviewerDashboard';
+---
+
+<Layout title="GEPA Reviewer Console — Evaluator Queue">
+  <ReviewerDashboard client:only="react" />
+</Layout>

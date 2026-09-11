@@ -1,0 +1,36 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-surface-base: #f8fafc;
+    --color-text-primary: #0f172a;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.high-contrast {
+  --color-surface-base: #000000;
+  --color-text-primary: #ffffff;
+}
+
+.high-contrast body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast button:focus-visible,
+.high-contrast input:focus-visible,
+.high-contrast a:focus-visible {
+  outline: 3px solid #facc15 !important;
+  outline-offset: 2px !important;
+}

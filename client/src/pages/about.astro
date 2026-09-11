@@ -1,0 +1,241 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { IconShield, IconCheck, IconAlert } from '../components/Icons';
+---
+
+<Layout title="GEPA Technical Manual & CEFR Scope">
+  <div class="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-500 selection:text-white">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <a href="/" class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg bg-brand-800 text-white font-black text-lg flex items-center justify-center tracking-tight shadow-soft">
+              G
+            </div>
+            <span class="font-bold text-slate-900 tracking-tight text-lg">GEPA</span>
+          </a>
+          <span class="px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-brand-700 bg-brand-50 rounded-full border border-brand-200">
+            Technical Manual
+          </span>
+        </div>
+
+        <nav class="flex items-center gap-3 text-xs font-semibold">
+          <a href="/" class="px-3 py-1.5 text-brand-800 hover:bg-brand-50 rounded-lg transition-colors">
+            Assessment Start
+          </a>
+          <a href="/review" class="px-3 py-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+            Reviewer Queue
+          </a>
+          <a href="/admin" class="px-3 py-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+            Admin Ops
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-10">
+      <!-- Title Block -->
+      <div class="space-y-3 border-b border-slate-200 pb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-800 text-xs font-semibold">
+          <IconShield class="w-3.5 h-3.5 text-brand-700" />
+          <span>GEPA Diagnostic Placement Assessment Beta (v2.0)</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Technical Specification & Operational Blueprint
+        </h1>
+        <p class="text-base text-slate-600 leading-relaxed">
+          Complete construct definitions, delivery mechanics, claims guardrails, and accessibility standards for the GEPA computer-adaptive diagnostic assessment.
+        </p>
+      </div>
+
+      <!-- CEFR Scope Note (Mandatory PRD §5) -->
+      <section class="p-6 bg-brand-50/70 border-2 border-brand-300 rounded-2xl space-y-3 shadow-soft">
+        <div class="flex items-center gap-2 text-brand-900 font-bold text-sm uppercase tracking-wider">
+          <IconAlert class="w-4 h-4 text-brand-700" />
+          <span>CEFR Scope Note & Construct Boundary</span>
+        </div>
+        <p class="text-sm font-medium text-slate-800 leading-relaxed">
+          GEPA v2 samples mediation and digitally-mediated interaction where practical; it does <strong>not</strong> claim to measure plurilingual/pluricultural competence.
+        </p>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Source reference: CEFR Companion Volume (2020) and GEPA Master Draft v2 blueprint §1–§3. The assessment estimates general English proficiency across receptive and productive skills using CEFR as the external reference framework, without claiming formal alignment prior to large-scale empirical calibration.
+        </p>
+      </section>
+
+      <!-- Section 1: Assessment Constructs & Reporting -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">1. Assessment Components & Measurement Constructs</h2>
+        <div class="overflow-hidden border border-slate-200 rounded-xl bg-white shadow-soft">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+                <th class="p-3.5">Component</th>
+                <th class="p-3.5">Primary Construct</th>
+                <th class="p-3.5">Reporting Status</th>
+                <th class="p-3.5">Format & Timing</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Language Systems</td>
+                <td class="p-3.5">Grammar and vocabulary in contextual discourse</td>
+                <td class="p-3.5 font-medium text-amber-700 bg-amber-50/50">Diagnostic only (beneath skill profile)</td>
+                <td class="p-3.5">12–18 MCQs, ~8–12 min</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Reading</td>
+                <td class="p-3.5">Gist, detail, inference, cohesion, stance, discourse, synthesis</td>
+                <td class="p-3.5 font-medium text-emerald-700 bg-emerald-50/50">Reported CEFR Band</td>
+                <td class="p-3.5">12–18 items (paired testlets), ~10–15 min</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Listening</td>
+                <td class="p-3.5">Detail, main point, inference, attitude, purpose, pragmatic meaning</td>
+                <td class="p-3.5 font-medium text-emerald-700 bg-emerald-50/50">Reported CEFR Band</td>
+                <td class="p-3.5">12–18 items (broadcasts & dialogues), ~10–15 min</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Speaking</td>
+                <td class="p-3.5">Intelligibility, fluency, grammar, vocabulary, discourse, interaction</td>
+                <td class="p-3.5 font-medium text-emerald-700 bg-emerald-50/50">Reported CEFR Band</td>
+                <td class="p-3.5">8 recorded tasks across 7 task types, ~12–18 min</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Writing</td>
+                <td class="p-3.5">Task achievement, organisation, grammar, lexis, register, mediation</td>
+                <td class="p-3.5 font-medium text-emerald-700 bg-emerald-50/50">Reported CEFR Band</td>
+                <td class="p-3.5">3 scored tasks (+1 diagnostic), 20–45 min</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-semibold text-slate-900">Listen-to-Write</td>
+                <td class="p-3.5">Orthography, lexis, and listening-to-writing transcription accuracy</td>
+                <td class="p-3.5 font-medium text-amber-700 bg-amber-50/50">Diagnostic only (never in Writing level)</td>
+                <td class="p-3.5">Integrated transcription probe</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 2: Domain Sampling -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">2. Domain Sampling & Knowledge Exclusion</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-5 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 text-sm block">1. Personal Domain</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Family, hobbies, travel, domestic arrangements, leisure interests, and personal experiences.
+            </p>
+          </div>
+          <div class="p-5 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 text-sm block">2. Public Domain</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Civic notices, public transport, community events, consumer transactions, media, and public services.
+            </p>
+          </div>
+          <div class="p-5 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 text-sm block">3. Educational Domain</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              General study skills, campus communications, lecture comprehension, textbook summaries, and academic discussions.
+            </p>
+          </div>
+          <div class="p-5 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 text-sm block">4. Occupational Domain</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Workplace emails, team meetings, project updates, executive summaries, and formal business correspondence.
+            </p>
+          </div>
+        </div>
+        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-medium">
+          <strong>Important Construct Control:</strong> Profession-specific jargon and technical domain knowledge are strictly excluded. The assessment measures general communicative competence accessible to all background backgrounds.
+        </div>
+      </section>
+
+      <!-- Section 3: Beta Claims Policy -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">3. Claims Policy Guardrails</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-5 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-2">
+            <span class="font-bold text-emerald-900 text-sm block">Allowed Statements</span>
+            <ul class="space-y-1.5 text-slate-700">
+              <li class="flex items-center gap-2"><IconCheck class="w-3.5 h-3.5 text-emerald-600" /> Indicative placement estimate</li>
+              <li class="flex items-center gap-2"><IconCheck class="w-3.5 h-3.5 text-emerald-600" /> Diagnostic profile and observed skill gaps</li>
+              <li class="flex items-center gap-2"><IconCheck class="w-3.5 h-3.5 text-emerald-600" /> Study recommendations and Can-Do descriptors</li>
+              <li class="flex items-center gap-2"><IconCheck class="w-3.5 h-3.5 text-emerald-600" /> Destination readiness advice with disclaimers</li>
+              <li class="flex items-center gap-2"><IconCheck class="w-3.5 h-3.5 text-emerald-600" /> Low or Moderate confidence based on test completeness</li>
+            </ul>
+          </div>
+
+          <div class="p-5 bg-rose-50/50 border border-rose-200 rounded-xl space-y-2">
+            <span class="font-bold text-rose-900 text-sm block">Strictly Forbidden Claims & Phrasing</span>
+            <ul class="space-y-1.5 text-slate-700">
+              <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">&times;</span> Asserting definitive, institutional, or binding CEFR status</li>
+              <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">&times;</span> Claiming formal external alignment, accreditation, or third-party endorsements</li>
+              <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">&times;</span> Forecasting specific marks or bands on third-party commercial assessments</li>
+              <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">&times;</span> Reporting elevated certainty ratings or numeric percentage bounds</li>
+              <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">&times;</span> Fractional, sub-tier, or plus/minus band notation</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Target-Exam Readiness Layer Currency Notes (PRD §9) -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">4. Target-Exam Readiness & Currency Notes</h2>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          GEPA provides an optional destination readiness interpretation layer. Exam names represent destination goals for study planning, not co-branded endorsements. Current specifications include:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 block">TOEFL iBT (Jan 2026 Scale)</span>
+            <p class="text-slate-600">
+              Updated January 2026: 1–6 section/overall scale with multistage adaptive Reading and Listening delivery. GEPA describes academic English task readiness only.
+            </p>
+          </div>
+          <div class="p-4 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 block">PTE Academic (Aug 2025 Tasks)</span>
+            <p class="text-slate-600">
+              Incorporates task updates from August 2025 including Summarize Group Discussion and Respond to a Situation. Evaluates prompt comprehension and spoken fluency foundations.
+            </p>
+          </div>
+          <div class="p-4 bg-white border border-slate-200 rounded-xl space-y-2">
+            <span class="font-bold text-slate-900 block">OET (Healthcare Context)</span>
+            <p class="text-slate-600">
+              OET remains a four-subtest healthcare-specific assessment. GEPA evaluates foundational general English readiness before candidates commence specialized clinical communication prep.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Accessibility & Fairness -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-slate-900">5. Accessibility & Fairness Provisions</h2>
+        <div class="p-5 bg-white border border-slate-200 rounded-xl space-y-3 text-xs leading-relaxed text-slate-700">
+          <p>
+            GEPA is engineered to conform with <strong>WCAG 2.2 Level AA</strong> guidelines:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-slate-600 pl-2">
+            <li><strong>D/deaf & Hard of Hearing:</strong> Transcript-access pathway provided; Listening reported as "not measured" with partial receptive profile.</li>
+            <li><strong>Speech Differences & Stammering:</strong> Alternative to Oral Reading provided; disorder-characteristic disfluency is not penalized.</li>
+            <li><strong>Dyslexia & Processing:</strong> 1.5× extended timing, wide line/letter spacing, text scaling up to 200%, zero speed dependence.</li>
+            <li><strong>Low Vision & Motor:</strong> 7:1 high contrast mode, full keyboard navigation, large touch targets (minimum 44×44px), no drag-only interactions.</li>
+            <li><strong>Low Bandwidth:</strong> Audio asset pre-buffering, local draft autosave, and graceful reconnection recovery.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Back to Test CTA -->
+      <div class="pt-6 border-t border-slate-200 flex items-center justify-between">
+        <span class="text-xs text-slate-500">Document version: 2.0.0-beta • Status: Approved</span>
+        <a
+          href="/"
+          class="px-6 py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl shadow-soft transition-colors"
+        >
+          Return to Assessment Start
+        </a>
+      </div>
+    </main>
+  </div>
+</Layout>

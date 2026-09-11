@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'GEPA — General English Placement Assessment',
+  description = 'Free Diagnostic Beta — Indicative placement estimate across core communicative skills referencing international frameworks.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full bg-slate-50 text-slate-900">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style is:global>
+      /* Base high contrast styles when toggled */
+      .high-contrast {
+        --color-surface-base: #000000;
+        --color-text-primary: #ffffff;
+      }
+      .high-contrast body {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+      }
+      .high-contrast button:focus-visible,
+      .high-contrast input:focus-visible,
+      .high-contrast a:focus-visible {
+        outline: 3px solid #facc15 !important;
+        outline-offset: 2px !important;
+      }
+    </style>
+  </head>
+  <body class="h-full font-sans antialiased bg-slate-50 text-slate-900">
+    <slot />
+  </body>
+</html>
