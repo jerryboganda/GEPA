@@ -81,8 +81,23 @@ export async function clickCorrectOption(page: Page): Promise<void> {
       .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')?.replace('option-', '') ?? ''));
     const matchIdx = optionIds.findIndex((id) => id && correct.has(id));
     if (matchIdx >= 0) {
-      await page.locator('[data-testid^="option-"]').nth(matchIdx).click();
-      return;
+      const optionBtn = page.locator('[data-testid^="option-"]').nth(matchIdx);
+      // A click Playwright reports as successful doesn't guarantee React's
+      // onClick actually committed the selection — the real cause of past
+      // multi-minute hangs was objective-next staying disabled after a
+      // "successful" click, because selectedAnswers never actually updated.
+      // Verify aria-checked flips and retry the click itself if it didn't,
+      // instead of trusting the click alone.
+      for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
+        await optionBtn.click({ timeout: 8_000 });
+        const checked = await optionBtn
+          .getAttribute('aria-checked')
+          .then((v) => v === 'true')
+          .catch(() => false);
+        if (checked) return;
+        await page.waitForTimeout(200);
+      }
+      return; // let the caller's own next/submit wait surface a clear failure if this never stuck
     }
     await page.waitForTimeout(200);
   }
@@ -104,14 +119,17 @@ export async function answerAllObjectiveModules(page: Page): Promise<void> {
     await clickCorrectOption(page);
 
     // Testlet with more than one item: click Next until the final item, then Submit.
+    // Explicit timeouts (rather than the default, which waits out the rest
+    // of the test's budget) turn a still-disabled button into a fast, clear
+    // failure naming exactly which click never became actionable.
     const nextBtn = page.getByTestId('objective-next');
     while (await nextBtn.isVisible().catch(() => false)) {
-      await nextBtn.click();
+      await nextBtn.click({ timeout: 8_000 });
       await clickCorrectOption(page);
     }
 
     const submitBtn = page.getByTestId('objective-submit');
-    await submitBtn.click();
+    await submitBtn.click({ timeout: 8_000 });
     await page.waitForTimeout(150); // let the next unit (or module_complete) render
   }
   throw new Error('answerAllObjectiveModules exceeded its iteration guard — routing likely stuck');
