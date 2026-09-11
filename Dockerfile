@@ -14,8 +14,11 @@ RUN npm run build
 # a current stable toolchain, the same way CI's own build does via
 # dtolnay/rust-toolchain@stable — a hardcoded 1.80 here is what broke once a
 # transitive dependency (hmac v0.13.0) started requiring Cargo's edition2024
-# feature, unstable before Rust 1.85.
-FROM rust:1-bullseye AS server-builder
+# feature, unstable before Rust 1.85. bookworm (not bullseye) to match the
+# runner stage below — bullseye is now old enough that its security mirror
+# has started pruning individual package files out from under still-listed
+# index entries, not just serving a stale-but-otherwise-fine Release file.
+FROM rust:1-bookworm AS server-builder
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY shared ./shared
@@ -24,15 +27,10 @@ COPY server ./server
 RUN cargo build --release --bin server
 
 # Stage 3: Minimal Runtime Image
-FROM debian:bullseye-slim AS runner
+FROM debian:bookworm-slim AS runner
 WORKDIR /app
 
-# -o Acquire::Check-Valid-Until=false: bullseye is Debian's old-stable now,
-# and its security repo's Release file signature has a validity window that
-# eventually expires as time passes past end-of-support — this bypasses that
-# staleness check rather than failing the build outright. Packages still get
-# signature-verified; only the "is this metadata too old" check is skipped.
-RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     && rm -rf /var/lib/apt/lists/*
