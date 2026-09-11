@@ -10,7 +10,12 @@ COPY client/ ./
 RUN npm run build
 
 # Stage 2: Build Rust Backend Server
-FROM rust:1.80-bullseye AS server-builder
+# Floating "1" tag (not a pinned minor version) so this build always matches
+# a current stable toolchain, the same way CI's own build does via
+# dtolnay/rust-toolchain@stable — a hardcoded 1.80 here is what broke once a
+# transitive dependency (hmac v0.13.0) started requiring Cargo's edition2024
+# feature, unstable before Rust 1.85.
+FROM rust:1-bullseye AS server-builder
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY shared ./shared
