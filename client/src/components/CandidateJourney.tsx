@@ -520,29 +520,23 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      console.log('[diag] submit start', currentTask.task_id, currentWritingText.length);
-      const submitRes = await authedFetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
+      await authedFetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: currentWritingText }),
       });
-      console.log('[diag] submit resolved', submitRes.status);
 
       if (currentWritingIdx + 1 < writingTasks.length) {
         setCurrentWritingIdx((i) => i + 1);
         setCurrentWritingText('');
       } else {
         // Fetch Full Result!
-        console.log('[diag] fetching full result');
         const fRes = await authedFetch(`/api/sessions/${sessionId}/results/full`);
-        console.log('[diag] full result resolved', fRes.status);
         const report = await fRes.json();
-        console.log('[diag] full result parsed');
         setFullResult(report);
         setCurrentStep('full_result');
       }
-    } catch (e) {
-      console.log('[diag] submit caught error', String(e));
+    } catch {
       // Offline/demo fallback only — real reports come from the server and
       // satisfy `ResultReport` exactly (see client/src/schemas/api.ts).
       setFullResult({

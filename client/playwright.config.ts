@@ -49,10 +49,6 @@ export default defineConfig({
       timeout: 180_000,
       reuseExistingServer: !process.env.CI,
       env: { E2E_MODE: 'true', PORT: '8080', CLIENT_DIST: path.resolve(__dirname, 'dist') },
-      // TEMPORARY: surfaces a real server-side panic (if any) behind the
-      // journey.full full-result stall directly in the CI log.
-      stdout: 'pipe',
-      stderr: 'pipe',
     },
     {
       command: 'npm run dev',

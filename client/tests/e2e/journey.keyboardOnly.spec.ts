@@ -17,19 +17,25 @@ async function pressSpace(page: import('@playwright/test').Page) {
 async function unlockListeningIfNeeded(page: import('@playwright/test').Page) {
   const playBtn = page.getByTestId('audio-play-btn');
   if (!(await playBtn.isVisible().catch(() => false))) return;
-  const firstOption = page.locator('[data-testid^="option-"]').first();
-  if (!(await firstOption.isDisabled().catch(() => false))) return;
 
-  await playBtn.focus();
-  await page.keyboard.press('Enter');
-  await page.evaluate(() => {
-    document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
-  });
-  await page
-    .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
-      timeout: 5_000,
-    })
-    .catch(() => {});
+  // Retry the whole activate+dispatch cycle rather than trying once and
+  // silently giving up: a swallowed failure here left the options genuinely
+  // disabled, and the caller would still try to select one anyway.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const firstOption = page.locator('[data-testid^="option-"]').first();
+    if (!(await firstOption.isDisabled().catch(() => false))) return;
+
+    await playBtn.focus();
+    await page.keyboard.press('Enter');
+    await page.evaluate(() => {
+      document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
+    });
+    await page
+      .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
+        timeout: 3_000,
+      })
+      .catch(() => {});
+  }
 }
 
 test('candidate can reach the receptive result using only the keyboard', async ({ page }) => {
@@ -51,15 +57,14 @@ test('candidate can reach the receptive result using only the keyboard', async (
     if (!(await page.getByTestId('screen-objective-test').isVisible().catch(() => false))) break;
 
     // Radiogroup: Tab to the first radio, ArrowDown to cycle, Space to select.
+    // A single batched read (rather than one round-trip per button) avoids
+    // a mid-scan React re-render mixing in a different unit's options.
     const buttons = page.locator('[data-testid^="option-"]');
-    const count = await buttons.count();
     let selectedIndex = -1;
-    for (let i = 0; i < count; i++) {
-      const testId = await buttons.nth(i).getAttribute('data-testid');
-      if (testId && correct.has(testId.replace('option-', ''))) {
-        selectedIndex = i;
-        break;
-      }
+    for (let attempt = 0; attempt < 10 && selectedIndex < 0; attempt++) {
+      const optionIds = await buttons.evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')?.replace('option-', '') ?? ''));
+      selectedIndex = optionIds.findIndex((id) => id && correct.has(id));
+      if (selectedIndex < 0) await page.waitForTimeout(200);
     }
     expect(selectedIndex).toBeGreaterThanOrEqual(0);
 

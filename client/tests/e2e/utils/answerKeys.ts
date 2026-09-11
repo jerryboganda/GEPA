@@ -40,33 +40,51 @@ export function correctOptionIds(): Set<string> {
 async function unlockListeningIfNeeded(page: Page): Promise<void> {
   const playBtn = page.getByTestId('audio-play-btn');
   if (!(await playBtn.isVisible().catch(() => false))) return; // not an LSN item
-  const firstOption = page.locator('[data-testid^="option-"]').first();
-  if (!(await firstOption.isDisabled().catch(() => false))) return; // already unlocked
 
-  await playBtn.click();
-  await page.evaluate(() => {
-    document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
-  });
-  await page
-    .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
-      timeout: 5_000,
-    })
-    .catch(() => {});
+  // Retry the whole play+dispatch cycle rather than trying once and silently
+  // giving up: a swallowed failure here used to leave the options genuinely
+  // disabled, and clickCorrectOption would still find a data-testid match
+  // and try to click it — Playwright's own click() then retries a disabled
+  // element for the rest of the test's timeout budget, which is what the
+  // multi-minute stalls actually were, not a hang in this function itself.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const firstOption = page.locator('[data-testid^="option-"]').first();
+    if (!(await firstOption.isDisabled().catch(() => false))) return; // unlocked
+
+    await playBtn.click().catch(() => {});
+    await page.evaluate(() => {
+      document.querySelectorAll('audio').forEach((el) => el.dispatchEvent(new Event('ended')));
+    });
+    await page
+      .waitForFunction(() => !document.querySelector('[data-testid^="option-"]')?.hasAttribute('disabled'), {
+        timeout: 3_000,
+      })
+      .catch(() => {});
+  }
 }
 
 /** Clicks the one visible option button whose id is the correct answer. */
 export async function clickCorrectOption(page: Page): Promise<void> {
   await unlockListeningIfNeeded(page);
   const correct = correctOptionIds();
-  const buttons = page.locator('[data-testid^="option-"]');
-  const count = await buttons.count();
-  for (let i = 0; i < count; i++) {
-    const testId = await buttons.nth(i).getAttribute('data-testid');
-    const optionId = testId?.replace('option-', '');
-    if (optionId && correct.has(optionId)) {
-      await buttons.nth(i).click();
+
+  // Reading each button's data-testid one at a time (a separate round-trip
+  // per button) left a window for React to swap in a new unit's options
+  // mid-scan, occasionally producing a mixed read that matched nothing —
+  // a real cause of the flaky "no correct option found" failures. A single
+  // batched read is atomic from the page's perspective, and retrying a few
+  // times rides out any remaining render-in-progress moment instead of
+  // failing on the first transient miss.
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const optionIds = await page
+      .locator('[data-testid^="option-"]')
+      .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')?.replace('option-', '') ?? ''));
+    const matchIdx = optionIds.findIndex((id) => id && correct.has(id));
+    if (matchIdx >= 0) {
+      await page.locator('[data-testid^="option-"]').nth(matchIdx).click();
       return;
     }
+    await page.waitForTimeout(200);
   }
   throw new Error('No correct option found among visible option buttons — item/answer-key mismatch');
 }
