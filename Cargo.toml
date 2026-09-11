@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "shared/engine",
+    "server",
+    "tools/seed_validator",
+    "tools/copy_lint",
+    "tools/forms_checker",
+    "tools/audio_producer",
+    "tools/exposure_reporter",
+    "tools/seed_loader",
+    "tools/retention_runner",
+]
+resolver = "2"

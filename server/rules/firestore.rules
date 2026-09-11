@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Sessions: candidate can read own session; no client writes (all via API)
+    match /sessions/{sid} {
+      allow read: if request.auth != null && resource.data.candidate_uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Never allow client access to raw responses subcollection (contains 'correct' and answer keys)
+    match /sessions/{sid}/responses/{r} {
+      allow read, write: if false;
+    }
+
+    // Drafts flow strictly through the server API
+    match /sessions/{sid}/productive/{t} {
+      allow read, write: if false;
+    }
+
+    // Results: candidate can read own generated result report
+    match /results/{sid} {
+      allow read: if request.auth != null && resource.data.candidate_uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Role claims mirror
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Explicit DENY on all restricted collections:
+    // items, restricted_keys, stimulus_admin, ratings, jobs, rulesets, rubrics
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
