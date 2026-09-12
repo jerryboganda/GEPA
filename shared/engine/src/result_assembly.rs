@@ -2,7 +2,7 @@ use crate::models::{
     Band, Confidence, DiagnosticsSummary, Headline, LanguageSystemsDiagnostic,
     ListenToWriteDiagnostic, ReadinessLayer, ResultReport, SkillResult,
 };
-use crate::wording_policy::scan_candidate_copy;
+use crate::wording_policy::{scan_candidate_copy, scan_confidence_text};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -252,11 +252,7 @@ pub fn assemble_result_report(
 ) -> Result<ResultReport, String> {
     let mut skill_results = Vec::new();
     let mut confidence_triggers = Vec::new();
-    let mut has_unresolved_boundary = false;
-    let mut has_floor_unresolved = false;
-    let mut has_aberrant = false;
     let mut has_insufficient = false;
-    let mut has_below_route = false;
 
     for sk in &input.skills {
         let (can_do, growth) = if let Some(b) = sk.band {
@@ -271,16 +267,6 @@ pub fn assemble_result_report(
         if sk.status == "insufficient_evidence" {
             has_insufficient = true;
             confidence_triggers.push(format!("Skill {} had insufficient evidence.", sk.skill));
-        }
-
-        for f in &sk.flags {
-            match f.as_str() {
-                "boundary_unresolved" => has_unresolved_boundary = true,
-                "floor_unresolved" => has_floor_unresolved = true,
-                "aberrant_pattern" => has_aberrant = true,
-                "below_route" => has_below_route = true,
-                _ => {}
-            }
         }
 
         skill_results.push(SkillResult {
@@ -298,31 +284,88 @@ pub fn assemble_result_report(
         confidence_triggers.push("Partial profile: receptive skills only.".to_string());
     }
 
-    for f in &input.session_flags {
-        match f.as_str() {
-            "effort_omissions" => confidence_triggers.push("Three or more questions omitted due to timeout.".to_string()),
-            "effort_rapid" => confidence_triggers.push("Rapid response pattern observed.".to_string()),
-            "wide_window" => confidence_triggers.push("Performance variation observed across different test modules.".to_string()),
-            "productive_route_default" => confidence_triggers.push("Productive route used default placement.".to_string()),
-            "profile_inconsistency" => confidence_triggers.push("Observed score variation between receptive and productive modules.".to_string()),
-            _ => {}
+    // Collect all flags from skills and session
+    let mut all_flags = input.session_flags.clone();
+    for sk in &input.skills {
+        for f in &sk.flags {
+            all_flags.push(f.clone());
         }
     }
 
-    if has_unresolved_boundary {
+    // Check module/session flags per 05 §3.4:
+    // {boundary_unresolved, floor_unresolved, aberrant_pattern, inconsistent_pattern,
+    //  evidenceShortfall, wideWindow, productive_route_default, effort_omissions, effort_rapid,
+    //  profile_inconsistency, technical_replaced >= 2}
+    let has_boundary = all_flags.iter().any(|f| f == "boundary_unresolved");
+    let has_floor = all_flags.iter().any(|f| f == "floor_unresolved");
+    let has_aberrant = all_flags.iter().any(|f| f == "aberrant_pattern");
+    let has_inconsistent = all_flags.iter().any(|f| f == "inconsistent_pattern");
+    let has_evidence_shortfall = all_flags.iter().any(|f| f == "evidenceShortfall" || f == "evidence_shortfall");
+    let has_wide_window = all_flags.iter().any(|f| f == "wideWindow" || f == "wide_window");
+    let has_route_default = all_flags.iter().any(|f| f == "productive_route_default");
+    let has_omissions = all_flags.iter().any(|f| f == "effort_omissions");
+    let has_rapid = all_flags.iter().any(|f| f == "effort_rapid");
+    let has_profile_inconsistency = all_flags.iter().any(|f| f == "profile_inconsistency");
+    let has_below_route = all_flags.iter().any(|f| f == "below_route");
+
+    // technical_replaced >= 2 check
+    let tech_replaced_count = all_flags.iter().filter(|f| *f == "technical_replaced" || *f == "technical_audio").count();
+    let has_tech_replaced_multiple = tech_replaced_count >= 2 || all_flags.iter().any(|f| f == "technical_replaced_multiple");
+
+    // >= 2 integrity flags check
+    let integrity_count = all_flags.iter().filter(|f| {
+        matches!(f.as_str(), "effort_rapid" | "effort_omissions" | "ai_suspect_review" | "off_topic" | "profile_inconsistency")
+    }).count();
+
+    if has_omissions {
+        confidence_triggers.push("Three or more questions omitted due to timeout.".to_string());
+    }
+    if has_rapid {
+        confidence_triggers.push("Rapid response pattern observed.".to_string());
+    }
+    if has_wide_window {
+        confidence_triggers.push("Performance variation observed across different test modules.".to_string());
+    }
+    if has_route_default {
+        confidence_triggers.push("Productive route used default placement.".to_string());
+    }
+    if has_profile_inconsistency {
+        confidence_triggers.push("Observed score variation between receptive and productive modules.".to_string());
+    }
+    if has_boundary {
         confidence_triggers.push("Performance was near a band boundary with limited confirming items.".to_string());
     }
-    if has_floor_unresolved {
+    if has_floor {
         confidence_triggers.push("Lower performance floor could not be fully resolved.".to_string());
     }
     if has_aberrant {
         confidence_triggers.push("Non-monotonic response pattern detected.".to_string());
     }
+    if has_inconsistent {
+        confidence_triggers.push("Inconsistent response pattern observed across test units.".to_string());
+    }
+    if has_evidence_shortfall {
+        confidence_triggers.push("Diagnostic evidence was limited near the diagnosed boundary.".to_string());
+    }
     if has_below_route {
         confidence_triggers.push("Performance was below the starting route threshold.".to_string());
     }
+    if has_tech_replaced_multiple {
+        confidence_triggers.push("Multiple audio recordings required technical replacement.".to_string());
+    }
+    if integrity_count >= 2 {
+        confidence_triggers.push("Multiple performance consistency or integrity flags observed.".to_string());
+    }
 
-    let is_low = !confidence_triggers.is_empty()
+    // Deduplicate triggers
+    let mut unique_triggers: Vec<String> = Vec::new();
+    for tr in confidence_triggers {
+        if !unique_triggers.contains(&tr) {
+            unique_triggers.push(tr);
+        }
+    }
+
+    let is_low = !unique_triggers.is_empty()
         || has_insufficient
         || input.profile_type != "full";
 
@@ -335,8 +378,13 @@ pub fn assemble_result_report(
     let confidence_reasons = if confidence == Confidence::Moderate {
         vec!["All scheduled modules were completed with consistent diagnostic patterns.".to_string()]
     } else {
-        confidence_triggers
+        unique_triggers
     };
+
+    // Scan all confidence reasons for policy compliance
+    for reason in &confidence_reasons {
+        scan_confidence_text(reason).map_err(|e| format!("Confidence reason policy violation: {}", e))?;
+    }
 
     let headline = derive_headline(&input.profile_type, &skill_results);
 
@@ -345,6 +393,7 @@ pub fn assemble_result_report(
     } else {
         "Recommended study interval: retest after approximately 8–12 weeks of structured study.".to_string()
     };
+    scan_candidate_copy(&retest_advice).map_err(|e| format!("Retest advice policy violation: {}", e))?;
 
     let readiness = input
         .target_goal

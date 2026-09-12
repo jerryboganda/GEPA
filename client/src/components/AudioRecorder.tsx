@@ -31,6 +31,15 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const recordedBlobRef = useRef<Blob | null>(null);
+  // recorder.onstop below is a closure fixed at recorder-creation time, so
+  // reading the `speakTimeRemaining` *state* from inside it would always
+  // see the value from that one moment (its initial maxSpeakSeconds, since
+  // the countdown effect hasn't ticked yet) -- every real recording would
+  // compute recordedSecs=0 and always fail the >=3s quality gate,
+  // regardless of how long the candidate actually spoke. A ref's `.current`
+  // is read fresh at call time even from a stale closure, so this measures
+  // real elapsed wall-clock time instead.
+  const recordingStartedAtRef = useRef<number>(0);
 
   // Prep Countdown
   useEffect(() => {
@@ -117,7 +126,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           setRecordedUrl(url);
 
           // Quality gate check: duration >= 3s
-          const recordedSecs = maxSpeakSeconds - speakTimeRemaining;
+          const recordedSecs = (Date.now() - recordingStartedAtRef.current) / 1000;
           if (recordedSecs < 3) {
             setPhase('quality_failed');
             setErrorMessage('We could not capture that clearly. Recording duration was under 3 seconds.');
@@ -128,6 +137,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         };
 
         mediaRecorderRef.current = recorder;
+        recordingStartedAtRef.current = Date.now();
         recorder.start(250);
       } else {
         simulateRecording();
@@ -172,10 +182,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className={`p-6 rounded-2xl border border-slate-200 bg-white shadow-soft ${className}`}>
+    <div data-testid="audio-recorder" className={`p-6 rounded-2xl border border-slate-200 bg-white shadow-soft ${className}`}>
       {/* Preparation Phase */}
       {phase === 'prep' && (
-        <div className="text-center py-6 space-y-4">
+        <div data-testid="recorder-prep" className="text-center py-6 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-800 text-xs font-semibold uppercase tracking-wider">
             Preparation Time
           </div>
@@ -184,6 +194,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             Organise your ideas. Recording will automatically commence when the countdown reaches zero.
           </p>
           <button
+            data-testid="recorder-skip-prep-btn"
             onClick={startRecording}
             className="px-4 py-2 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
           >
@@ -194,7 +205,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Recording Phase */}
       {phase === 'recording' && (
-        <div className="text-center py-6 space-y-6">
+        <div data-testid="recorder-recording" className="text-center py-6 space-y-6">
           <div className="flex items-center justify-center gap-2">
             <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping" />
             <span className="text-sm font-semibold text-rose-700">Recording Live</span>
@@ -218,6 +229,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
           <div>
             <button
+              data-testid="recorder-finish-btn"
               onClick={stopRecording}
               className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm rounded-xl shadow-soft focus:ring-4 focus:ring-rose-500/20 transition-all"
             >
@@ -229,7 +241,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Quality Check Failed (Technical re-record) */}
       {phase === 'quality_failed' && (
-        <div className="text-center py-6 space-y-4">
+        <div data-testid="recorder-quality-failed" className="text-center py-6 space-y-4">
           <div className="w-12 h-12 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
             <IconAlert className="w-6 h-6" />
           </div>
@@ -248,7 +260,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       {/* Review Phase */}
       {phase === 'review' && (
-        <div className="text-center py-6 space-y-5">
+        <div data-testid="recorder-review" className="text-center py-6 space-y-5">
           <div className="w-10 h-10 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
             <IconCheck className="w-5 h-5" />
           </div>
@@ -266,6 +278,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
           <div className="flex items-center justify-center gap-3 pt-2">
             {allowsRerecord && !rerecordUsed && (
               <button
+                data-testid="recorder-rerecord-btn"
                 onClick={handleRerecord}
                 className="px-4 py-2 border border-slate-300 text-slate-700 font-medium text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >

@@ -1,16 +1,20 @@
 mod ai;
 mod api;
+mod auth;
+mod db;
 mod repos;
 mod services;
 mod state;
 
 use ai::GeminiClient;
+use auth::JwtService;
 use axum::{
     routing::{delete, get, post, put},
     Router,
 };
+use db::PostgresClient;
 use parking_lot::RwLock;
-use repos::SeedBank;
+use repos::{JobRepo, ReviewQueueRepo, SeedBank, SessionRepo};
 use state::{AppState, SharedState};
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -47,13 +51,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let gemini_client = Arc::new(GeminiClient::new());
 
+    let db = PostgresClient::from_env().await;
+    tracing::info!("Postgres client initialized (DECISIONS.md D-021)");
+    let jwt = JwtService::from_env();
+
+    let media_manifest = load_media_manifest();
+    tracing::info!("Media manifest loaded: {} real assets linked", media_manifest.len());
+
     let state: SharedState = Arc::new(AppState {
         seed_bank: RwLock::new(seed_bank),
-        sessions: RwLock::new(std::collections::HashMap::new()),
-        review_queue: RwLock::new(Vec::new()),
-        jobs: RwLock::new(std::collections::HashMap::new()),
+        session_repo: SessionRepo::new(db.clone()),
+        job_repo: JobRepo::new(db.clone()),
+        review_queue_repo: ReviewQueueRepo::new(db.clone()),
+        db,
         idempotency_cache: RwLock::new(std::collections::HashMap::new()),
         gemini_client,
+        jwt,
+        media_manifest: RwLock::new(media_manifest),
     });
 
     let cors = CorsLayer::new()
@@ -63,6 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = Router::new()
         .route("/healthz", get(api::healthz))
+        .route("/api/auth/login", post(api::login))
         .route("/api/sessions", post(api::create_session))
         .route("/api/sessions/:id", get(api::get_session_state))
         .route("/api/sessions/:id", delete(api::delete_session))
@@ -122,6 +137,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/admin/seed/load", post(api::admin_seed_load))
         .route("/api/admin/audio/produce", post(api::admin_audio_produce))
         .route("/api/admin/retention/run", post(api::admin_retention_run))
+        .route("/api/test/e2e/sessions", post(api::e2e_seed_session))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state);
@@ -143,4 +159,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     axum::serve(listener, app).await?;
 
     Ok(())
+}
+
+/// Load `assets/media_manifest.json` (produced by `tools/audio_producer`,
+/// see Phase 3) if it exists. Empty map (server still boots) if not — the
+/// audio pipeline hasn't run yet, or is mid-development.
+fn load_media_manifest() -> std::collections::HashMap<String, state::MediaAsset> {
+    let path = std::env::var("MEDIA_MANIFEST").unwrap_or_else(|_| "assets/media_manifest.json".to_string());
+    match std::fs::read_to_string(&path) {
+        Ok(raw) => serde_json::from_str(&raw).unwrap_or_default(),
+        Err(_) => std::collections::HashMap::new(),
+    }
 }

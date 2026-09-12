@@ -9,5 +9,6 @@ members = [
     "tools/exposure_reporter",
     "tools/seed_loader",
     "tools/retention_runner",
+    "tools/create_staff_user",
 ]
 resolver = "2"

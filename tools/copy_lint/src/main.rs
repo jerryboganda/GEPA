@@ -1,7 +1,19 @@
 use shared_engine::wording_policy::scan_candidate_copy;
 use std::fs;
-use std::path::Path;
-use walkdir::WalkDir;
+use std::path::{Path, PathBuf};
+
+fn collect_files(dir: &Path, files: &mut Vec<PathBuf>) {
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_files(&path, files);
+            } else if path.is_file() {
+                files.push(path);
+            }
+        }
+    }
+}
 
 fn main() {
     println!("=== GEPA Claims Policy & Copy Linter ===");
@@ -15,12 +27,14 @@ fn main() {
             continue;
         }
 
-        for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
-            let path = entry.path();
+        let mut files = Vec::new();
+        collect_files(dir, &mut files);
+
+        for path in files {
             if path.is_file() {
                 let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
                 if ext == "ts" || ext == "tsx" || ext == "astro" || ext == "json" {
-                    let content = match fs::read_to_string(path) {
+                    let content = match fs::read_to_string(&path) {
                         Ok(c) => c,
                         Err(_) => continue,
                     };

@@ -26,3 +26,16 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 parking_lot = "0.12"
 rand = "0.8"
+jsonwebtoken = "9"
+# axum-core's FromRequestParts is itself `#[async_trait]`-desugared (MSRV
+# reasons) — impls must use the same macro or the trait/impl signatures
+# won't unify (E0195). Version pinned to what's already in Cargo.lock via
+# axum's own dependency, so this adds no new transitive dependency tree.
+async-trait = "0.1"
+# Postgres persistence (DECISIONS.md D-021 — replaces Firestore). Plain
+# runtime queries (tokio-postgres), no compile-time-checked-query macros and
+# no ORM: smaller, faster-compiling dependency tree, and matches this repo's
+# existing style of hand-rolled REST/SQL calls over heavy SDKs.
+tokio-postgres = { version = "0.7", features = ["with-chrono-0_4", "with-serde_json-1"] }
+deadpool-postgres = "0.14"
+argon2 = "0.5"

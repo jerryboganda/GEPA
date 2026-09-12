@@ -1,4 +1,4 @@
-﻿name: CI Pipeline (Compute Offload)
+name: CI Pipeline (Compute Offload)
 
 on:
   push:
@@ -16,6 +16,28 @@ jobs:
     name: Full Verification Suite (Offloaded)
     runs-on: ubuntu-latest
 
+    # Postgres (DECISIONS.md D-021 — no Firebase/Firestore/Java emulator
+    # needed). This is the only place DB-dependent code is actually
+    # exercised against a live database — never locally on a dev machine.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: gepa
+          POSTGRES_PASSWORD: gepa
+          POSTGRES_DB: gepa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://gepa:gepa@localhost:5432/gepa
+      JWT_SECRET: ci-test-secret-not-for-prod
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -25,6 +47,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: client/package-lock.json
 
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -33,9 +56,6 @@ jobs:
 
       - name: Cache Cargo Dependencies
         uses: swatinem/rust-cache@v2
-
-      - name: Install Root Dependencies
-        run: npm ci
 
       - name: Install Client Dependencies
         run: npm --prefix client ci
@@ -58,16 +78,39 @@ jobs:
       - name: Linting (Clippy + Claims Copy Linter)
         run: npm run lint
 
-      - name: Cargo Test Suite (Pure Engine Coverage >=95%)
+      - name: Cargo Test Suite (Engine + Postgres-backed Server Tests)
         run: npm run test
 
       - name: Client Production Build (Astro)
         run: npm run build:client
 
+      - name: Install Playwright Browsers
+        run: npm --prefix client run test:e2e:install
+
+      - name: E2E Journey + Accessibility Suite
+        run: npm run test:e2e
+        env:
+          E2E_MODE: "true"
+
   container-build:
     name: Cloud Run Container Build & Smoke Test
     needs: verify
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: gepa
+          POSTGRES_PASSWORD: gepa
+          POSTGRES_DB: gepa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Checkout Code
@@ -88,7 +131,11 @@ jobs:
 
       - name: Container Healthz Smoke Test
         run: |
-          docker run -d -p 8080:8080 --name gepa-test gepa-runtime:latest
+          docker run -d -p 8080:8080 --name gepa-test \
+            --add-host=host.docker.internal:host-gateway \
+            -e DATABASE_URL=postgres://gepa:gepa@host.docker.internal:5432/gepa \
+            -e JWT_SECRET=ci-test-secret-not-for-prod \
+            gepa-runtime:latest
           sleep 5
           curl --fail --retry 5 --retry-connrefused http://localhost:8080/healthz || (docker logs gepa-test && exit 1)
           docker stop gepa-test

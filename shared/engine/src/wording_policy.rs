@@ -48,7 +48,7 @@ fn get_regex_set() -> &'static RegexSet {
 
 fn get_level_re() -> &'static Regex {
     LEVEL_RE.get_or_init(|| {
-        Regex::new(r"\b(Pre-A1|A1|A2|B1|B2|C1|C2)[+\-](?:[^\w]|$)").expect("Failed to build level regex")
+        Regex::new(r"(?i)\b(Pre-A1|A1|A2|B1|B2|C1|C2)[+\-](?:[^\w]|$)").expect("Failed to build level regex")
     })
 }
 

@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { authedFetch } from '../lib/apiClient';
+import { useStaffAuth } from '../lib/useStaffAuth';
 import { IconShield, IconAlert, IconCheck, IconPlay, IconVolume } from './Icons';
 
 export const ReviewerDashboard: React.FC = () => {
+  const { user, loading: authLoading, signIn } = useStaffAuth();
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginSubmitting, setLoginSubmitting] = useState(false);
   const [queue, setQueue] = useState<any[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [sessionDetail, setSessionDetail] = useState<any>(null);
@@ -12,7 +19,8 @@ export const ReviewerDashboard: React.FC = () => {
   const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
-    fetch('/api/review/queue')
+    if (!user) return;
+    authedFetch('/api/review/queue')
       .then((res) => res.json())
       .then((data) => {
         setQueue(data);
@@ -40,11 +48,11 @@ export const ReviewerDashboard: React.FC = () => {
         setQueue(mockQueue);
         loadSession(mockQueue[0].session_id);
       });
-  }, []);
+  }, [user]);
 
   const loadSession = (id: string) => {
     setSelectedSessionId(id);
-    fetch(`/api/review/sessions/${id}`)
+    authedFetch(`/api/review/sessions/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setSessionDetail(data);
@@ -91,6 +99,65 @@ export const ReviewerDashboard: React.FC = () => {
     return item.flag_type === filter;
   });
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-100 text-slate-500 text-sm">Loading…</div>;
+  }
+
+  if (!user) {
+    const handleLogin = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoginError(null);
+      setLoginSubmitting(true);
+      try {
+        await signIn(loginEmail, loginPassword);
+      } catch {
+        setLoginError('Invalid email or password.');
+      } finally {
+        setLoginSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100">
+        <form
+          onSubmit={handleLogin}
+          className="bg-white p-8 rounded-2xl border border-slate-200 shadow-card space-y-4 text-center max-w-sm w-full"
+        >
+          <IconShield className="w-10 h-10 mx-auto text-brand-800" />
+          <h1 className="text-lg font-bold text-slate-900">Reviewer sign-in required</h1>
+          <p className="text-xs text-slate-500">
+            The server independently verifies your role on every request — this screen only controls what
+            the UI shows.
+          </p>
+          <input
+            type="email"
+            required
+            placeholder="Email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            className="w-full p-2.5 border border-slate-300 rounded-lg text-sm text-left focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          />
+          <input
+            type="password"
+            required
+            placeholder="Password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            className="w-full p-2.5 border border-slate-300 rounded-lg text-sm text-left focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          />
+          {loginError && <p className="text-xs text-rose-700">{loginError}</p>}
+          <button
+            type="submit"
+            disabled={loginSubmitting}
+            className="px-5 py-2.5 bg-brand-800 text-white font-bold text-xs rounded-lg shadow-soft hover:bg-brand-900 min-h-[44px] w-full"
+          >
+            {loginSubmitting ? 'Signing in…' : 'Sign in'}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 font-sans">
       {/* Top Navbar */}
@@ -112,7 +179,7 @@ export const ReviewerDashboard: React.FC = () => {
             <a href="/about" className="hover:text-slate-900 transition-colors font-semibold text-slate-700">
               Technical Manual
             </a>
-            <span>Signed in as: evaluator@gepa.edu</span>
+            <span>Signed in as: {user.email}</span>
             <span className="px-2 py-0.5 bg-slate-200 rounded text-slate-800 font-mono">role: reviewer</span>
           </div>
         </div>

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import type { z } from 'zod';
+import { authedFetch } from '../lib/apiClient';
+import { saveCandidateToken } from '../lib/session';
+import { CandidateDeliveryUnit, ResultReport, SkillResult, SpeakingTask, WritingTask } from '../schemas/api';
 import { Timer } from './Timer';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioRecorder } from './AudioRecorder';
@@ -32,6 +36,19 @@ type ScreenStep =
   | 'writing_test'
   | 'full_result';
 
+// Real, spec-shaped types (client/src/schemas/api.ts) instead of `any`.
+// Receptive/full results use `Partial<...>` rather than the exact
+// ResultReport shape: the offline-demo fallback payloads built when a fetch
+// fails don't populate every field (e.g. `headline`), and forcing that here
+// would be a type-only workaround for a data-shape gap, not a real fix.
+type DeliveryUnit = z.infer<typeof CandidateDeliveryUnit>;
+type DeliveryItem = DeliveryUnit['items'][number];
+type ItemOption = DeliveryItem['options'][number];
+type ResultReportT = Partial<z.infer<typeof ResultReport>>;
+type SpeakingTaskT = z.infer<typeof SpeakingTask>;
+type WritingTaskT = z.infer<typeof WritingTask>;
+type SkillResultT = z.infer<typeof SkillResult>;
+
 export const CandidateJourney: React.FC = () => {
   // Session State
   const [sessionId, setSessionId] = useState<string>('');
@@ -49,20 +66,20 @@ export const CandidateJourney: React.FC = () => {
   const [isReceptiveFinalized, setIsReceptiveFinalized] = useState<boolean>(false);
 
   // Delivery Units & Items
-  const [deliveryUnit, setDeliveryUnit] = useState<any>(null);
+  const [deliveryUnit, setDeliveryUnit] = useState<DeliveryUnit | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [activeTestletItemIdx, setActiveTestletItemIdx] = useState<number>(0);
   const [audioReplayCount, setAudioReplayCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Receptive & Full Results
-  const [receptiveResult, setReceptiveResult] = useState<any>(null);
-  const [fullResult, setFullResult] = useState<any>(null);
+  const [receptiveResult, setReceptiveResult] = useState<ResultReportT | null>(null);
+  const [fullResult, setFullResult] = useState<ResultReportT | null>(null);
 
   // Speaking & Writing Tasks
-  const [speakingTasks, setSpeakingTasks] = useState<any[]>([]);
+  const [speakingTasks, setSpeakingTasks] = useState<SpeakingTaskT[]>([]);
   const [currentSpeakingIdx, setCurrentSpeakingIdx] = useState<number>(0);
-  const [writingTasks, setWritingTasks] = useState<any[]>([]);
+  const [writingTasks, setWritingTasks] = useState<WritingTaskT[]>([]);
   const [currentWritingIdx, setCurrentWritingIdx] = useState<number>(0);
   const [currentWritingText, setCurrentWritingText] = useState<string>('');
 
@@ -87,7 +104,7 @@ export const CandidateJourney: React.FC = () => {
     const devClass =
       typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop';
     try {
-      const res = await fetch('/api/sessions', {
+      const res = await authedFetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,6 +118,10 @@ export const CandidateJourney: React.FC = () => {
       const data = await res.json();
       setSessionId(data.session_id);
       if (typeof window !== 'undefined') {
+        // DECISIONS.md D-021: the server issues this session's bearer token
+        // right here (no external identity provider) — save it before any
+        // further authedFetch call, or those calls have nothing to send.
+        saveCandidateToken(data.token);
         localStorage.setItem('gepa_active_session', data.session_id);
         setSavedSessionId(data.session_id);
       }
@@ -120,7 +141,7 @@ export const CandidateJourney: React.FC = () => {
     if (!cleanId) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${cleanId}`);
+      const res = await authedFetch(`/api/sessions/${cleanId}`);
       if (!res.ok) {
         alert('Session record not found. Please start a new placement assessment.');
         return;
@@ -135,31 +156,31 @@ export const CandidateJourney: React.FC = () => {
       }
 
       if (data.has_result) {
-        const fRes = await fetch(`/api/sessions/${data.session_id}/results/full`);
+        const fRes = await authedFetch(`/api/sessions/${data.session_id}/results/full`);
         const report = await fRes.json();
         setFullResult(report);
         setCurrentStep('full_result');
       } else if (data.wrt_status === 'in_progress' || data.wrt_status === 'complete') {
-        const wRes = await fetch(`/api/sessions/${data.session_id}/writing/start`);
+        const wRes = await authedFetch(`/api/sessions/${data.session_id}/writing/start`);
         const tasks = await wRes.json();
         setWritingTasks(tasks);
         setCurrentWritingIdx(0);
         setCurrentWritingText('');
         setCurrentStep('writing_test');
       } else if (data.spk_status === 'in_progress') {
-        const sRes = await fetch(`/api/sessions/${data.session_id}/speaking/start`);
+        const sRes = await authedFetch(`/api/sessions/${data.session_id}/speaking/start`);
         const tasks = await sRes.json();
         setSpeakingTasks(tasks);
         setCurrentSpeakingIdx(0);
         setCurrentStep('speaking_test');
       } else if (data.rd_status === 'complete' && data.lsn_status === 'complete') {
-        const profRes = await fetch(`/api/sessions/${data.session_id}/results/receptive`);
+        const profRes = await authedFetch(`/api/sessions/${data.session_id}/results/receptive`);
         const report = await profRes.json();
         setReceptiveResult(report);
         setCurrentStep('receptive_result');
       } else if (data.rd_status === 'in_progress') {
         setActiveModule('RD');
-        const rRes = await fetch(`/api/sessions/${data.session_id}/modules/RD/start`, {
+        const rRes = await authedFetch(`/api/sessions/${data.session_id}/modules/RD/start`, {
           method: 'POST',
         });
         const unit = await rRes.json();
@@ -167,7 +188,7 @@ export const CandidateJourney: React.FC = () => {
         setCurrentStep('objective_test');
       } else if (data.lsn_status === 'in_progress') {
         setActiveModule('LSN');
-        const lRes = await fetch(`/api/sessions/${data.session_id}/modules/LSN/start`, {
+        const lRes = await authedFetch(`/api/sessions/${data.session_id}/modules/LSN/start`, {
           method: 'POST',
         });
         const unit = await lRes.json();
@@ -175,7 +196,7 @@ export const CandidateJourney: React.FC = () => {
         setCurrentStep('objective_test');
       } else {
         setActiveModule('LS');
-        const lsRes = await fetch(`/api/sessions/${data.session_id}/modules/LS/start`, {
+        const lsRes = await authedFetch(`/api/sessions/${data.session_id}/modules/LS/start`, {
           method: 'POST',
         });
         const unit = await lsRes.json();
@@ -195,7 +216,7 @@ export const CandidateJourney: React.FC = () => {
     setQuestionCount(1);
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/modules/LS/start`, { method: 'POST' });
+      const res = await authedFetch(`/api/sessions/${sessionId}/modules/LS/start`, { method: 'POST' });
       const unit = await res.json();
       setDeliveryUnit(unit);
       setSelectedAnswers({});
@@ -233,10 +254,11 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      let body: any;
+      let body: { responses: { item_id: string; selected_option_id: string | null; response_ms: number }[]; replay_count: number }
+        | { item_id: string; selected_option_id: string | null; response_ms: number; replay_count: number };
       if (deliveryUnit.items.length > 1) {
         body = {
-          responses: deliveryUnit.items.map((it: any) => ({
+          responses: deliveryUnit.items.map((it: DeliveryItem) => ({
             item_id: it.item_id,
             selected_option_id: selectedAnswers[it.item_id] || null,
             response_ms: 12400,
@@ -254,7 +276,7 @@ export const CandidateJourney: React.FC = () => {
         };
       }
 
-      const res = await fetch(`/api/sessions/${sessionId}/responses`, {
+      const res = await authedFetch(`/api/sessions/${sessionId}/responses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -268,7 +290,7 @@ export const CandidateJourney: React.FC = () => {
           setActiveModule('RD');
           setQuestionCount(1);
           setAudioReplayCount(0);
-          const rRes = await fetch(`/api/sessions/${sessionId}/modules/RD/start`, { method: 'POST' });
+          const rRes = await authedFetch(`/api/sessions/${sessionId}/modules/RD/start`, { method: 'POST' });
           const rUnit = await rRes.json();
           setDeliveryUnit(rUnit);
           setSelectedAnswers({});
@@ -278,14 +300,14 @@ export const CandidateJourney: React.FC = () => {
           setActiveModule('LSN');
           setQuestionCount(1);
           setAudioReplayCount(0);
-          const lRes = await fetch(`/api/sessions/${sessionId}/modules/LSN/start`, { method: 'POST' });
+          const lRes = await authedFetch(`/api/sessions/${sessionId}/modules/LSN/start`, { method: 'POST' });
           const lUnit = await lRes.json();
           setDeliveryUnit(lUnit);
           setSelectedAnswers({});
           setActiveTestletItemIdx(0);
         } else if (activeModule === 'LSN') {
           // Move to Receptive Profile!
-          const profRes = await fetch(`/api/sessions/${sessionId}/results/receptive`);
+          const profRes = await authedFetch(`/api/sessions/${sessionId}/results/receptive`);
           const report = await profRes.json();
           setReceptiveResult(report);
           setCurrentStep('receptive_result');
@@ -362,7 +384,9 @@ export const CandidateJourney: React.FC = () => {
           module_complete: false,
         });
       } else {
-        // Receptive result demo
+        // Offline/demo fallback only (real responses come from the server
+        // and satisfy `ResultReport` exactly) — a deliberately abbreviated
+        // stub, so it's force-cast rather than reshaped to the full schema.
         setReceptiveResult({
           session_id: sessionId,
           profile_type: 'foundation_receptive',
@@ -377,7 +401,7 @@ export const CandidateJourney: React.FC = () => {
           },
           confidence: 'Moderate',
           confidence_reasons: ['Receptive modules completed with consistent placement evidence.'],
-        });
+        } as unknown as ResultReportT);
         setCurrentStep('receptive_result');
       }
     } finally {
@@ -389,33 +413,34 @@ export const CandidateJourney: React.FC = () => {
   const handleProceedToSpeaking = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/speaking/start`);
+      const res = await authedFetch(`/api/sessions/${sessionId}/speaking/start`);
       const tasks = await res.json();
       setSpeakingTasks(tasks);
       setCurrentSpeakingIdx(0);
       setCurrentStep('mic_check');
     } catch {
-      // Sample speaking tasks
+      // Offline/demo fallback only — real tasks come from the server and
+      // satisfy `SpeakingTask` exactly (see client/src/schemas/api.ts).
       setSpeakingTasks([
         {
           task_id: 'SPK-B1B2-OR',
           task_type: 'oral_reading',
           label: 'Oral Reading',
           prompt: 'Public transit systems in major cities are increasingly adopting contactless mobile ticketing to reduce passenger queues and operational overhead.',
-          prep_seconds: 15,
-          max_speak_seconds: 35,
-          allows_rerecord: true,
+          prepSeconds: 15,
+          maxSpeakSeconds: 35,
+          allowsRerecord: true,
         },
         {
           task_id: 'SPK-B1B2-FS',
           task_type: 'functional_situation',
           label: 'Functional Situation',
           prompt: 'You ordered an electronic item online, but received the incorrect model. Telephone customer services, explain the discrepancy, and request an exchange.',
-          prep_seconds: 20,
-          max_speak_seconds: 50,
-          allows_rerecord: true,
+          prepSeconds: 20,
+          maxSpeakSeconds: 50,
+          allowsRerecord: true,
         },
-      ]);
+      ] as unknown as SpeakingTaskT[]);
       setCurrentSpeakingIdx(0);
       setCurrentStep('mic_check');
     } finally {
@@ -430,7 +455,7 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await fetch(`/api/sessions/${sessionId}/speaking/${currentTask.task_id}/submit`, {
+      await authedFetch(`/api/sessions/${sessionId}/speaking/${currentTask.task_id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storage_path: 'local://sample_rec.webm' }),
@@ -457,13 +482,15 @@ export const CandidateJourney: React.FC = () => {
   const handleProceedToWriting = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/writing/start`);
+      const res = await authedFetch(`/api/sessions/${sessionId}/writing/start`);
       const tasks = await res.json();
       setWritingTasks(tasks);
       setCurrentWritingIdx(0);
       setCurrentWritingText('');
       setCurrentStep('writing_test');
     } catch {
+      // Offline/demo fallback only — real tasks come from the server and
+      // satisfy `WritingTask` exactly (see client/src/schemas/api.ts).
       setWritingTasks([
         {
           task_id: 'WRT-B1B2-1',
@@ -477,7 +504,7 @@ export const CandidateJourney: React.FC = () => {
           prompt: 'Review the proposal for urban green spaces and summarise the primary environmental advantages and potential budget considerations.',
           word_guidance: { min: 120, max: 180 },
         },
-      ]);
+      ] as unknown as WritingTaskT[]);
       setCurrentWritingIdx(0);
       setCurrentWritingText('');
       setCurrentStep('writing_test');
@@ -493,7 +520,7 @@ export const CandidateJourney: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await fetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
+      await authedFetch(`/api/sessions/${sessionId}/writing/${currentTask.task_id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: currentWritingText }),
@@ -504,13 +531,14 @@ export const CandidateJourney: React.FC = () => {
         setCurrentWritingText('');
       } else {
         // Fetch Full Result!
-        const fRes = await fetch(`/api/sessions/${sessionId}/results/full`);
+        const fRes = await authedFetch(`/api/sessions/${sessionId}/results/full`);
         const report = await fRes.json();
         setFullResult(report);
         setCurrentStep('full_result');
       }
     } catch {
-      // Mock full result
+      // Offline/demo fallback only — real reports come from the server and
+      // satisfy `ResultReport` exactly (see client/src/schemas/api.ts).
       setFullResult({
         session_id: sessionId,
         profile_type: 'full',
@@ -535,7 +563,7 @@ export const CandidateJourney: React.FC = () => {
           disclaimer: 'GEPA does not predict official exam scores.',
         },
         retest_advice: 'Recommended study interval: retest after approximately 8–12 weeks of structured study.',
-      });
+      } as unknown as ResultReportT);
       setCurrentStep('full_result');
     } finally {
       setIsLoading(false);
@@ -546,7 +574,7 @@ export const CandidateJourney: React.FC = () => {
   const handleDeleteData = async () => {
     if (confirm('Are you sure you want to delete all diagnostic records from this session?')) {
       try {
-        await fetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
+        await authedFetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
       } catch {}
       if (typeof window !== 'undefined') {
         localStorage.removeItem('gepa_active_session');
@@ -578,7 +606,7 @@ export const CandidateJourney: React.FC = () => {
 
           <div className="flex items-center gap-3 pr-40 sm:pr-44">
             {sessionId && (
-              <span className="hidden md:inline-block text-xs font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+              <span className="hidden md:inline-block text-xs font-mono text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
                 Session: {sessionId}
               </span>
             )}
@@ -610,7 +638,7 @@ export const CandidateJourney: React.FC = () => {
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
         {/* STEP 1: START SCREEN */}
         {currentStep === 'start' && (
-          <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-300">
+          <div data-testid="screen-start" className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-300">
             <div className="text-center space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-800 text-xs font-semibold">
                 <IconShield className="w-3.5 h-3.5 text-brand-700" />
@@ -636,6 +664,7 @@ export const CandidateJourney: React.FC = () => {
                     <button
                       key={g.id}
                       type="button"
+                      data-testid={`goal-chip-${g.id}`}
                       onClick={() => setTargetGoal(g.id)}
                       className={`py-2 px-3 text-xs font-semibold rounded-lg border text-left transition-all min-h-[44px] flex items-center justify-between ${
                         targetGoal === g.id
@@ -652,10 +681,12 @@ export const CandidateJourney: React.FC = () => {
 
               {/* Language Selection */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-1">
+                <label htmlFor="start-language-select" className="block text-sm font-semibold text-slate-900 mb-1">
                   {UI_STRINGS.start_screen.language_label}
                 </label>
                 <select
+                  id="start-language-select"
+                  data-testid="start-language-select"
                   value={uiLanguage}
                   onChange={(e) => setUiLanguage(e.target.value)}
                   className="w-full sm:w-64 p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-brand-500 focus:outline-none"
@@ -671,6 +702,7 @@ export const CandidateJourney: React.FC = () => {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
+                    data-testid="start-consent-privacy"
                     checked={privacyConsent}
                     onChange={(e) => setPrivacyConsent(e.target.checked)}
                     className="w-5 h-5 mt-0.5 accent-brand-600 rounded cursor-pointer shrink-0"
@@ -683,6 +715,7 @@ export const CandidateJourney: React.FC = () => {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
+                    data-testid="start-consent-research"
                     checked={researchConsent}
                     onChange={(e) => setResearchConsent(e.target.checked)}
                     className="w-5 h-5 mt-0.5 accent-brand-600 rounded cursor-pointer shrink-0"
@@ -696,6 +729,7 @@ export const CandidateJourney: React.FC = () => {
               {/* Primary CTA */}
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                 <button
+                  data-testid="start-cta"
                   onClick={handleStartSession}
                   disabled={!privacyConsent || isLoading}
                   className={`w-full sm:flex-1 py-3 px-6 rounded-xl font-bold text-sm text-white transition-all shadow-soft flex items-center justify-center gap-2 min-h-[48px] ${
@@ -716,6 +750,7 @@ export const CandidateJourney: React.FC = () => {
 
                 <button
                   type="button"
+                  data-testid="start-about-btn"
                   onClick={() => setShowAboutModal(true)}
                   className="w-full sm:w-auto py-3 px-5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors min-h-[48px]"
                 >
@@ -733,6 +768,7 @@ export const CandidateJourney: React.FC = () => {
                     </div>
                     <button
                       type="button"
+                      data-testid="resume-detected-btn"
                       onClick={() => handleResumeSession(savedSessionId)}
                       disabled={isLoading}
                       className="w-full sm:w-auto px-4 py-2 bg-brand-800 hover:bg-brand-900 text-white font-bold rounded-lg shadow-xs transition-colors"
@@ -749,6 +785,7 @@ export const CandidateJourney: React.FC = () => {
                   <div className="pt-2 flex items-center gap-2">
                     <input
                       type="text"
+                      data-testid="resume-id-input"
                       placeholder="e.g. ses_1234567890abcdef"
                       value={resumeInputId}
                       onChange={(e) => setResumeInputId(e.target.value)}
@@ -756,6 +793,7 @@ export const CandidateJourney: React.FC = () => {
                     />
                     <button
                       type="button"
+                      data-testid="resume-id-btn"
                       onClick={() => handleResumeSession(resumeInputId)}
                       disabled={!resumeInputId.trim() || isLoading}
                       className="px-4 py-2 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold rounded-lg transition-colors"
@@ -771,7 +809,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 2: WORKED EXAMPLE */}
         {currentStep === 'worked_example' && (
-          <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-300">
+          <div data-testid="screen-worked-example" className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2 text-xs font-bold text-brand-700 uppercase tracking-wider">
                 <span className="w-2 h-2 rounded-full bg-brand-600" />
@@ -841,6 +879,7 @@ export const CandidateJourney: React.FC = () => {
               </div>
 
               <button
+                data-testid="worked-example-continue"
                 onClick={handleBeginLanguageSystems}
                 disabled={isLoading}
                 className="w-full py-3.5 px-6 bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm rounded-xl shadow-soft flex items-center justify-center gap-2 min-h-[48px]"
@@ -854,7 +893,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 3: OBJECTIVE TEST PLAYER (LS, RD, LSN) */}
         {currentStep === 'objective_test' && deliveryUnit && (
-          <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
+          <div data-testid="screen-objective-test" className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
             {/* Module & Progress Bar */}
             <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
               <div className="flex items-center gap-3">
@@ -868,7 +907,9 @@ export const CandidateJourney: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-600">Question {questionCount}</span>
               </div>
 
-              <Timer deadlineAt={deliveryUnit.deadline_at} onTimeout={handleSubmitObjective} />
+              <div data-testid="objective-timer">
+                <Timer deadlineAt={deliveryUnit.deadline_at} onTimeout={handleSubmitObjective} />
+              </div>
             </div>
 
             {/* Testlet Stimulus Layout for RD and LSN */}
@@ -885,7 +926,7 @@ export const CandidateJourney: React.FC = () => {
 
                   {activeModule === 'LSN' && (
                     <AudioPlayer
-                      audioUrl={deliveryUnit.audio_url}
+                      audioUrl={deliveryUnit.audio_url ?? undefined}
                       onPlayCompleted={(count) => setAudioReplayCount(count)}
                     />
                   )}
@@ -904,7 +945,7 @@ export const CandidateJourney: React.FC = () => {
                   activeModule === 'LS' ? 'max-w-2xl mx-auto col-span-12' : 'lg:col-span-6'
                 } w-full space-y-6`}
               >
-                {deliveryUnit.items.map((item: any, idx: number) => {
+                {deliveryUnit.items.map((item: DeliveryItem, idx: number) => {
                   if (activeModule !== 'LS' && idx !== activeTestletItemIdx) {
                     return null;
                   }
@@ -928,21 +969,37 @@ export const CandidateJourney: React.FC = () => {
                       )}
 
                       <div className="space-y-3" role="radiogroup" aria-label="Question options">
-                        {item.options.map((opt: any) => {
+                        {item.options.map((opt: ItemOption, optIdx: number) => {
                           const isSelected = selectedAnswers[item.item_id] === opt.option_id;
+                          const selectOption = (id: string) => {
+                            if (isListeningLocked) return;
+                            setSelectedAnswers((prev) => ({ ...prev, [item.item_id]: id }));
+                          };
                           return (
                             <button
                               key={opt.option_id}
                               type="button"
+                              data-testid={`option-${opt.option_id}`}
                               role="radio"
                               aria-checked={isSelected}
                               disabled={isListeningLocked}
-                              onClick={() => {
+                              // Roving tabindex radiogroup (06 §3: "arrow keys move, Space selects"):
+                              // only the checked option (or the first, before any selection) is
+                              // Tab-reachable; Up/Down/Left/Right move focus AND selection, wrapping.
+                              tabIndex={isSelected || (optIdx === 0 && !selectedAnswers[item.item_id]) ? 0 : -1}
+                              onClick={() => selectOption(opt.option_id)}
+                              onKeyDown={(e) => {
                                 if (isListeningLocked) return;
-                                setSelectedAnswers((prev) => ({
-                                  ...prev,
-                                  [item.item_id]: opt.option_id,
-                                }));
+                                if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) return;
+                                e.preventDefault();
+                                const group = e.currentTarget.closest('[role="radiogroup"]');
+                                const radios = Array.from(group?.querySelectorAll<HTMLButtonElement>('[role="radio"]') ?? []);
+                                const currentIdx = radios.indexOf(e.currentTarget);
+                                const delta = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1;
+                                const nextIdx = (currentIdx + delta + radios.length) % radios.length;
+                                const nextButton = radios[nextIdx];
+                                nextButton?.focus();
+                                selectOption(item.options[nextIdx].option_id);
                               }}
                               className={`w-full text-left p-4 rounded-xl border text-sm sm:text-base font-medium transition-all flex items-center justify-between min-h-[48px] ${
                                 isListeningLocked
@@ -972,7 +1029,7 @@ export const CandidateJourney: React.FC = () => {
                             Testlet Question {activeTestletItemIdx + 1} of {deliveryUnit.items.length}
                           </span>
                           <div className="flex gap-2">
-                            {deliveryUnit.items.map((_: any, i: number) => (
+                            {deliveryUnit.items.map((_: DeliveryItem, i: number) => (
                               <button
                                 key={i}
                                 type="button"
@@ -996,6 +1053,7 @@ export const CandidateJourney: React.FC = () => {
                           {activeTestletItemIdx > 0 && (
                             <button
                               type="button"
+                              data-testid="objective-prev"
                               onClick={() => setActiveTestletItemIdx(activeTestletItemIdx - 1)}
                               className="w-full sm:w-auto py-3 px-5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors min-h-[48px]"
                             >
@@ -1005,6 +1063,7 @@ export const CandidateJourney: React.FC = () => {
                           {activeTestletItemIdx < deliveryUnit.items.length - 1 ? (
                             <button
                               type="button"
+                              data-testid="objective-next"
                               onClick={() => setActiveTestletItemIdx(activeTestletItemIdx + 1)}
                               disabled={!selectedAnswers[item.item_id]}
                               className={`w-full sm:flex-1 py-3.5 px-6 rounded-xl text-sm font-bold text-white transition-all shadow-soft flex items-center justify-center gap-2 min-h-[48px] ${
@@ -1019,14 +1078,15 @@ export const CandidateJourney: React.FC = () => {
                           ) : (
                             <button
                               type="button"
+                              data-testid="objective-submit"
                               onClick={handleSubmitObjective}
                               disabled={
                                 isLoading ||
-                                deliveryUnit.items.some((it: any) => !selectedAnswers[it.item_id])
+                                deliveryUnit.items.some((it: DeliveryItem) => !selectedAnswers[it.item_id])
                               }
                               className={`w-full sm:flex-1 py-3.5 px-6 rounded-xl text-sm font-bold text-white transition-all shadow-soft flex items-center justify-center gap-2 min-h-[48px] ${
                                 isLoading ||
-                                deliveryUnit.items.some((it: any) => !selectedAnswers[it.item_id])
+                                deliveryUnit.items.some((it: DeliveryItem) => !selectedAnswers[it.item_id])
                                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                                   : 'bg-brand-800 hover:bg-brand-900 active:bg-brand-950 focus:ring-4 focus:ring-brand-500/20'
                               }`}
@@ -1045,6 +1105,7 @@ export const CandidateJourney: React.FC = () => {
                       ) : (
                         <button
                           type="button"
+                          data-testid="objective-submit"
                           onClick={handleSubmitObjective}
                           disabled={isLoading || !selectedAnswers[item.item_id]}
                           className={`w-full py-3.5 px-6 rounded-xl text-sm font-bold text-white transition-all shadow-soft flex items-center justify-center gap-2 min-h-[48px] ${
@@ -1073,7 +1134,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 4: RECEPTIVE RESULT SCREEN */}
         {currentStep === 'receptive_result' && receptiveResult && (
-          <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in duration-300">
+          <div data-testid="screen-receptive-result" className="max-w-3xl mx-auto space-y-8 animate-in fade-in duration-300">
             <div className="text-center space-y-2">
               <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
                 Foundation Stage Complete
@@ -1086,10 +1147,10 @@ export const CandidateJourney: React.FC = () => {
 
             {/* Receptive Skill Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {receptiveResult.skills
-                .filter((s: any) => s.skill === 'RD' || s.skill === 'LSN')
-                .map((sk: any) => (
-                  <div key={sk.skill} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-4">
+              {(receptiveResult.skills ?? [])
+                .filter((s: SkillResultT) => s.skill === 'RD' || s.skill === 'LSN')
+                .map((sk: SkillResultT) => (
+                  <div key={sk.skill} data-testid={`skill-card-${sk.skill}`} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                         {sk.skill === 'RD' ? 'Reading' : 'Listening'}
@@ -1114,15 +1175,15 @@ export const CandidateJourney: React.FC = () => {
             {/* Confidence Badge */}
             <div className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
                   Diagnostic Confidence
                 </span>
                 <span className="text-base font-bold text-brand-900">
                   {receptiveResult.confidence} Confidence
                 </span>
               </div>
-              <div className="text-xs text-slate-500 max-w-md text-right">
-                {receptiveResult.confidence_reasons && receptiveResult.confidence_reasons.join(' ')}
+              <div className="text-xs text-slate-600 max-w-sm">
+                {(receptiveResult.confidenceReasons ?? (receptiveResult as Record<string, unknown>).confidence_reasons as string[] | undefined)?.join(' ')}
               </div>
             </div>
 
@@ -1138,12 +1199,14 @@ export const CandidateJourney: React.FC = () => {
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
                   <button
+                    data-testid="print-profile-btn"
                     onClick={() => window.print()}
                     className="px-4 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl shadow-soft"
                   >
                     Print Profile
                   </button>
                   <button
+                    data-testid="delete-data-btn"
                     onClick={handleDeleteData}
                     className="px-4 py-2.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl"
                   >
@@ -1170,6 +1233,7 @@ export const CandidateJourney: React.FC = () => {
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
+                    data-testid="receptive-continue-speaking"
                     onClick={handleProceedToSpeaking}
                     className="flex-1 py-3 px-5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm rounded-xl shadow-soft flex items-center justify-center gap-2 min-h-[48px]"
                   >
@@ -1178,6 +1242,7 @@ export const CandidateJourney: React.FC = () => {
                   </button>
 
                   <button
+                    data-testid="receptive-finish"
                     onClick={() => setIsReceptiveFinalized(true)}
                     className="py-3 px-5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-semibold text-sm rounded-xl min-h-[48px]"
                   >
@@ -1191,7 +1256,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 5: SPEAKING MIC CHECK */}
         {currentStep === 'mic_check' && (
-          <div className="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-card space-y-6 animate-in fade-in duration-300">
+          <div data-testid="screen-mic-check" className="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-card space-y-6 animate-in fade-in duration-300">
             <div className="text-center space-y-2">
               <div className="w-12 h-12 mx-auto rounded-full bg-brand-100 text-brand-700 flex items-center justify-center">
                 <IconMic className="w-6 h-6" />
@@ -1211,6 +1276,7 @@ export const CandidateJourney: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
               <button
+                data-testid="mic-check-begin-speaking"
                 onClick={() => setCurrentStep('speaking_test')}
                 className="w-full sm:flex-1 py-3 px-6 bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm rounded-xl shadow-soft flex items-center justify-center gap-2 min-h-[48px]"
               >
@@ -1219,6 +1285,7 @@ export const CandidateJourney: React.FC = () => {
               </button>
 
               <button
+                data-testid="mic-check-skip"
                 onClick={handleProceedToWriting}
                 className="w-full sm:w-auto py-3 px-4 text-xs font-semibold text-slate-500 hover:text-slate-800"
               >
@@ -1230,7 +1297,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 6: SPEAKING TEST PLAYER */}
         {currentStep === 'speaking_test' && speakingTasks[currentSpeakingIdx] && (
-          <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
+          <div data-testid="screen-speaking-test" className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <span className="px-3 py-1 rounded-md text-xs font-bold bg-brand-800 text-white uppercase tracking-wider">
@@ -1249,15 +1316,21 @@ export const CandidateJourney: React.FC = () => {
               </p>
             </div>
 
-            {/* Recorder Island */}
+            {/* Recorder Island — keyed by task_id so React remounts a fresh
+                instance per task; without a key, the same instance (and its
+                internal 'review' phase from the previous task) persisted
+                across tasks and every task after the first was permanently
+                stuck showing "Response Captured" with no way to record. */}
             <AudioRecorder
-              prepSeconds={speakingTasks[currentSpeakingIdx].prep_seconds || 15}
-              maxSpeakSeconds={speakingTasks[currentSpeakingIdx].max_speak_seconds || 45}
-              allowsRerecord={speakingTasks[currentSpeakingIdx].allows_rerecord !== false}
+              key={speakingTasks[currentSpeakingIdx].task_id}
+              prepSeconds={speakingTasks[currentSpeakingIdx].prepSeconds || 15}
+              maxSpeakSeconds={speakingTasks[currentSpeakingIdx].maxSpeakSeconds || 45}
+              allowsRerecord={speakingTasks[currentSpeakingIdx].allowsRerecord !== false}
               onRecordingComplete={() => {}}
             />
 
             <button
+              data-testid="speaking-submit"
               onClick={handleSubmitSpeakingTask}
               disabled={isLoading}
               className="w-full py-3.5 px-6 bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm rounded-xl shadow-soft flex items-center justify-center gap-2 min-h-[48px]"
@@ -1276,7 +1349,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 6.5: WRITING BREAK & DESKTOP RECOMMENDATION (PRD §6) */}
         {currentStep === 'writing_break' && (
-          <div className="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-card space-y-6 animate-in fade-in duration-300">
+          <div data-testid="screen-writing-break" className="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-card space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center gap-2 text-xs font-bold text-brand-700 uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-brand-600" />
               <span>Section Transition • Optional Break</span>
@@ -1308,6 +1381,7 @@ export const CandidateJourney: React.FC = () => {
             </div>
 
             <button
+              data-testid="writing-break-begin"
               onClick={handleProceedToWriting}
               disabled={isLoading}
               className="w-full py-3.5 px-6 bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm rounded-xl shadow-soft flex items-center justify-center gap-2 min-h-[48px]"
@@ -1326,7 +1400,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 7: WRITING TEST PLAYER */}
         {currentStep === 'writing_test' && writingTasks[currentWritingIdx] && (
-          <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
+          <div data-testid="screen-writing-test" className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <span className="px-3 py-1 rounded-md text-xs font-bold bg-brand-800 text-white uppercase tracking-wider">
@@ -1352,12 +1426,18 @@ export const CandidateJourney: React.FC = () => {
 
               {/* Editor Island */}
               <div className="lg:col-span-7 flex flex-col space-y-4">
+                {/* Keyed by task_id so React remounts a fresh instance per
+                    task — WritingEditor only seeds its internal `text` from
+                    `initialValue` at mount, so without a key the previous
+                    task's draft (and paste/focus-loss telemetry) leaked
+                    into every task after the first. */}
                 <WritingEditor
+                  key={writingTasks[currentWritingIdx].task_id}
                   wordGuidance={writingTasks[currentWritingIdx].word_guidance}
                   initialValue={currentWritingText}
                   onChange={setCurrentWritingText}
                   onAutosave={(txt) => {
-                    fetch(`/api/sessions/${sessionId}/writing/${writingTasks[currentWritingIdx].task_id}/draft`, {
+                    authedFetch(`/api/sessions/${sessionId}/writing/${writingTasks[currentWritingIdx].task_id}/draft`, {
                       method: 'PUT',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text: txt }),
@@ -1366,6 +1446,7 @@ export const CandidateJourney: React.FC = () => {
                 />
 
                 <button
+                  data-testid="writing-submit"
                   onClick={handleSubmitWritingTask}
                   disabled={isLoading || currentWritingText.trim().length === 0}
                   className={`w-full py-3.5 px-6 rounded-xl font-bold text-sm text-white transition-all shadow-soft flex items-center justify-center gap-2 min-h-[48px] ${
@@ -1390,7 +1471,7 @@ export const CandidateJourney: React.FC = () => {
 
         {/* STEP 8: FULL RESULT DASHBOARD */}
         {currentStep === 'full_result' && fullResult && (
-          <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-300 pb-12">
+          <div data-testid="screen-full-result" className="max-w-4xl mx-auto space-y-10 animate-in fade-in duration-300 pb-12">
             {/* Header */}
             <div className="text-center space-y-3">
               <span className="px-3.5 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-800 text-xs font-bold uppercase tracking-wider">
@@ -1407,9 +1488,10 @@ export const CandidateJourney: React.FC = () => {
             {/* 1. PRIMARY SKILL CARDS (PROMINENT - DOM ORDER & SIZE) */}
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {fullResult.skills.map((sk: any) => (
+                {(fullResult.skills ?? []).map((sk: SkillResultT) => (
                   <div
                     key={sk.skill}
+                    data-testid={`skill-card-${sk.skill}`}
                     className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card hover:shadow-elevated transition-all flex flex-col justify-between space-y-4"
                   >
                     <div>
@@ -1462,7 +1544,7 @@ export const CandidateJourney: React.FC = () => {
                   <IconShield className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-600">
                     Diagnostic Confidence
                   </div>
                   <div className="text-lg font-bold text-slate-900">
@@ -1471,13 +1553,16 @@ export const CandidateJourney: React.FC = () => {
                 </div>
               </div>
               <div className="text-xs text-slate-600 max-w-lg">
-                {fullResult.confidence_reasons && (
-                  <ul className="list-disc list-inside space-y-1">
-                    {fullResult.confidence_reasons.map((r: string, i: number) => (
-                      <li key={i}>{r}</li>
-                    ))}
-                  </ul>
-                )}
+                {(() => {
+                  const reasons = fullResult.confidenceReasons ?? ((fullResult as Record<string, unknown>).confidence_reasons as string[] | undefined);
+                  return reasons && (
+                    <ul className="list-disc list-inside space-y-1">
+                      {reasons.map((r: string, i: number) => (
+                        <li key={i}>{r}</li>
+                      ))}
+                    </ul>
+                  );
+                })()}
               </div>
             </div>
 
@@ -1490,27 +1575,37 @@ export const CandidateJourney: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <span className="font-bold text-slate-900 block">Grammar & Vocabulary Observed</span>
-                    {fullResult.diagnostics.language_systems.constructs_strong && (
-                      <div>
-                        <span className="font-semibold text-emerald-700">Strengths:</span>{' '}
-                        {fullResult.diagnostics.language_systems.constructs_strong.join(', ')}
-                      </div>
-                    )}
-                    {fullResult.diagnostics.language_systems.constructs_weak && (
-                      <div>
-                        <span className="font-semibold text-amber-700">Growth Areas:</span>{' '}
-                        {fullResult.diagnostics.language_systems.constructs_weak.join(', ')}
-                      </div>
-                    )}
+                    {(() => {
+                      const ls = (fullResult.diagnostics?.languageSystems ??
+                        (fullResult.diagnostics as Record<string, unknown> | undefined)?.language_systems) as
+                        | { constructsStrong?: string[]; constructsWeak?: string[]; constructs_strong?: string[]; constructs_weak?: string[] }
+                        | undefined;
+                      const strong = ls?.constructsStrong ?? ls?.constructs_strong;
+                      const weak = ls?.constructsWeak ?? ls?.constructs_weak;
+                      return (
+                        <>
+                          {strong && (
+                            <div>
+                              <span className="font-semibold text-emerald-700">Strengths:</span> {strong.join(', ')}
+                            </div>
+                          )}
+                          {weak && (
+                            <div>
+                              <span className="font-semibold text-amber-700">Growth Areas:</span> {weak.join(', ')}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <span className="font-bold text-slate-900 block">Fluency & Spoken Performance</span>
                     <p className="text-slate-600">
-                      {fullResult.diagnostics.fluency_notes && fullResult.diagnostics.fluency_notes[0]}
+                      {(fullResult.diagnostics.fluencyNotes || fullResult.diagnostics.fluency_notes)?.[0]}
                     </p>
                     <p className="text-slate-600">
-                      {fullResult.diagnostics.pronunciation_notes && fullResult.diagnostics.pronunciation_notes[0]}
+                      {(fullResult.diagnostics.pronunciationNotes || fullResult.diagnostics.pronunciation_notes)?.[0]}
                     </p>
                   </div>
                 </div>
@@ -1519,14 +1614,14 @@ export const CandidateJourney: React.FC = () => {
 
             {/* 4. OVERALL PROFILE HEADLINE (SMALL, BELOW SKILLS) */}
             {fullResult.headline && fullResult.headline.kind !== 'none' && (
-              <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs text-slate-700">
+              <div data-testid="results-headline" className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs text-slate-700">
                 <span>
                   <strong>Overall Profile Summary:</strong>{' '}
                   {fullResult.headline.kind === 'indicative_overall'
                     ? `Indicative overall placement: ${fullResult.headline.band}`
                     : `Uneven Profile across range ${fullResult.headline.range?.[0]}–${fullResult.headline.range?.[1]}`}
                 </span>
-                <span className="text-slate-500">Lower median derivation</span>
+                <span className="text-slate-600">Lower median derivation</span>
               </div>
             )}
 
@@ -1541,12 +1636,14 @@ export const CandidateJourney: React.FC = () => {
                 <p className="text-sm text-slate-800 leading-relaxed font-medium">
                   {fullResult.readiness.text}
                 </p>
-                {(fullResult.readiness.currency_note ||
+                {(fullResult.readiness.currencyNote ||
+                  fullResult.readiness.currency_note ||
                   READINESS_TARGETS[fullResult.readiness.target]?.currencyNote) && (
                   <div className="p-3 bg-white rounded-lg border border-brand-300 text-brand-900 text-xs flex items-center gap-2">
                     <IconShield className="w-4 h-4 text-brand-700 shrink-0" />
                     <span>
-                      {fullResult.readiness.currency_note ||
+                      {fullResult.readiness.currencyNote ||
+                        fullResult.readiness.currency_note ||
                         READINESS_TARGETS[fullResult.readiness.target]?.currencyNote}
                     </span>
                   </div>
@@ -1562,17 +1659,19 @@ export const CandidateJourney: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-200 shadow-soft">
               <div className="text-xs text-slate-600 max-w-md">
                 <span className="font-bold text-slate-900 block mb-0.5">{UI_STRINGS.results.retest_title}</span>
-                <span>{fullResult.retest_advice}</span>
+                <span>{fullResult.retestAdvice || fullResult.retest_advice}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <button
+                  data-testid="delete-data-btn"
                   onClick={handleDeleteData}
                   className="px-4 py-2.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors min-h-[44px]"
                 >
                   {UI_STRINGS.results.delete_data_btn}
                 </button>
                 <button
+                  data-testid="print-profile-btn"
                   onClick={() => window.print()}
                   className="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded-lg transition-colors min-h-[44px]"
                 >
@@ -1580,12 +1679,43 @@ export const CandidateJourney: React.FC = () => {
                 </button>
               </div>
             </div>
+
+            {/* 7. WHAT THIS RESULT IS AND IS NOT (CLAIMS POLICY) */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-soft space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                {UI_STRINGS.results.claims_title}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div data-testid="claims-is" className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                  <span className="font-bold text-emerald-900 block">{UI_STRINGS.results.claims_is_title}</span>
+                  <ul className="space-y-1.5 text-slate-700">
+                    {UI_STRINGS.results.claims_is_points.map((pt, i) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <IconCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div data-testid="claims-not" className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <span className="font-bold text-slate-900 block">{UI_STRINGS.results.claims_not_title}</span>
+                  <ul className="space-y-1.5 text-slate-700">
+                    {UI_STRINGS.results.claims_not_points.map((pt, i) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <IconAlert className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+      <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-600">
         <div className="max-w-6xl mx-auto px-4 space-y-1">
           <p>
             GEPA Diagnostic Assessment Beta • Pre-calibration prototype •{' '}
@@ -1593,7 +1723,7 @@ export const CandidateJourney: React.FC = () => {
               Technical Manual & CEFR Scope
             </a>
           </p>
-          <p className="text-slate-400">Claims Policy Guard Active • Zero High-Stakes Certification</p>
+          <p className="text-slate-600">Claims Policy Guard Active • Zero High-Stakes Certification</p>
         </div>
       </footer>
 

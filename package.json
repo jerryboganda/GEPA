@@ -16,7 +16,9 @@
     "audio:produce": "cargo run --bin audio_producer",
     "report:exposure": "cargo run --bin exposure_reporter",
     "retention:run": "cargo run --bin retention_runner",
+    "staff:create": "cargo run --bin create_staff_user --",
     "test": "cargo test --workspace",
-    "verify": "npm run seed:validate && npm run forms:check && npm run audio:produce && npm run report:exposure && npm run typecheck && npm run lint && npm run test && npm run build:client"
+    "test:e2e": "npm --prefix client run test:e2e",
+    "verify": "npm run seed:validate && npm run forms:check && npm run audio:produce && npm run report:exposure && npm run typecheck && npm run lint && npm run test && npm run build:client && npm run test:e2e"
   }
 }

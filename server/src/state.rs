@@ -7,32 +7,7 @@ use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Accommodations {
-    pub extended_time: bool,
-    pub transcript_access: bool,
-    pub oral_reading_alternative: bool,
-    pub high_contrast: bool,
-    pub text_scale: f64,
-    pub spacing: String,
-    pub keyboard_only: bool,
-}
-
-impl Default for Accommodations {
-    fn default() -> Self {
-        Self {
-            extended_time: false,
-            transcript_access: false,
-            oral_reading_alternative: false,
-            high_contrast: false,
-            text_scale: 1.0,
-            spacing: "normal".to_string(),
-            keyboard_only: false,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ObjectiveModuleState {
+pub struct RuntimeObjectiveState {
     pub module: String, // "LS", "RD", "LSN"
     pub status: String, // "pending", "in_progress", "complete"
     pub locator: LocatorState,
@@ -52,7 +27,7 @@ pub struct ObjectiveModuleState {
     pub current_pair_scores: Vec<bool>,
 }
 
-impl ObjectiveModuleState {
+impl RuntimeObjectiveState {
     pub fn new(module: &str) -> Self {
         Self {
             module: module.to_string(),
@@ -76,7 +51,7 @@ impl ObjectiveModuleState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProductiveModuleState {
+pub struct RuntimeProductiveState {
     pub module: String, // "SPK", "WRT"
     pub status: String,
     pub route: Option<Route>,
@@ -87,7 +62,7 @@ pub struct ProductiveModuleState {
     pub ratings: Vec<ProductiveRating>,
 }
 
-impl ProductiveModuleState {
+impl RuntimeProductiveState {
     pub fn new(module: &str) -> Self {
         Self {
             module: module.to_string(),
@@ -112,8 +87,12 @@ pub struct SessionState {
     pub device_class: String,
     #[serde(default = "default_state_version")]
     pub state_version: u64,
-    #[serde(skip)]
-    pub last_response_time: Option<std::time::Instant>,
+    /// Wall-clock timestamp of the last objective response, used for the
+    /// 750ms rapid-click throttle (`02_ARCHITECTURE.md §4`). Must be a real
+    /// (persistable) timestamp, not `std::time::Instant` (monotonic, meaningless
+    /// once the session round-trips through Postgres between requests).
+    #[serde(default)]
+    pub last_response_time: Option<chrono::DateTime<chrono::Utc>>,
     pub target_goal: String,
     pub ui_language: String,
     pub accommodations: Accommodations,
@@ -123,13 +102,15 @@ pub struct SessionState {
     pub identity_metadata: Option<serde_json::Value>,
     #[serde(default)]
     pub proctoring_metadata: Option<serde_json::Value>,
-    pub ls_state: ObjectiveModuleState,
-    pub rd_state: ObjectiveModuleState,
-    pub lsn_state: ObjectiveModuleState,
-    pub spk_state: ProductiveModuleState,
-    pub wrt_state: ProductiveModuleState,
+    pub ls_state: RuntimeObjectiveState,
+    pub rd_state: RuntimeObjectiveState,
+    pub lsn_state: RuntimeObjectiveState,
+    pub spk_state: RuntimeProductiveState,
+    pub wrt_state: RuntimeProductiveState,
     pub productive_route: Option<Route>,
     pub result_report: Option<ResultReport>,
+    #[serde(default)]
+    pub previous_reports: Vec<ResultReport>,
 }
 
 fn default_session_mode() -> String {
@@ -169,11 +150,28 @@ pub struct FlaggedSessionReview {
 
 pub struct AppState {
     pub seed_bank: RwLock<SeedBank>,
-    pub sessions: RwLock<HashMap<String, SessionState>>,
-    pub review_queue: RwLock<Vec<FlaggedSessionReview>>,
-    pub jobs: RwLock<HashMap<String, BackgroundJob>>,
+    /// Raw pool access for the one table that isn't a generic JSONB
+    /// document (`staff_users` — see `api.rs::login`); everything else goes
+    /// through the typed repos below.
+    pub db: Arc<crate::db::PostgresClient>,
+    pub session_repo: crate::repos::SessionRepo,
+    pub job_repo: crate::repos::JobRepo,
+    pub review_queue_repo: crate::repos::ReviewQueueRepo,
+    /// Short-lived request dedupe cache only (`Idempotency-Key` header,
+    /// `02_ARCHITECTURE.md §4`) — deliberately kept in-process rather than in
+    /// Postgres: losing it on restart just means a duplicate request
+    /// re-executes once, which is a non-event, not a data-durability bug.
     pub idempotency_cache: RwLock<HashMap<String, serde_json::Value>>,
     pub gemini_client: Arc<crate::ai::GeminiClient>,
+    pub jwt: Arc<crate::auth::JwtService>,
+    pub media_manifest: RwLock<HashMap<String, MediaAsset>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MediaAsset {
+    pub opus_path: String,
+    pub mp3_path: String,
+    pub duration_sec: f64,
 }
 
 pub type SharedState = Arc<AppState>;

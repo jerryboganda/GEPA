@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
+import { authedFetch, authedDownload } from '../lib/apiClient';
+import { useStaffAuth } from '../lib/useStaffAuth';
 import { IconShield, IconCheck, IconAlert } from './Icons';
 
 export const AdminDashboard: React.FC = () => {
+  const { user, loading, signIn } = useStaffAuth();
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginSubmitting, setLoginSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'forms' | 'audio' | 'telemetry' | 'metrics'>('overview');
   const [formCheckResult, setFormCheckResult] = useState<any>(null);
   const [isRunningCheck, setIsRunningCheck] = useState<boolean>(false);
@@ -12,7 +19,7 @@ export const AdminDashboard: React.FC = () => {
   const runFormCheck = async () => {
     setIsRunningCheck(true);
     try {
-      const res = await fetch('/api/admin/forms/check', { method: 'POST' });
+      const res = await authedFetch('/api/admin/forms/check', { method: 'POST' });
       const data = await res.json();
       setFormCheckResult(data);
     } catch {
@@ -43,7 +50,7 @@ export const AdminDashboard: React.FC = () => {
   const fetchMetrics = async () => {
     setIsLoadingMetrics(true);
     try {
-      const res = await fetch('/api/admin/reports/metrics');
+      const res = await authedFetch('/api/admin/reports/metrics');
       const data = await res.json();
       setMetricsData(data);
     } catch {
@@ -70,6 +77,65 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-100 text-slate-500 text-sm">Loading…</div>;
+  }
+
+  if (!user) {
+    const handleLogin = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoginError(null);
+      setLoginSubmitting(true);
+      try {
+        await signIn(loginEmail, loginPassword);
+      } catch {
+        setLoginError('Invalid email or password.');
+      } finally {
+        setLoginSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100">
+        <form
+          onSubmit={handleLogin}
+          className="bg-white p-8 rounded-2xl border border-slate-200 shadow-card space-y-4 text-center max-w-sm w-full"
+        >
+          <IconShield className="w-10 h-10 mx-auto text-brand-800" />
+          <h1 className="text-lg font-bold text-slate-900">Admin sign-in required</h1>
+          <p className="text-xs text-slate-500">
+            The server independently verifies your role on every request — this screen only controls what
+            the UI shows.
+          </p>
+          <input
+            type="email"
+            required
+            placeholder="Email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            className="w-full p-2.5 border border-slate-300 rounded-lg text-sm text-left focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          />
+          <input
+            type="password"
+            required
+            placeholder="Password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            className="w-full p-2.5 border border-slate-300 rounded-lg text-sm text-left focus:ring-2 focus:ring-brand-500 focus:outline-none"
+          />
+          {loginError && <p className="text-xs text-rose-700">{loginError}</p>}
+          <button
+            type="submit"
+            disabled={loginSubmitting}
+            className="px-5 py-2.5 bg-brand-800 text-white font-bold text-xs rounded-lg shadow-soft hover:bg-brand-900 min-h-[44px] w-full"
+          >
+            {loginSubmitting ? 'Signing in…' : 'Sign in'}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 font-sans">
       {/* Top Navbar */}
@@ -91,7 +157,7 @@ export const AdminDashboard: React.FC = () => {
             <a href="/about" className="hover:text-slate-900 transition-colors font-semibold text-slate-700">
               Technical Manual
             </a>
-            <span>Signed in as: admin@gepa.edu</span>
+            <span>Signed in as: {user.email}</span>
             <span className="px-2 py-0.5 bg-slate-200 rounded text-slate-800 font-mono">role: admin</span>
           </div>
         </div>
@@ -258,21 +324,19 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <a
-                href="/api/admin/reports/exposure"
-                download="gepa_exposure_report.csv"
+              <button
+                onClick={() => authedDownload('/api/admin/reports/exposure', 'gepa_exposure_report.csv')}
                 className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 shadow-soft transition-colors flex items-center gap-2 min-h-[44px]"
               >
                 <span>Download Exposure Report (CSV)</span>
-              </a>
+              </button>
 
-              <a
-                href="/api/admin/reports/telemetry"
-                download="gepa_telemetry_report.csv"
+              <button
+                onClick={() => authedDownload('/api/admin/reports/telemetry', 'gepa_telemetry_report.csv')}
                 className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 shadow-soft transition-colors flex items-center gap-2 min-h-[44px]"
               >
                 <span>Download Telemetry Metrics (CSV)</span>
-              </a>
+              </button>
             </div>
           </div>
         )}

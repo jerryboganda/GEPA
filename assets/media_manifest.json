@@ -1,0 +1,366 @@
+{
+  "LSN-B2-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-B2-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B2-S2/v1.mp3",
+    "duration_sec": 22.2,
+    "checksum": "207b0f4229bf847b689f05ac410d9f40af8f4a27565a8869285151fc537063cd",
+    "in_tolerance": true
+  },
+  "SPK-A2B1-RT": {
+    "opus_path": "assets/audio/prompts/SPK-A2B1-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A2B1-RT/v1.mp3",
+    "duration_sec": 7.7,
+    "checksum": "ab37cb4d0220929159d9d1db99be9e30655536cece3e6cec7329f6625a160606",
+    "in_tolerance": true
+  },
+  "SPK-B1B2-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-B1B2-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B1B2-INT1/v1.mp3",
+    "duration_sec": 6.7,
+    "checksum": "df52b387efdc01f78b0ca7d618c340dca8876af04aa793feab0f35778e32b491",
+    "in_tolerance": true
+  },
+  "SPK-B2C1-SR": {
+    "opus_path": "assets/audio/prompts/SPK-B2C1-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B2C1-SR/v1.mp3",
+    "duration_sec": 7.0,
+    "checksum": "97c581ee0c68a7e6d9de8ad6e37bebdc8083c6072603f421c2da400f8352266a",
+    "in_tolerance": true
+  },
+  "LSN-PRE-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-PRE-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-PRE-S2/v1.mp3",
+    "duration_sec": 7.2,
+    "checksum": "db62f5c52e0e5383df6a0a10a4a98ebea1f3ae162bb4143a6849dec4b1c63d26",
+    "in_tolerance": false
+  },
+  "LSN-A1-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-A1-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A1-S1/v1.mp3",
+    "duration_sec": 14.3,
+    "checksum": "988fafeb313734934889aba1ad7371e386e4e8530d917fd7c8ad64975ac50d78",
+    "in_tolerance": false
+  },
+  "SPK-A2B1-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-A2B1-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A2B1-INT2/v1.mp3",
+    "duration_sec": 3.3,
+    "checksum": "9b57769dc22c520b9ac54dcf0cc9a75e4013aaa20983326b5e83d88666438ce1",
+    "in_tolerance": true
+  },
+  "SPK-PreA1A1-SR": {
+    "opus_path": "assets/audio/prompts/SPK-PreA1A1-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-PreA1A1-SR/v1.mp3",
+    "duration_sec": 2.8,
+    "checksum": "f0f8bf06d354a8c443e921763e2500bac8b4e0b658264f9bf6f6765055f61163",
+    "in_tolerance": false
+  },
+  "SPK-B1B2-SR": {
+    "opus_path": "assets/audio/prompts/SPK-B1B2-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B1B2-SR/v1.mp3",
+    "duration_sec": 6.8,
+    "checksum": "47f9c7b62312ebf2c20317f40af4dab146e5e68a1fb459824ceea30a48d851e2",
+    "in_tolerance": true
+  },
+  "SPK-A1A2-SR": {
+    "opus_path": "assets/audio/prompts/SPK-A1A2-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A1A2-SR/v1.mp3",
+    "duration_sec": 3.8,
+    "checksum": "bc9be90214b5b781752d1c462727ca67f42f7e34ba421eb69228525a638957db",
+    "in_tolerance": true
+  },
+  "SPK-B1B2-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-B1B2-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B1B2-INT2/v1.mp3",
+    "duration_sec": 3.0,
+    "checksum": "060e8f909febeaeed68ce032b9fca71a098c4d7c2566e5493d60bb8cd58290aa",
+    "in_tolerance": true
+  },
+  "LSN-A2-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-A2-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A2-S1/v1.mp3",
+    "duration_sec": 11.7,
+    "checksum": "80532901512fd2a8f9b36d475c893ed09a3ede2c3372b9d0b3c64296a0eeefcb",
+    "in_tolerance": false
+  },
+  "SPK-B1B2-RT": {
+    "opus_path": "assets/audio/prompts/SPK-B1B2-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B1B2-RT/v1.mp3",
+    "duration_sec": 12.5,
+    "checksum": "b66d6cb811c033258b7fab6b9c2c11389b7c2a4ef337a08cdd823cecf5224156",
+    "in_tolerance": true
+  },
+  "SPK-B2C1-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-B2C1-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B2C1-INT1/v1.mp3",
+    "duration_sec": 6.3,
+    "checksum": "61843fb5399f7be70b23dd8acb149a562b9cfee51f80e902f7b6c629353a32dd",
+    "in_tolerance": true
+  },
+  "SPK-C1C2-SR": {
+    "opus_path": "assets/audio/prompts/SPK-C1C2-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-C1C2-SR/v1.mp3",
+    "duration_sec": 8.2,
+    "checksum": "2b73c419cfd2b428c90871584693f74edf0a7f3670ff4a013e2464d454cba113",
+    "in_tolerance": false
+  },
+  "SPK-C1C2-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-C1C2-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-C1C2-INT1/v1.mp3",
+    "duration_sec": 6.8,
+    "checksum": "0932250a5a23ee0781e83f6ad14ecb97a5110c85d25379ae75902016c4e9612e",
+    "in_tolerance": true
+  },
+  "LSN-A2-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-A2-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A2-S3/v1.mp3",
+    "duration_sec": 12.3,
+    "checksum": "2bd3d489420ee260c1a617e9c8df935a3c3b6b9de187eb482581179057874f84",
+    "in_tolerance": false
+  },
+  "WRT-PA-D": {
+    "opus_path": "assets/audio/prompts/WRT-PA-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-PA-D/v1.mp3",
+    "duration_sec": 2.9,
+    "checksum": "94a57412a02a9b0585f772490579f6f334f2b9bcb3493d657848c76dc0f534e3",
+    "in_tolerance": false
+  },
+  "SPK-A1A2-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-A1A2-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A1A2-INT1/v1.mp3",
+    "duration_sec": 6.2,
+    "checksum": "998eceafb0ee2ac714ef6eb568a2f1fd67399cd53a7c0d52de03a3e9869d31c5",
+    "in_tolerance": false
+  },
+  "LSN-PRE-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-PRE-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-PRE-S1/v1.mp3",
+    "duration_sec": 4.9,
+    "checksum": "c38579a6e06e4e48c03193ee0952fe7ab8a14117c1948ad2f81899828fc2e51c",
+    "in_tolerance": false
+  },
+  "LSN-A1-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-A1-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A1-S2/v1.mp3",
+    "duration_sec": 8.5,
+    "checksum": "03f1016326c224bce59a341a8a4eeeb7041782675e35f338ebaffcbf5d02d17a",
+    "in_tolerance": false
+  },
+  "WRT-A12-D": {
+    "opus_path": "assets/audio/prompts/WRT-A12-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-A12-D/v1.mp3",
+    "duration_sec": 3.8,
+    "checksum": "bc9be90214b5b781752d1c462727ca67f42f7e34ba421eb69228525a638957db",
+    "in_tolerance": false
+  },
+  "WRT-C1C2-D": {
+    "opus_path": "assets/audio/prompts/WRT-C1C2-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-C1C2-D/v1.mp3",
+    "duration_sec": 6.0,
+    "checksum": "fd343ff2f3f01e60d7ecd5892581b857bd1442e9ecd7216b1674b064bceade3c",
+    "in_tolerance": false
+  },
+  "LSN-C2-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-C2-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C2-S1/v1.mp3",
+    "duration_sec": 35.6,
+    "checksum": "b4172567c4ffb6bbfe7e3993d1ef9c3547626402f81e05b335e15663673c14e8",
+    "in_tolerance": true
+  },
+  "LSN-B2-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-B2-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B2-S1/v1.mp3",
+    "duration_sec": 24.2,
+    "checksum": "422a8985819db459a0f3c1d44fe8f817dbb228822850c1734763d364c83f8606",
+    "in_tolerance": true
+  },
+  "CALIBRATION-DEMO-TONE": {
+    "opus_path": "assets/audio/prompts/CALIBRATION-DEMO-TONE/v1.opus",
+    "mp3_path": "assets/audio/prompts/CALIBRATION-DEMO-TONE/v1.mp3",
+    "duration_sec": 3.0,
+    "checksum": "42f557893d9ff3c1f29c45b2769fd0b0e097da59ade4283b46b8fb083a17e23a",
+    "in_tolerance": true
+  },
+  "SPK-A2B1-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-A2B1-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A2B1-INT1/v1.mp3",
+    "duration_sec": 4.4,
+    "checksum": "179d1364c68c1c90cf049522cac890cb8b6b13502fc13598ec6fa8f668db4af0",
+    "in_tolerance": false
+  },
+  "SPK-A1A2-RT": {
+    "opus_path": "assets/audio/prompts/SPK-A1A2-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A1A2-RT/v1.mp3",
+    "duration_sec": 6.6,
+    "checksum": "b29b46d96ad3ee6a234b0188f3e4a1801e7acd2fd10a4a1053f95dd77ceb3e81",
+    "in_tolerance": true
+  },
+  "LSN-C1-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-C1-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C1-S3/v1.mp3",
+    "duration_sec": 24.3,
+    "checksum": "057cd24bd6257b5a4ac8efc04ed61cbc07b5cb7b4121de1f8c300dc2f8530f44",
+    "in_tolerance": true
+  },
+  "WRT-B1B2-D": {
+    "opus_path": "assets/audio/prompts/WRT-B1B2-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-B1B2-D/v1.mp3",
+    "duration_sec": 6.3,
+    "checksum": "aa25053e305e51649b90becbcc7af6547c1307ffc53a3e6c8641ab85f689dac7",
+    "in_tolerance": true
+  },
+  "LSN-C2-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-C2-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C2-S2/v1.mp3",
+    "duration_sec": 30.1,
+    "checksum": "337a2421af0383553e67c200ae097e6b63cbb4a927c34bb803b7220d719a7b6f",
+    "in_tolerance": true
+  },
+  "LSN-B2-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-B2-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B2-S3/v1.mp3",
+    "duration_sec": 21.5,
+    "checksum": "dcda2f50482b714648948ae65353f8f5aba688f545d6b638747a86119bdbf72d",
+    "in_tolerance": true
+  },
+  "SPK-PreA1A1-INT1": {
+    "opus_path": "assets/audio/prompts/SPK-PreA1A1-INT1/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-PreA1A1-INT1/v1.mp3",
+    "duration_sec": 3.5,
+    "checksum": "8f0f5bd1986cd2fb027de9ec9c6e0ed3dfb30ca7e49ef6ae7a7355f5eacbde97",
+    "in_tolerance": true
+  },
+  "WRT-A2B1-D": {
+    "opus_path": "assets/audio/prompts/WRT-A2B1-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-A2B1-D/v1.mp3",
+    "duration_sec": 4.5,
+    "checksum": "2369c78a1efeb4e92a13858711e636159439a8e9c12d0b8973bf9cbe25b44904",
+    "in_tolerance": false
+  },
+  "LSN-C1-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-C1-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C1-S1/v1.mp3",
+    "duration_sec": 34.8,
+    "checksum": "4321206f8ef8e91f44e495d754d86ff6c2ca1c2b756e76c39462feef1813e96b",
+    "in_tolerance": true
+  },
+  "SPK-C1C2-RT": {
+    "opus_path": "assets/audio/prompts/SPK-C1C2-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-C1C2-RT/v1.mp3",
+    "duration_sec": 13.6,
+    "checksum": "10ef1465b8a70f16d49e2fb030a20cb9120b4e7aad0391c7f1fd0da94e34d3c1",
+    "in_tolerance": true
+  },
+  "SPK-A1A2-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-A1A2-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A1A2-INT2/v1.mp3",
+    "duration_sec": 4.6,
+    "checksum": "cecc1bc19417aa1ba0b78bf53fa16342cf10f3d8c88bbba77b280197f9b647f5",
+    "in_tolerance": true
+  },
+  "SPK-C1C2-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-C1C2-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-C1C2-INT2/v1.mp3",
+    "duration_sec": 5.0,
+    "checksum": "70c45b291e5df99983429a7eb448b9970d603c3ab0ac361132e460defce11c8f",
+    "in_tolerance": true
+  },
+  "SPK-B2C1-RT": {
+    "opus_path": "assets/audio/prompts/SPK-B2C1-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B2C1-RT/v1.mp3",
+    "duration_sec": 14.6,
+    "checksum": "7d78244490a9b92e7d98fb127631abb019baec8c6850cdca6d13ac0d1110f2e2",
+    "in_tolerance": true
+  },
+  "SPK-B2C1-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-B2C1-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-B2C1-INT2/v1.mp3",
+    "duration_sec": 6.6,
+    "checksum": "16e7042a53924571f00ffc524b201e0c516a9622231f176b441afa29bdbee855",
+    "in_tolerance": true
+  },
+  "LSN-B1-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-B1-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B1-S2/v1.mp3",
+    "duration_sec": 17.8,
+    "checksum": "494575b3e8b1fe8449dafe1a904473be1eddedc13a70839069c91280e70bff5b",
+    "in_tolerance": false
+  },
+  "WRT-B2C1-D": {
+    "opus_path": "assets/audio/prompts/WRT-B2C1-D/v1.opus",
+    "mp3_path": "assets/audio/prompts/WRT-B2C1-D/v1.mp3",
+    "duration_sec": 6.0,
+    "checksum": "b7696a0a0e4a9c32456107d2a733a48f515991f48ff967a80de9083f45504660",
+    "in_tolerance": true
+  },
+  "LSN-C2-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-C2-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C2-S3/v1.mp3",
+    "duration_sec": 26.0,
+    "checksum": "9697f3a084c8e616d51dcefe7b4e2689f076a25926b97eadd405e4d926b408c1",
+    "in_tolerance": true
+  },
+  "LSN-PRE-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-PRE-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-PRE-S3/v1.mp3",
+    "duration_sec": 5.5,
+    "checksum": "81692db541aa2f530b9159a50aba4bfe301da9a524db7b43ab645435ea6f6ae9",
+    "in_tolerance": false
+  },
+  "LSN-B1-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-B1-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B1-S3/v1.mp3",
+    "duration_sec": 18.3,
+    "checksum": "268a199aa78eb60a186bd3179adb3306e4d2fad3847bbd0bfa80412322c8423d",
+    "in_tolerance": false
+  },
+  "LSN-C1-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-C1-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-C1-S2/v1.mp3",
+    "duration_sec": 29.1,
+    "checksum": "d48ee83335f76c099c6d0f1f93dc55012d6d35c2a31386338397d309012af742",
+    "in_tolerance": true
+  },
+  "LSN-A2-S2": {
+    "opus_path": "assets/audio/stimuli/LSN-A2-S2/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A2-S2/v1.mp3",
+    "duration_sec": 12.4,
+    "checksum": "522c6416792e732c5456b47e59daaf9e74e527ae5f2b515057b8231622a7411b",
+    "in_tolerance": false
+  },
+  "LSN-B1-S1": {
+    "opus_path": "assets/audio/stimuli/LSN-B1-S1/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-B1-S1/v1.mp3",
+    "duration_sec": 21.6,
+    "checksum": "21d80be4edc7d2cdbb6845606087a743728eb0e2dc1a217c6abd5abbcd2a53c5",
+    "in_tolerance": true
+  },
+  "SPK-A2B1-SR": {
+    "opus_path": "assets/audio/prompts/SPK-A2B1-SR/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-A2B1-SR/v1.mp3",
+    "duration_sec": 6.0,
+    "checksum": "0aff2764c3b4c7fa71ab4f06b583c7506c494e8a17bce10c03398169bab1b8b5",
+    "in_tolerance": true
+  },
+  "SPK-PreA1A1-RT": {
+    "opus_path": "assets/audio/prompts/SPK-PreA1A1-RT/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-PreA1A1-RT/v1.mp3",
+    "duration_sec": 4.5,
+    "checksum": "8c339b6beef62b3972538433ffe20e4c86c44f8447b38abeaf2ece391b15f234",
+    "in_tolerance": true
+  },
+  "LSN-A1-S3": {
+    "opus_path": "assets/audio/stimuli/LSN-A1-S3/v1.opus",
+    "mp3_path": "assets/audio/stimuli/LSN-A1-S3/v1.mp3",
+    "duration_sec": 13.5,
+    "checksum": "5ffcbf997ed827f96b641f50ec36e5756c5560f66ee4eb03a7f04eeb84643116",
+    "in_tolerance": false
+  },
+  "SPK-PreA1A1-INT2": {
+    "opus_path": "assets/audio/prompts/SPK-PreA1A1-INT2/v1.opus",
+    "mp3_path": "assets/audio/prompts/SPK-PreA1A1-INT2/v1.mp3",
+    "duration_sec": 4.1,
+    "checksum": "7b4a6d40bc862637fdb0e79fcd496c350016457fdb0696ec2993e19ba0a5391f",
+    "in_tolerance": true
+  }
+}

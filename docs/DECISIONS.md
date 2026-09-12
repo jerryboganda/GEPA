@@ -94,7 +94,56 @@ Context: The production VPS must serve the live application reliably with minima
 Decision: Strictly enforce a Zero-Compute Host policy. All compilation, linting, testing, and Docker image composition are executed exclusively on GitHub Actions runners via `.github/workflows/ci.yml`, `.github/workflows/deploy-cloud-run.yml`, and `.github/workflows/deploy-vps.yml`. Production VPS deployments pull pre-built, multi-stage optimized runtime images from GitHub Container Registry (`ghcr.io`) with strict resource constraints (1.0 CPU, 512MB RAM cap) and automated dangling image pruning (`docker image prune -f`), leaving the production host dedicated 100% to serving live traffic.
 Spec: 02 §1, 02 §8, 11 (M12). Status: approved.
 
+## D-020 · Model tiering placeholder fix (MODEL_RATER distinct from MODEL_FAST/MODEL_TTS)
+Context: `.env.example` had `MODEL_RATER`, `MODEL_FAST` and `MODEL_TTS` all pinned to the same flash model, contradicting
+`02_ARCHITECTURE.md §1` ("MODEL_RATER (Pro-class...)") and Q-002 (agent runs `models.list` at M1 to pin real IDs). No
+`GEMINI_API_KEY` is available in this build environment, so a live `models.list` call cannot be made.
+Decision: pin `MODEL_RATER=gemini-2.5-pro` (distinct Pro-class placeholder) and leave `MODEL_FAST`/`MODEL_TTS` on the
+flash model, with an inline comment marking these as placeholders pending a real `models.list` run once a key exists.
+Spec: 02 §1, Q-002. Reversible: yes. Status: proposed.
+
+## D-021 · Postgres + self-issued JWT replaces Firestore + Firebase Auth (product owner directive)
+Context: `00_MASTER_SYSTEM_PROMPT.md §4`, `02_ARCHITECTURE.md §1` and `03_DATA_MODEL.md §5` specify Firestore + Firebase
+Auth (anonymous candidates, Google sign-in for staff) as the persistence/identity layer. The product owner explicitly
+overrode this mid-build: **no Firebase in any form** (not even the local Emulator Suite, which needs a JVM this
+environment should not have installed) — Postgres for storage, plain Rust for everything else, and all DB-dependent
+verification runs in GitHub Actions (a Postgres service container), never against a database on the dev machine.
+Decision:
+- **Persistence**: `server/src/db.rs` (`PostgresClient`, via `tokio-postgres` + `deadpool-postgres`, no query-macro/ORM
+  crate — avoids a compile-time-checked-query tool needing a live DB at build time, and keeps the dependency tree
+  small on a slow-building toolchain). Three tables (`sessions`, `jobs`, `review_queue`) share one shape —
+  `id TEXT PRIMARY KEY, data JSONB, version BIGINT` — so the whole domain model (`SessionState`, `BackgroundJob`,
+  `FlaggedSessionReview`) round-trips through `serde_json` unchanged; `repos.rs`'s `SessionRepo`/`JobRepo`/
+  `ReviewQueueRepo` kept their exact public API from the Firestore design, only their backing client changed.
+  Optimistic concurrency uses an integer `version` column (`UPDATE ... WHERE version = $expected`) in place of
+  Firestore's `updateTime` precondition. Migrations are one plain SQL file (`server/migrations/001_init.sql`), embedded
+  into the binary via `include_str!` and run idempotently at startup — no migration-framework crate for a handful of
+  tables at pilot scale.
+- **Auth**: `server/src/auth.rs` issues its own HS256 JWTs (`JwtService`, secret from `JWT_SECRET`) instead of
+  verifying externally-issued Firebase ID tokens — this removes the JWKS-fetching/emulator-vs-prod branching entirely,
+  not just the dependency. Candidates need no external identity provider at all: `POST /api/sessions` mints a fresh
+  anonymous `candidate_uid` and returns a token in the same response (`CreateSessionResponse.token`), so the client
+  never needs a separate "sign in" step first. Reviewers/admins log in with email + password
+  (`POST /api/auth/login`) against a new `staff_users` table (Argon2-hashed passwords, `tools/create_staff_user`
+  provisions the first accounts) instead of Google sign-in + custom claims. The `AuthUser`/`StaffAuth`/`AdminAuth`
+  Axum extractors and every `api.rs` handler signature are unchanged — only what they verify against changed.
+- **Rules enforcement**: Firestore's `firestore.rules`/`storage.rules` (and their emulator-based unit tests) are
+  removed — there is no separate rules layer with Postgres; the same ownership/role checks that already lived in
+  `api.rs` (`require_session_owner`, `assert_owns_or_staff`) are now the *only* enforcement point, which is exactly
+  what they always were for anything routed through the API (D-009).
+- **Local dev**: nothing is installed or run locally to support this. `cargo check`/`cargo test` compile and run the
+  DB-independent parts (the 47 pure-engine tests) without any database. Anything that needs a live Postgres connection
+  is verified exclusively in `.github/workflows/ci.yml` (`postgres:16-alpine` service container) — see D-016/D-018's
+  existing GitHub-Actions-offload precedent, now extended to cover this too.
+
+Alternatives considered: `sqlx` (heavier dependency tree, its compile-time query macros need a reachable DB at build
+time — directly conflicts with "nothing DB-related runs locally"); keeping the Firestore Emulator Suite for local/CI
+parity (rejected outright by the product owner — it requires a JVM, which must not be installed on this machine).
+Spec: 00 §4, 02 §1, 03 §5, 09 §1-§2, 11 (M4, M5, M10). Reversible: architecturally yes (the repo-layer abstraction
+means swapping backends again is a `db.rs`/`auth.rs` change, not a `services.rs`/`api.rs` rewrite) but not a decision
+expected to be revisited. Status: approved.
+
 ---
-<!-- Agent appends from here. Next id: D-019 -->
+<!-- Agent appends from here. Next id: D-022 -->
 
 

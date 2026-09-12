@@ -85,7 +85,7 @@ npm run seed:load
 ```
 Boundary guarantees:
 - **Candidate-Safe Collections:** `items`, `reading_stimuli`, `listening_stimuli` (with `text` transcript strictly stripped).
-- **Restricted Collections (Server Only):** `restricted_keys`, `listening_admin_stimuli`. Blocked from candidate client reads via `firestore.rules`.
+- **Restricted Collections (Server Only):** `restricted_keys`, `listening_admin_stimuli`. Blocked from candidate client access — the seed bank stays server-side in memory (`server/src/repos.rs::SeedBank`), never exposed via any client-reachable table or endpoint (DECISIONS.md D-021).
 
 To hot-reload the seed bank in the running server without downtime:
 ```bash
@@ -238,25 +238,31 @@ The prompt registry in `server/src/ai/prompts.rs` is append-only with explicit v
 
 ---
 
-## 9. Security Rules & Deployment
+## 9. Access Control & Deployment
 
-### 9.1 Firestore Security Rules
-Deploy `server/rules/firestore.rules`:
-```bash
-firebase deploy --only firestore:rules
-```
-Crucial rules:
-- `restricted_keys` collection: `allow read, write: if false;`
-- `stimulus_admin` collection: `allow read, write: if false;`
-- `sessions` collection: candidates can read only their own active session; updates to scored fields are rejected.
+### 9.1 Ownership/role enforcement (DECISIONS.md D-021)
+There is no separate rules layer — Postgres has no equivalent to Firestore Security Rules, so the same checks that
+were always the real enforcement point for anything routed through the API are the *only* enforcement point:
+- `server/src/api.rs::require_session_owner` — every `/api/sessions/:id/*` route: the session must exist and the
+  caller must own it (candidate token `sub` matches `sessions.candidate_uid`) or be reviewer/admin staff.
+- `server/src/auth.rs::AuthUser` / `StaffAuth` / `AdminAuth` — Axum extractors gating every route by role
+  (`/api/review/*` needs reviewer or admin, `/api/admin/*` needs admin).
+- The seed bank (`restricted_keys`, listening scripts) never leaves server memory — no table or endpoint exposes it
+  to any client role, staff included.
 
-### 9.2 Cloud Storage Security Rules
-Deploy `server/rules/storage.rules`:
+### 9.2 Postgres schema
+Migrations are one file, `server/migrations/001_init.sql`, embedded into the server binary and run idempotently at
+every startup — no separate deploy step. To apply manually against a specific database:
 ```bash
-firebase deploy --only storage
+psql "$DATABASE_URL" -f server/migrations/001_init.sql
 ```
-- Audio uploads restricted to candidate's own session folder.
-- Listening stimulus files accessible only via signed, time-limited download URLs.
+
+### 9.3 Provisioning a reviewer/admin account
+```bash
+npm run staff:create -- reviewer@example.com "a-strong-password" reviewer
+npm run staff:create -- admin@example.com "a-strong-password" admin
+```
+Re-running with the same email resets that account's password/role.
 
 ---
 

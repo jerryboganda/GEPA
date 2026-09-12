@@ -17,6 +17,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [playCount, setPlayCount] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [reconnecting, setReconnecting] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -26,6 +27,21 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     setProgress(0);
   }, [audioUrl]);
 
+  // Disconnection/buffer failure (06 §5): resume replays the same audio and
+  // it still counts as the play that was interrupted, not a new one — so
+  // this resets playback state WITHOUT touching playCount, letting the
+  // candidate press Play again for the same play slot. Two independent
+  // signals can mean "this play didn't happen": the element's own `error`
+  // DOM event (a fresh load genuinely failed), and play()'s promise
+  // rejecting (which also covers retrying play() on an element that's
+  // already in an error state, where the browser may not re-attempt
+  // loading or refire `error` at all). Both must land here, not just one.
+  const handlePlaybackFailure = () => {
+    setIsPlaying(false);
+    setProgress(0);
+    setReconnecting(true);
+  };
+
   const handlePlay = () => {
     if (playCount >= 2 || isPlaying) return;
 
@@ -33,15 +49,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       onPlayStarted();
     }
 
+    setReconnecting(false);
     setIsPlaying(true);
     const audio = audioRef.current;
     if (audio) {
       audio.currentTime = 0;
-      audio.play().catch(() => {
-        // Fallback for mock/test environments
-        simulateAudioPlayback();
-      });
+      audio.play().catch(handlePlaybackFailure);
     } else {
+      // No <audio> element at all (audioUrl unset) — offline/demo fallback.
       simulateAudioPlayback();
     }
   };
@@ -75,7 +90,13 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const isLocked = playCount >= 2 || isPlaying;
 
   return (
-    <div className={`p-4 rounded-xl border border-slate-200 bg-slate-50/80 shadow-soft ${className}`}>
+    <div data-testid="audio-player" className={`p-4 rounded-xl border border-slate-200 bg-slate-50/80 shadow-soft ${className}`}>
+      {reconnecting && (
+        <div data-testid="audio-reconnecting" className="mb-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+          <div className="w-3.5 h-3.5 border-2 border-amber-400/40 border-t-amber-700 rounded-full animate-spin shrink-0" />
+          <span>Checking your connection… press Play to try again — this will not count as an extra play.</span>
+        </div>
+      )}
       {audioUrl && (
         <audio
           ref={audioRef}
@@ -87,6 +108,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             }
           }}
           onEnded={finishPlayback}
+          onError={handlePlaybackFailure}
           className="hidden"
           preload="auto"
         />
@@ -115,6 +137,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
+            data-testid="audio-play-btn"
             onClick={handlePlay}
             disabled={isLocked}
             aria-label={

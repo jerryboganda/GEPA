@@ -1,8 +1,12 @@
+use crate::db::{DbError, PostgresClient};
+use crate::state::{BackgroundJob, FlaggedSessionReview, SessionState};
 use serde_json::Value;
 use shared_engine::models::*;
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use std::sync::Arc;
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Default)]
 pub struct SeedBank {
@@ -86,5 +90,156 @@ impl SeedBank {
             writing_tasks,
             enemy_groups,
         })
+    }
+}
+
+fn decode_err(e: serde_json::Error) -> DbError {
+    DbError::Query(format!("json decode: {e}"))
+}
+
+/// A session row plus the `version` counter needed to write it back with an
+/// optimistic-concurrency precondition.
+pub struct FetchedSession {
+    pub session: SessionState,
+    pub version: i64,
+}
+
+/// Postgres-backed `sessions` table (DECISIONS.md D-021). Replaces the old
+/// in-process `RwLock<HashMap<String, SessionState>>` — every call
+/// round-trips to Postgres, so session state genuinely survives a server
+/// restart. The whole `SessionState` is stored as one JSONB `data` column;
+/// see `db.rs` for why (keeps this repo's shape stable across the earlier
+/// Firestore design and this one).
+#[derive(Clone)]
+pub struct SessionRepo {
+    db: Arc<PostgresClient>,
+}
+
+impl SessionRepo {
+    pub fn new(db: Arc<PostgresClient>) -> Self {
+        Self { db }
+    }
+
+    pub async fn create(&self, session: &SessionState) -> Result<(), DbError> {
+        let value = serde_json::to_value(session).map_err(decode_err)?;
+        self.db.create("sessions", &session.session_id, &value).await
+    }
+
+    pub async fn get(&self, id: &str) -> Result<Option<FetchedSession>, DbError> {
+        let fetched = match self.db.get("sessions", id).await? {
+            Some(f) => f,
+            None => return Ok(None),
+        };
+        let session: SessionState = serde_json::from_value(fetched.data).map_err(decode_err)?;
+        Ok(Some(FetchedSession { session, version: fetched.version }))
+    }
+
+    /// Overwrite the whole row. Pass `expected_version` (from a prior
+    /// `get`) to make this a compare-and-swap — `Err(Conflict)` means
+    /// another request modified the session in between; the caller should
+    /// re-fetch and retry (see `services.rs`'s helper `load_session`).
+    pub async fn set(&self, session: &SessionState, expected_version: i64) -> Result<(), DbError> {
+        let value = serde_json::to_value(session).map_err(decode_err)?;
+        self.db.set("sessions", &session.session_id, &value, expected_version).await
+    }
+
+    pub async fn delete(&self, id: &str) -> Result<bool, DbError> {
+        self.db.delete("sessions", id).await
+    }
+
+    /// Every session. Used only by admin reports and the retention job,
+    /// which genuinely need to see every row anyway.
+    /// # ponytail: full-table scan, fine at pilot volume — add a real
+    /// index/query if session counts grow past the tens of thousands.
+    pub async fn list_all(&self) -> Result<Vec<SessionState>, DbError> {
+        let rows = self.db.list("sessions").await?;
+        Ok(rows.into_iter().filter_map(|(_, v)| serde_json::from_value(v).ok()).collect())
+    }
+}
+
+/// Postgres-backed `jobs` table (background rating-job audit trail,
+/// `02_ARCHITECTURE.md §5`).
+#[derive(Clone)]
+pub struct JobRepo {
+    db: Arc<PostgresClient>,
+}
+
+impl JobRepo {
+    pub fn new(db: Arc<PostgresClient>) -> Self {
+        Self { db }
+    }
+
+    pub async fn create(&self, job: &BackgroundJob) -> Result<(), DbError> {
+        let value = serde_json::to_value(job).map_err(decode_err)?;
+        self.db.create("jobs", &job.id, &value).await
+    }
+
+    pub async fn list_all(&self) -> Result<Vec<BackgroundJob>, DbError> {
+        let rows = self.db.list("jobs").await?;
+        Ok(rows.into_iter().filter_map(|(_, v)| serde_json::from_value(v).ok()).collect())
+    }
+}
+
+/// Postgres-backed reviewer flag queue (each row a `FlaggedSessionReview`,
+/// keyed by a server-generated id).
+#[derive(Clone)]
+pub struct ReviewQueueRepo {
+    db: Arc<PostgresClient>,
+}
+
+impl ReviewQueueRepo {
+    pub fn new(db: Arc<PostgresClient>) -> Self {
+        Self { db }
+    }
+
+    pub async fn push(&self, item: &FlaggedSessionReview) -> Result<(), DbError> {
+        let id = format!("rq_{}", &Uuid::new_v4().to_string().replace('-', "")[..16]);
+        let value = serde_json::to_value(item).map_err(decode_err)?;
+        self.db.create("review_queue", &id, &value).await
+    }
+
+    pub async fn list_all(&self) -> Result<Vec<FlaggedSessionReview>, DbError> {
+        let rows = self.db.list("review_queue").await?;
+        Ok(rows.into_iter().filter_map(|(_, v)| serde_json::from_value(v).ok()).collect())
+    }
+
+    /// Dedupe check used before pushing a `profile_inconsistency` flag twice
+    /// for the same session (mirrors the old `Vec::iter().any(...)` check).
+    pub async fn exists(&self, session_id: &str, flag_type: &str) -> Result<bool, DbError> {
+        let all = self.list_all().await?;
+        Ok(all.iter().any(|item| item.session_id == session_id && item.flag_type == flag_type))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use shared_engine::models::Band;
+
+    // Every new session's LocatorState starts at Band::B1 for every objective
+    // module (routing.rs::LocatorState::new). If any module's item bank has
+    // zero unused stimuli at B1, `get_next_unit` returns None on the very
+    // first call and the candidate silently skips straight past that module
+    // instead of seeing it (the bug behind the LSN e2e failures).
+    #[test]
+    fn every_module_has_a_usable_stimulus_at_the_default_starting_band() {
+        let seed_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../seed");
+        let bank = SeedBank::load_from_dir(seed_dir).expect("seed bank should load");
+
+        let lsn_b1 = bank.lsn_stimuli.iter().find(|s| s.band == Band::B1);
+        assert!(lsn_b1.is_some(), "no LSN stimulus at Band::B1 (the default starting band for a fresh session)");
+        for id in &lsn_b1.unwrap().item_ids {
+            assert!(
+                bank.lsn_items.iter().any(|i| &i.item_id == id),
+                "LSN stimulus {} references item {id} which is missing from lsn_items",
+                lsn_b1.unwrap().stimulus_id
+            );
+        }
+
+        let rd_b1 = bank.rd_stimuli.iter().find(|s| s.band == Band::B1);
+        assert!(rd_b1.is_some(), "no RD stimulus at Band::B1 (the default starting band for a fresh session)");
+
+        let ls_b1 = bank.ls_items.iter().any(|i| i.band == Band::B1);
+        assert!(ls_b1, "no LS item at Band::B1 (the default starting band for a fresh session)");
     }
 }

@@ -1,0 +1,12 @@
+[package]
+name = "create_staff_user"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Reuses the server crate's own password hashing (server/src/auth.rs) so
+# there's exactly one argon2 call site in the whole workspace.
+server = { path = "../../server" }
+tokio = { version = "1.38", features = ["rt-multi-thread", "macros"] }
+tokio-postgres = "0.7"
+uuid = { version = "1.8", features = ["v4"] }

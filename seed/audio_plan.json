@@ -1,0 +1,341 @@
+{
+  "accent_note": "Offline flite voices only cover American + Scottish accents — no General British or Australian voice was available on this build. See DECISIONS.md D-019.",
+  "assignments": [
+    {
+      "asset_id": "LSN-PRE-S1",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "LSN-PRE-S2",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-PRE-S3",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-A1-S1",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-A1-S2",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "LSN-A1-S3",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-A2-S1",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-A2-S2",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-A2-S3",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "LSN-B1-S1",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-B1-S2",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-B1-S3",
+      "voices": [
+        "awb",
+        "rms",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-B2-S1",
+      "voices": [
+        "awb",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-B2-S2",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-B2-S3",
+      "voices": [
+        "awb",
+        "kal16",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-C1-S1",
+      "voices": [
+        "awb"
+      ]
+    },
+    {
+      "asset_id": "LSN-C1-S2",
+      "voices": [
+        "awb",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-C1-S3",
+      "voices": [
+        "kal16",
+        "rms",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-C2-S1",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "LSN-C2-S2",
+      "voices": [
+        "kal16",
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "LSN-C2-S3",
+      "voices": [
+        "awb",
+        "kal16",
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-PreA1A1-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-PreA1A1-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-PreA1A1-INT1",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-PreA1A1-INT2",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-A1A2-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-A1A2-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-A1A2-INT1",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-A1A2-INT2",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-A2B1-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-A2B1-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-A2B1-INT1",
+      "voices": [
+        "awb"
+      ]
+    },
+    {
+      "asset_id": "SPK-A2B1-INT2",
+      "voices": [
+        "awb"
+      ]
+    },
+    {
+      "asset_id": "SPK-B1B2-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-B1B2-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-B1B2-INT1",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-B1B2-INT2",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-B2C1-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-B2C1-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-B2C1-INT1",
+      "voices": [
+        "awb"
+      ]
+    },
+    {
+      "asset_id": "SPK-B2C1-INT2",
+      "voices": [
+        "awb"
+      ]
+    },
+    {
+      "asset_id": "SPK-C1C2-SR",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "SPK-C1C2-RT",
+      "voices": [
+        "slt"
+      ]
+    },
+    {
+      "asset_id": "SPK-C1C2-INT1",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "SPK-C1C2-INT2",
+      "voices": [
+        "rms"
+      ]
+    },
+    {
+      "asset_id": "WRT-PA-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "WRT-A12-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "WRT-A2B1-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "WRT-B1B2-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "WRT-B2C1-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "WRT-C1C2-D",
+      "voices": [
+        "kal16"
+      ]
+    },
+    {
+      "asset_id": "CALIBRATION-DEMO-TONE",
+      "voices": [
+        "sine_440hz"
+      ]
+    }
+  ],
+  "generated_at": "2026-09-11T16:52:53.809339700+00:00",
+  "provider": "flite",
+  "voice_pool": [
+    "kal16 (US English, male)",
+    "rms (US English, male)",
+    "slt (US English, female)",
+    "awb (Scottish English, male)"
+  ]
+}

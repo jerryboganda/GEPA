@@ -60,6 +60,21 @@ export const UI_STRINGS = {
     delete_data_btn: 'Delete My Data',
     receptive_only_notice:
       'This foundation profile summarizes receptive skills only. Speaking and Writing have not yet been evaluated.',
+    claims_title: 'What this result is and is not',
+    claims_is_title: 'What this result is',
+    claims_is_points: [
+      'Indicative placement estimate based on observed performance',
+      'Diagnostic communicative profile highlighting strengths and growth areas',
+      'Developmental guidance to help prioritize future study',
+      'Provisional placement with Moderate or Low confidence',
+    ],
+    claims_not_title: 'What this result is not',
+    claims_not_points: [
+      'GEPA does not predict official exam scores.',
+      'Not an institutional or high-stakes examination',
+      'Does not provide external admissions or licensing equivalence',
+      'Does not report fractional or plus/minus sub-levels',
+    ],
   },
   accessibility: {
     title: 'Display & Access Settings',
