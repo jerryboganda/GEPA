@@ -153,15 +153,25 @@ mod tests {
         }
     }
 
-    /// True if `ident` occurs in `statement` as a code token — i.e. outside
-    /// every string literal. Word-boundary matching on the literal-stripped
-    /// text covers `{ident}` captures, `ident = value` named fields, and
-    /// positional-arg uses, while a word inside a quoted message ("random
-    /// secret") is removed with the literal and never matches.
+    /// True if `ident` occurs in `statement` as an interpolated value.
+    /// Two surfaces are checked:
+    /// (a) code outside string literals — named fields (`email = e`) and
+    ///     positional args (`"{}", correct`) appear as plain tokens after
+    ///     literals are stripped;
+    /// (b) inline captures (`{transcript}`) — these live *inside* the
+    ///     message literal but are interpolated code references, so the
+    ///     raw statement is checked for the exact `{ident}` shape.
+    /// An English word inside the literal with no braces ("random secret")
+    /// matches neither and never false-positives.
     fn contains_identifier_outside_literals(statement: &str, ident: &str) -> bool {
         let code_only = strip_string_literals(statement);
-        code_only.split(|c: char| !(c.is_alphanumeric() || c == '_'))
+        if code_only
+            .split(|c: char| !(c.is_alphanumeric() || c == '_'))
             .any(|token| token == ident)
+        {
+            return true;
+        }
+        statement.contains(&format!("{{{ident}}}"))
     }
 
     /// Replace the contents of every double-quoted string literal with a
