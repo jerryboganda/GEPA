@@ -398,9 +398,15 @@ pub struct SpeakingTask {
     pub prompt: String,
     pub candidate_sees_text: bool,
     pub delivery: String,
-    #[serde(default)]
+    /// Server-only rating/production material. Serialized ONLY when present
+    /// — and the candidate-view path (`get_speaking_tasks`) nulls it out, so
+    /// candidates never see the field name either. Reviewer-facing views
+    /// hand-build their JSON and don't serialize this struct at all.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub audio_script: Option<String>,
-    #[serde(default)]
+    /// Interlocutor target line for simulated interactions — same
+    /// server-only treatment as `audio_script`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interlocutor_line: Option<String>,
     #[serde(default)]
     pub audio: Option<TaskAudio>,
@@ -450,7 +456,10 @@ pub struct WritingTask {
     pub topic_family: String,
     #[serde(rename = "timeLimitSeconds", alias = "time_limit_seconds", default = "default_writing_limit")]
     pub time_limit_seconds: u32,
-    #[serde(default)]
+    /// Listen-to-write source text — server-only, same treatment as
+    /// `SpeakingTask::audio_script` (06 §8: the candidate hears the
+    /// audio, never reads the script).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub audio_script: Option<String>,
     #[serde(default)]
     pub audio: Option<TaskAudio>,

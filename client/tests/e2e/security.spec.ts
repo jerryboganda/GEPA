@@ -25,17 +25,31 @@ test('no API response leaks answer keys or listening scripts across a full journ
   // Productive-phase scripts: the audio_script/interlocutor_line values
   // from the seed speaking/writing task banks (server-side rating
   // material — must never be serialized into /speaking/start or
-  // /writing/start responses).
+  // /writing/start responses). Where the seed deliberately reuses the
+  // prompt as the script for `candidate_sees_text` tasks (sentence
+  // reconstruction: the candidate reads and repeats the same text),
+  // the prompt itself is *supposed* to be in the response — scanning
+  // it would false-positive on every build, so only script text that
+  // differs from the candidate-visible prompt counts.
   const speakingSeed = JSON.parse(readFileSync(path.resolve(__dirname, '../../../seed/speaking_tasks.json'), 'utf-8')) as {
-    tasks: { audio_script?: string; interlocutor_line?: string }[];
+    tasks: { audio_script?: string; interlocutor_line?: string; prompt?: string }[];
   };
   const writingSeed = JSON.parse(readFileSync(path.resolve(__dirname, '../../../seed/writing_tasks.json'), 'utf-8')) as {
-    tasks: { audio_script?: string }[];
+    tasks: { audio_script?: string; prompt?: string }[];
   };
+  const trimmed = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim();
   const productiveScripts = [
-    ...speakingSeed.tasks.flatMap((t) => [t.audio_script ?? '', t.interlocutor_line ?? '']),
-    ...writingSeed.tasks.flatMap((t) => [t.audio_script ?? '']),
-  ].filter((t) => t.length > 20);
+    ...speakingSeed.tasks.flatMap((t) => {
+      const prompt = trimmed(t.prompt);
+      return [t.audio_script, t.interlocutor_line].filter(
+        (s) => trimmed(s).length > 20 && trimmed(s) !== prompt,
+      );
+    }),
+    ...writingSeed.tasks.flatMap((t) => {
+      const prompt = trimmed(t.prompt);
+      return [t.audio_script].filter((s) => trimmed(s).length > 20 && trimmed(s) !== prompt);
+    }),
+  ].map((s) => trimmed(s));
 
   page.on('response', async (response) => {
     if (!response.url().includes('/api/')) return;
@@ -50,13 +64,17 @@ test('no API response leaks answer keys or listening scripts across a full journ
     if (/"correct"\s*:\s*(true|false)/.test(body)) leaks.push(`${response.url()} leaked a correct field`);
     // Server-only field names being present at all is a leak of the field
     // (the values are redacted server-side; the *shape* must not ship either).
-    if (/"audio_script"/.test(body)) leaks.push(`${response.url()} leaked audio_script field`);
-    if (/"interlocutor_line"/.test(body)) leaks.push(`${response.url()} leaked interlocutor_line field`);
+    // NB: this works because the engine models skip_serializing_if the
+    // field is None — the candidate view nulls them, so neither name nor
+    // value reaches the wire.
+    if (/"audio_script"\s*:/.test(body)) leaks.push(`${response.url()} leaked audio_script field`);
+    if (/"interlocutor_line"\s*:/.test(body)) leaks.push(`${response.url()} leaked interlocutor_line field`);
+    const flat = body.replace(/\s+/g, ' ');
     for (const script of adminScripts) {
-      if (body.includes(script)) leaks.push(`${response.url()} leaked a listening admin script verbatim`);
+      if (flat.includes(script)) leaks.push(`${response.url()} leaked a listening admin script verbatim`);
     }
     for (const script of productiveScripts) {
-      if (body.includes(script)) leaks.push(`${response.url()} leaked a productive-phase script verbatim`);
+      if (flat.includes(script)) leaks.push(`${response.url()} leaked a productive-phase script verbatim`);
     }
   });
 

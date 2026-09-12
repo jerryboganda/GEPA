@@ -59,6 +59,33 @@ def load_listening_scripts() -> list[str]:
     return scripts
 
 
+def load_productive_scripts() -> list[str]:
+    """audio_script/interlocutor_line values from the speaking/writing
+    seed banks. Where the seed deliberately reuses the candidate-visible
+    prompt as the script (sentence reconstruction: the candidate reads
+    and repeats the same text), the prompt legitimately ships — only
+    script text that differs from the prompt is a leak signature.
+    """
+    out: list[str] = []
+    for bank_name in ("speaking_tasks.json", "writing_tasks.json"):
+        path = ROOT / "seed" / bank_name
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        tasks = data.get("tasks", data) if isinstance(data, dict) else data
+        for task in tasks:
+            prompt = _flatten(task.get("prompt", ""))
+            for field in ("audio_script", "interlocutor_line"):
+                script = _flatten(task.get(field, ""))
+                if len(script) >= 40 and script != prompt:
+                    out.append(script)
+    return out
+
+
+def _flatten(s: str) -> str:
+    return re.sub(r"\s+", " ", str(s)).strip()
+
+
 def main() -> int:
     if not DIST.exists():
         print(f"error: dist dir not found: {DIST}", file=sys.stderr)
@@ -66,6 +93,7 @@ def main() -> int:
 
     key_option_ids = load_restricted_ids()
     listening_scripts = load_listening_scripts()
+    productive_scripts = load_productive_scripts()
 
     files = [p for p in DIST.rglob("*") if p.is_file()]
     if not files:
@@ -87,21 +115,30 @@ def main() -> int:
 
         # Listening scripts must never be embedded in the client bundle
         # (candidate gets a signed audio URL, never the script text —
-        # AGENTS.md "Never" list, 06 §5).
-        for script in listening_scripts:
+        # AGENTS.md "Never" list, 06 §5); same for productive-phase
+        # audio_script/interlocutor_line material (06 §4, §8).
+        normalized = re.sub(r"\s+", " ", text)
+        for script in listening_scripts + productive_scripts:
             if len(script) >= 40:
-                # match on a distinctive middle slice so whitespace
-                # normalisation in the bundler can't dodge the check
-                probe = re.sub(r"\s+", " ", script[10:70]).strip()
-                if probe and probe in re.sub(r"\s+", " ", text):
+                probe = script[10:70].strip()
+                if probe and probe in normalized:
                     violations.append(
-                        f"{rel}: listening script text leaked: {script[:50]}..."
+                        f"{rel}: server-only script text leaked: {script[:50]}..."
                     )
                     break
 
-        # The restricted keys file's own marker must never be shipped
-        if '"SERVER-ONLY' in text or "key_option_id" in text:
-            violations.append(f"{rel}: restricted answer-key material present")
+        # The restricted collections' own field-name shape must never be
+        # declared in client code either (dead zod schemas shipping the
+        # shape was the original finding — D-022).
+        restricted_field_names = ("key_option_id", "authoring_letter", "answer_text", "interlocutor_line")
+        for field in restricted_field_names:
+            if f'"{field}"' in text or f"'{field}'" in text:
+                violations.append(f"{rel}: restricted field name '{field}' declared in bundle")
+
+        # `audio_script` gets the same treatment, scoped to field-name
+        # occurrences (string-key form) so ordinary prose can't trip it.
+        if '"audio_script"' in text or "'audio_script'" in text:
+            violations.append(f"{rel}: restricted field name 'audio_script' declared in bundle")
 
     if violations:
         print("BUNDLE SECRET SCAN FAILED — server-only material in client/dist:", file=sys.stderr)
@@ -110,7 +147,8 @@ def main() -> int:
         return 1
 
     print(f"bundle secret scan clean: {len(files)} files checked, "
-          f"{len(key_option_ids)} key ids, {len(listening_scripts)} listening scripts verified absent")
+          f"{len(key_option_ids)} key ids, {len(listening_scripts)} listening + "
+          f"{len(productive_scripts)} productive scripts verified absent")
     return 0
 
 

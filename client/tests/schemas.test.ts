@@ -17,7 +17,6 @@ import {
   ReadingStimulus,
   StimulusMedia,
   ListeningStimulusPublic,
-  ListeningStimulusAdmin,
   TaskAudio,
   SpeakingTask,
   WordGuidance,
@@ -121,7 +120,8 @@ test('2. Bank objects schema validation and defaults', () => {
   });
   assert.equal(rdStim.word_count, 50);
 
-  // ListeningStimulusPublic & Admin
+  // ListeningStimulusPublic (the admin variant that carried `script` was
+  // removed — restricted collection shapes don't ship in the client bundle)
   const media = {
     storagePath: 'audio/stimuli/LSN-B1-S1/v1.opus',
     durationSec: 30.5,
@@ -139,17 +139,8 @@ test('2. Bank objects schema validation and defaults', () => {
     item_ids: ['LSN-B1-01'],
   });
   assert.equal(lsnPub.speaker_count, 1);
-
-  const lsnAdmin = ListeningStimulusAdmin.parse({
-    ...lsnPub,
-    script: 'Audio script text',
-    speakers: 'Speaker 1',
-    target_wpm: 120,
-    word_count: 40,
-    est_duration_sec: 20.0,
-  });
-  assert.equal(lsnAdmin.script, 'Audio script text');
-  assert.deepEqual(lsnAdmin.accents, []);
+  // No script-bearing field may exist on the candidate-safe shape.
+  assert.equal('script' in ListeningStimulusPublic.shape, false);
 
   // SpeakingTask
   const spk = SpeakingTask.parse({

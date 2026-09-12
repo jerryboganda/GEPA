@@ -76,7 +76,11 @@ export const StimulusMedia = z.object({
   codec: z.string(),
 });
 
-// Candidate-safe listening stimulus: NO script text.
+// Candidate-safe listening stimulus: NO script text. (The admin variant
+// that extended this with `script`/`speakers`/`voice_cast` was removed —
+// it was dead code and shipped the restricted stimulus_admin collection's
+// field shape into the public bundle. Reviewer views hand-build their
+// JSON server-side; nothing client-side ever parses an admin stimulus.)
 export const ListeningStimulusPublic = z.object({
   stimulus_id: z.string(),
   band: Band,
@@ -85,17 +89,6 @@ export const ListeningStimulusPublic = z.object({
   topic_family: z.string(),
   media: StimulusMedia.nullable(),
   item_ids: z.array(z.string()),
-});
-
-// RESTRICTED (collection stimulus_admin): script + production metadata.
-export const ListeningStimulusAdmin = ListeningStimulusPublic.extend({
-  script: z.string(),
-  speakers: z.string(),
-  target_wpm: z.number().int(),
-  word_count: z.number().int(),
-  est_duration_sec: z.number(),
-  accents: z.array(z.string()).default([]),
-  voice_cast: z.record(z.string()).default({}),
 });
 
 export const TaskAudio = z.object({
