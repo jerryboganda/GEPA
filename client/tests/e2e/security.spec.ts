@@ -25,12 +25,15 @@ test('no API response leaks answer keys or listening scripts across a full journ
   // Productive-phase scripts: the audio_script/interlocutor_line values
   // from the seed speaking/writing task banks (server-side rating
   // material — must never be serialized into /speaking/start or
-  // /writing/start responses). Where the seed deliberately reuses the
-  // prompt as the script for `candidate_sees_text` tasks (sentence
-  // reconstruction: the candidate reads and repeats the same text),
-  // the prompt itself is *supposed* to be in the response — scanning
-  // it would false-positive on every build, so only script text that
-  // differs from the candidate-visible prompt counts.
+  // /writing/start responses). In THIS seed, every script-bearing task
+  // quotes its script inside the candidate-visible prompt (RT "You
+  // hear: ...", INT interlocutor lines, listen-to-write "Listen and
+  // write: ..."), so verbatim script text in a response can never be
+  // distinguished from its own quoted prompt — the enforced invariants
+  // are therefore (a) the field names never appear on the wire (the
+  // nulled fields are skip_serializing_if'd server-side) and (b) any
+  // script material that is NOT part of its task's prompt (future seed
+  // revisions, genuinely hidden scripts) still fails this scan.
   const speakingSeed = JSON.parse(readFileSync(path.resolve(__dirname, '../../../seed/speaking_tasks.json'), 'utf-8')) as {
     tasks: { audio_script?: string; interlocutor_line?: string; prompt?: string }[];
   };
@@ -42,12 +45,12 @@ test('no API response leaks answer keys or listening scripts across a full journ
     ...speakingSeed.tasks.flatMap((t) => {
       const prompt = trimmed(t.prompt);
       return [t.audio_script, t.interlocutor_line].filter(
-        (s) => trimmed(s).length > 20 && trimmed(s) !== prompt,
+        (s) => trimmed(s).length > 20 && !prompt.includes(trimmed(s)),
       );
     }),
     ...writingSeed.tasks.flatMap((t) => {
       const prompt = trimmed(t.prompt);
-      return [t.audio_script].filter((s) => trimmed(s).length > 20 && trimmed(s) !== prompt);
+      return [t.audio_script].filter((s) => trimmed(s).length > 20 && !prompt.includes(trimmed(s)));
     }),
   ].map((s) => trimmed(s));
 

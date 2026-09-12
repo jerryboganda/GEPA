@@ -61,10 +61,14 @@ def load_listening_scripts() -> list[str]:
 
 def load_productive_scripts() -> list[str]:
     """audio_script/interlocutor_line values from the speaking/writing
-    seed banks. Where the seed deliberately reuses the candidate-visible
-    prompt as the script (sentence reconstruction: the candidate reads
-    and repeats the same text), the prompt legitimately ships — only
-    script text that differs from the prompt is a leak signature.
+    seed banks. This seed quotes every script inside its task's
+    candidate-visible prompt (RT "You hear: ...", INT lines,
+    listen-to-write "Listen and write: ..."), so script text that is
+    part of its own prompt cannot be distinguished from the prompt —
+    only script material NOT contained in its prompt (future seed
+    revisions with genuinely hidden scripts) is a leak signature.
+    The enforced invariant for the current seed is the field-name/
+    field-value absence (see the restricted-field-name checks below).
     """
     out: list[str] = []
     for bank_name in ("speaking_tasks.json", "writing_tasks.json"):
@@ -77,7 +81,7 @@ def load_productive_scripts() -> list[str]:
             prompt = _flatten(task.get("prompt", ""))
             for field in ("audio_script", "interlocutor_line"):
                 script = _flatten(task.get(field, ""))
-                if len(script) >= 40 and script != prompt:
+                if len(script) >= 40 and script not in prompt:
                     out.append(script)
     return out
 
