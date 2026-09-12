@@ -1,5 +1,19 @@
 # GEPA Platform Changelog
 
+## [Unreleased] - 2026-09-13 — CI hygiene: Node 24-native action pins (no app changes)
+
+Every workflow file bumped off actions that GitHub's runners already force onto Node 24
+(the "Node.js 20 is deprecated" annotations on every run): `actions/checkout@v4→v7`,
+`actions/setup-node@v4→v7`, `actions/upload-artifact@v4→v7`, `docker/setup-buildx-action@v3→v4`,
+`docker/login-action@v3→v4`, `docker/metadata-action@v5→v6`, `docker/build-push-action@v6→v7`.
+Release notes for every intervening major were checked first — all are runtime/ESM swaps or
+removals of inputs/envs this repo never uses; setup-node v5+'s automatic caching can't trigger
+here (no `packageManager` field, explicit `cache:` config kept). Deliberately left alone:
+`google-github-actions/auth@v2`, `deploy-cloudrun@v2` and `appleboy/ssh-action@v1.0.3` — they
+have produced no deprecation warnings, and they only execute in the deploy workflows, which
+cannot be exercised until the owner sets deploy-target secrets (QUESTIONS.md Q-008); bump
+them during the first deploy dry-run, not blind.
+
 ## [2.0.0-beta.5] - 2026-09-13 — M12 hardening: candidate-view sanitization + redaction & bundle gates
 
 ### Two real server-side leaks found by the new bundle gate (fixed at the root)
