@@ -84,6 +84,12 @@ jobs:
       - name: Client Production Build (Astro)
         run: npm run build:client
 
+      - name: Bundle Secrets Scan (M12 — server-only material must not ship)
+        run: python scripts/scan_bundle_secrets.py
+
+      - name: Initial Payload Size Gate (M12 — < 400 kB gzipped)
+        run: python scripts/check_bundle_size.py
+
       - name: Install Playwright Browsers
         run: npm --prefix client run test:e2e:install
 
@@ -139,3 +145,35 @@ jobs:
           sleep 5
           curl --fail --retry 5 --retry-connrefused http://localhost:8080/healthz || (docker logs gepa-test && exit 1)
           docker stop gepa-test
+
+      # M12 "log redaction test": boot the same image with canary secret
+      # values and a WRONG database password, so the pool-error and
+      # migration-failure paths (the only places that could embed the DSN
+      # or credentials in an error Display) actually execute, then prove
+      # none of the canaries appear in the process's full log output —
+      # which includes this crate's tracing events, tower_http's
+      # TraceLayer and deadpool's internal tracing.
+      - name: Log Redaction Runtime Test (M12)
+        run: |
+          CANARY_JWT="canary-jwt-secret-DO-NOT-LOG-9f8e7d6c"
+          CANARY_GEMINI="canary-gemini-key-DO-NOT-LOG-5a4b3c2d"
+          CANARY_DSN="postgres://gepa:canary-db-password-DO-NOT-LOG-1a2b3c4d@host.docker.internal:5432/gepa"
+          docker run -d --name gepa-redact-test \
+            --add-host=host.docker.internal:host-gateway \
+            -e JWT_SECRET="$CANARY_JWT" \
+            -e GEMINI_API_KEY="$CANARY_GEMINI" \
+            -e DATABASE_URL="$CANARY_DSN" \
+            gepa-runtime:latest
+          sleep 8
+          echo "--- redaction-test container logs (full) ---"
+          docker logs gepa-redact-test
+          echo "--- scanning captured output for canaries ---"
+          LOGS=$(docker logs gepa-redact-test 2>&1)
+          STATUS=0
+          echo "$LOGS" | grep -qF "$CANARY_JWT"   && { echo "LEAK: JWT_SECRET canary in logs"; STATUS=1; }
+          echo "$LOGS" | grep -qF "$CANARY_GEMINI" && { echo "LEAK: GEMINI_API_KEY canary in logs"; STATUS=1; }
+          echo "$LOGS" | grep -qF "$CANARY_DSN"   && { echo "LEAK: DATABASE_URL canary in logs"; STATUS=1; }
+          echo "$LOGS" | grep -qiF "canary-db-password" && { echo "LEAK: DB password fragment in logs"; STATUS=1; }
+          docker stop gepa-redact-test
+          if [ $STATUS -ne 0 ]; then exit 1; fi
+          echo "log redaction runtime test: CLEAN"

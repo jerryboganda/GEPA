@@ -577,8 +577,7 @@ impl AssessmentService {
         (strong_constructs, weak_constructs)
     }
 
-    pub async fn get_speaking_tasks(state: &AppState, session_id: &str) -> Result<Vec<SpeakingTask>, String> {
-        let (mut session, version) = load_session(state, session_id).await?;
+    pub async fn get_speaking_tasks(state: &AppState, session_id: &str) -> Result<Vec<SpeakingTask>, String> {        let (mut session, version) = load_session(state, session_id).await?;
 
         if session.productive_route.is_none() {
             let outcomes = vec![
@@ -618,7 +617,22 @@ impl AssessmentService {
 
         session.spk_state.task_ids = tasks.iter().map(|t| t.task_id.clone()).collect();
         store_session(state, &session, version).await?;
-        Ok(tasks)
+        // The returned tasks are serialized straight to the candidate —
+        // strip every server-only field first (AGENTS.md "Never" list:
+        // scripts must never reach the client; the candidate gets a
+        // signed audio URL, never the script). This is a per-field clone
+        // of a trimmed struct rather than serde `skip_serializing` on the
+        // model itself, because the *server* needs the scripts internally
+        // (Gemini rating prompt, audio production) and shares that model
+        // with the seed loader.
+        Ok(tasks
+            .into_iter()
+            .map(|mut t| {
+                t.audio_script = None;
+                t.interlocutor_line = None;
+                t
+            })
+            .collect())
     }
 
     pub async fn get_writing_tasks(state: &AppState, session_id: &str) -> Result<Vec<WritingTask>, String> {
@@ -635,7 +649,16 @@ impl AssessmentService {
 
         session.wrt_state.task_ids = tasks.iter().map(|t| t.task_id.clone()).collect();
         store_session(state, &session, version).await?;
-        Ok(tasks)
+        // Same candidate-view sanitization as `get_speaking_tasks`: the
+        // listen-to-write `audio_script` is server-only material (the
+        // candidate hears the audio, never reads the script — 06 §8).
+        Ok(tasks
+            .into_iter()
+            .map(|mut t| {
+                t.audio_script = None;
+                t
+            })
+            .collect())
     }
 
     pub async fn submit_speaking_response(

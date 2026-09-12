@@ -38,3 +38,16 @@ real TTS key exists. Answer:
 
 ---
 <!-- Agent appends from here. Next id: Q-008 -->
+
+## Q-008 — Production deploy target (final M12 item; owner decision required)
+Blocked: yes (for deployment itself only — nothing else is blocked). All M12 hardening items that don't need
+owner infrastructure are done and gated in CI: bundle secrets scan, initial-payload size gate (84 kB vs
+400 kB budget), static + runtime log-redaction tests, and the candidate-view sanitization fix those gates
+surfaced (D-022). What remains is choosing where the pre-built GHCR image runs: (a) the VPS path — set
+`VPS_HOST`/`VPS_SSH_KEY` (+ optional `VPS_USERNAME`/`VPS_PORT`) secrets and `deploy-vps.yml` pulls
+`ghcr.io/jerryboganda/gepa-server:latest` and brings up `docker-compose.prod.yml` (Postgres included);
+(b) the Cloud Run path — set `GCP_WORKLOAD_IDENTITY_PROVIDER`/`GCP_SERVICE_ACCOUNT` secrets and
+`deploy-cloud-run.yml` deploys (needs a GCP billing-linked project, overlapping Q-006); (c) deploy later —
+the image is published to GHCR on every `v*` tag regardless, so nothing rots meanwhile.
+Recommended: (a) if the VPS exists; the container is the exact one CI already smoke-tests (healthz + a
+full journey against a live Postgres) before any deploy. Answer:

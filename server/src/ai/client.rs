@@ -96,6 +96,11 @@ impl GeminiClient {
             match self.call_gemini_speaking_rater(key, task_type, prompt_text, audio_script, lower_band, upper_band, &transcript, traits).await {
                 Ok(out) => out,
                 Err(err) => {
+                    // `err` comes from reqwest, whose Display embeds the request
+                    // URL. The credential is deliberately kept out of the URL
+                    // (x-goog-api-key header — see `generate_content_url`), so
+                    // this is safe to log; audio/transcript content is never
+                    // part of reqwest error Display strings.
                     tracing::warn!("Gemini API speaking rating call failed, falling back to calibrated simulation: {}", err);
                     self.simulate_speaking_rating(traits)
                 }
@@ -206,6 +211,9 @@ impl GeminiClient {
             match self.call_gemini_writing_rater(key, task_type, prompt_text, lower_band, upper_band, candidate_text, traits).await {
                 Ok(out) => out,
                 Err(err) => {
+                    // Same safety argument as the speaking rater above: the
+                    // credential rides in a header, never the URL, so reqwest
+                    // Display strings cannot leak it.
                     tracing::warn!("Gemini API writing rating call failed, falling back to calibrated simulation: {}", err);
                     self.simulate_writing_rating(candidate_text, traits)
                 }
@@ -305,6 +313,18 @@ impl GeminiClient {
 
     // --- Private Gemini REST helpers ---
 
+    /// Generative Language API generateContent endpoint. The API key is
+    /// deliberately NOT part of the URL: it travels in the `x-goog-api-key`
+    /// request header, so reqwest error Display strings (which embed the
+    /// request URL) can never leak the credential into logs (AGENTS.md
+    /// logging redaction list, 09 §2).
+    fn generate_content_url(&self) -> String {
+        format!(
+            "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent",
+            self.model_rater
+        )
+    }
+
     async fn call_gemini_speaking_rater(
         &self,
         api_key: &str,
@@ -316,11 +336,7 @@ impl GeminiClient {
         transcript: &str,
         traits: &[&str],
     ) -> Result<GeminiRatingOutput, Box<dyn std::error::Error + Send + Sync>> {
-        let url = format!(
-            "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
-            self.model_rater, api_key
-        );
-
+        let url = self.generate_content_url();
         let sys_prompt = get_speaking_system_prompt();
         let ctx = SpeakingPromptContext {
             task_type,
@@ -352,7 +368,13 @@ impl GeminiClient {
             }
         });
 
-        let resp = self.client.post(&url).json(&body).send().await?;
+        let resp = self
+            .client
+            .post(&url)
+            .header("x-goog-api-key", api_key)
+            .json(&body)
+            .send()
+            .await?;
         if !resp.status().is_success() {
             return Err(format!("Gemini HTTP {}", resp.status()).into());
         }
@@ -376,11 +398,7 @@ impl GeminiClient {
         candidate_text: &str,
         traits: &[&str],
     ) -> Result<GeminiRatingOutput, Box<dyn std::error::Error + Send + Sync>> {
-        let url = format!(
-            "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
-            self.model_rater, api_key
-        );
-
+        let url = self.generate_content_url();
         let sys_prompt = get_writing_system_prompt();
         let ctx = WritingPromptContext {
             task_type,
@@ -411,7 +429,13 @@ impl GeminiClient {
             }
         });
 
-        let resp = self.client.post(&url).json(&body).send().await?;
+        let resp = self
+            .client
+            .post(&url)
+            .header("x-goog-api-key", api_key)
+            .json(&body)
+            .send()
+            .await?;
         if !resp.status().is_success() {
             return Err(format!("Gemini HTTP {}", resp.status()).into());
         }

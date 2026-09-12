@@ -1,5 +1,50 @@
 # GEPA Platform Changelog
 
+## [2.0.0-beta.5] - 2026-09-13 — M12 hardening: candidate-view sanitization + redaction & bundle gates
+
+### Two real server-side leaks found by the new bundle gate (fixed at the root)
+- **Productive task payloads shipped admin scripts**: `GET /api/sessions/:id/speaking/start` and
+  `/writing/start` serialized the full `SpeakingTask`/`WritingTask` structs — including `audio_script`
+  (present on 12 SPK + 6 WRT seed tasks: the model answer script for oral reading / audio-only tasks and the
+  listen-to-write source text) and `interlocutor_line` — directly to the candidate's browser. Every candidate
+  could read the rating material for their own tasks in the network tab. Fixed at the single serialization
+  point every route shares: `get_speaking_tasks`/`get_writing_tasks` (server/src/services.rs) null out those
+  fields before returning (DECISIONS.md D-022). The client zod schemas (`client/src/schemas/api.ts`) drop the
+  fields to match the wire, and the e2e security spec now drives through the productive phase and fails on
+  the field names themselves — previously it only scanned the receptive journey, which is exactly why this
+  leak survived a green security test for so long.
+- **Dead `RestrictedKey` schema shipped the restricted collection's shape**: the client bundle declared a
+  never-imported zod schema naming `key_option_id`, `authoring_letter`, `answer_text`, `rationale` — the
+  field-name shape of the server-only answer-key collection. No values leaked, but the shape is
+  server-only material per AGENTS.md's "Never" list. Deleted.
+
+### Credential hygiene
+- Gemini API key moved from the request URL (`?key=`) to the `x-goog-api-key` header: reqwest error Display
+  strings embed the request URL, so any logged rating-call failure could have leaked the credential.
+
+### M12 hardening gates, now actually implemented (all run in CI)
+- **Logging redaction, static**: `server/src/logging.rs` — a `cargo test`-time source scan that fails if any
+  `tracing::*!` macro in `server/src` interpolates a redaction-list identifier (audio URLs, transcripts,
+  option ids, keys, emails, credentials, DSNs). String literals are stripped before matching, so message
+  prose can't false-positive. Also hardened `db.rs`'s pool-error log (its Display can embed the DSN with
+  password) to log a static message instead.
+- **Logging redaction, runtime**: the CI container job boots a second container with canary secret values
+  (`JWT_SECRET`, `GEMINI_API_KEY`, a wrong-password `DATABASE_URL` — chosen so the pool-error and
+  migration-failure paths actually execute) and greps its full `docker logs` output for the canaries,
+  covering tower_http TraceLayer and deadpool internal events too.
+- **Bundle secrets scan**: `scripts/scan_bundle_secrets.py` after every client build — fails on
+  secret-shaped strings (Google API keys, `sk-` keys, JWTs, DSNs-with-password), restricted-key markers,
+  and verbatim listening/seed script text in `client/dist`.
+- **Initial payload size gate**: `scripts/check_bundle_size.py` — the spec's "< 400 kB gz initial" budget,
+  measured over exactly what `index.html` references (HTML + CSS + island JS), gzip level 6. Current
+  payload: **84 kB** (79% headroom).
+
+### Verification (GitHub Actions only — no local DB/browsers, per D-018)
+- Local sanity (file transforms, no DB/browser): `tsc --noEmit` clean, schema tests 4/4, Astro build + both
+  bundle gates pass.
+- Everything else (Postgres-backed cargo tests, full e2e + axe suite, container build + healthz + the new
+  redaction runtime test) runs in `.github/workflows/ci.yml`.
+
 ## [2.0.0-beta.4] - 2026-09-11 — Real persistence, real auth, real e2e, real audio
 
 ### Correction to prior entries

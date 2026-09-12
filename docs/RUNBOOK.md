@@ -264,6 +264,29 @@ npm run staff:create -- admin@example.com "a-strong-password" admin
 ```
 Re-running with the same email resets that account's password/role.
 
+### 9.4 Candidate-view sanitization & leak gates (DECISIONS.md D-022)
+The productive task endpoints strip server-only fields (`audio_script`, `interlocutor_line`) at the service
+boundary before serialization — the client schemas no longer even declare them. If you add a new
+candidate-facing field to `SpeakingTask`/`WritingTask`, ask whether it's rating material first; if it is,
+null it out in `get_speaking_tasks`/`get_writing_tasks` (server/src/services.rs) the same way. Three CI
+gates enforce this continuously:
+- `security.spec.ts` scans every `/api/*` response across a full journey (including `/speaking/start` and
+  `/writing/start`) for the field *names* `audio_script`/`interlocutor_line`/`key_option_id`/
+  `authoring_letter` and for verbatim seed script text — a leak fails CI, not just review.
+- `scripts/scan_bundle_secrets.py` scans the built `client/dist` for the same material plus
+  secret-shaped strings.
+- `scripts/check_bundle_size.py` holds the initial gzipped payload under the 400 kB spec budget
+  (currently 84 kB).
+
+### 9.5 Logging redaction (AGENTS.md §3)
+Two layers, both in CI:
+- Static: `server/src/logging.rs::log_statement_source_scan` fails `cargo test` if any `tracing::*!` macro
+  in `server/src` interpolates a redaction-list identifier (audio URLs, transcripts, option ids, keys,
+  emails, credentials, DSNs). Prose inside the message literal is fine — only interpolated identifiers trip it.
+- Runtime: the CI container job boots the image with canary secrets and a wrong DB password (exercising
+  the pool/migration failure paths) and greps the container's full log output for them. The Gemini API key
+  rides in the `x-goog-api-key` header, never the URL, so reqwest error Display strings cannot embed it.
+
 ---
 
 ## 10. Zero-Compute Production VPS Policy & Operations

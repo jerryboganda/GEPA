@@ -146,4 +146,44 @@ expected to be revisited. Status: approved.
 ---
 <!-- Agent appends from here. Next id: D-022 -->
 
+## D-022 — Candidate-view sanitization of productive task payloads + M12 hardening gates
+Context: the M12 "log redaction test" / "grep secrets in bundle" / "bundle < 400 kB gz" acceptance items were
+never actually implemented — and implementing the bundle scan immediately found two real server-side leaks that
+the e2e security spec had structurally missed (it only scanned the receptive journey's traffic):
+(1) `GET /api/sessions/:id/speaking|writing/start` serialized the full `SpeakingTask`/`WritingTask` structs,
+including `audio_script` (present on 12 SPK + 6 WRT seed tasks) and `interlocutor_line` — hand-delivering
+rating material (model scripts, interlocutor target lines) to every candidate's network tab; (2) the client
+bundle shipped a dead `RestrictedKey` zod schema declaring the shape of the restricted answer-key collection
+(`key_option_id`, `authoring_letter`, `answer_text`, `rationale` field names) — no values, but the shape is
+server-only material per AGENTS.md's "Never" list. The Gemini client also carried its API key in the request
+URL (`?key=`), where any reqwest error Display (which embeds the URL) could leak it into logs.
+Decision:
+- **Server-side candidate view**: `get_speaking_tasks`/`get_writing_tasks` (server/src/services.rs) null out
+`audio_script`/`interlocutor_line` before returning. Root-cause fix at the single serialization point every
+route shares, rather than serde `skip_serializing` on the shared engine model (the server itself needs those
+fields internally for rating prompts and audio production).
+- **Client schemas match the wire**: `client/src/schemas/api.ts` drops `audio_script`/`interlocutor_line` from
+`SpeakingTask`/`WritingTask` and deletes the dead `RestrictedKey` schema entirely; a schema test now asserts
+those field names are absent from the candidate-facing shapes. The e2e `security.spec.ts` extends its leak
+scan to the productive phase (drives through `/speaking/start`, fetches `/writing/start` with the session
+token, and fails on the field *names* `audio_script`/`interlocutor_line` as well as verbatim script text from
+all three seed banks).
+- **Credential hygiene**: Gemini API key moves from URL query to the `x-goog-api-key` header
+(`GeminiClient::generate_content_url`), so no reqwest error Display can ever embed it.
+- **Logging redaction, two layers** (AGENTS.md §3 redaction list): a static source-scan test
+(`server/src/logging.rs::log_statement_source_scan`) fails `cargo test` if any `tracing::*!` macro in
+`server/src` interpolates a redacted identifier (string-literal contents are stripped first, so message prose
+can't false-positive); and a CI runtime test boots the built container with canary secret values plus a wrong
+DB password (to actually exercise the pool-error/migration-failure paths) and greps the container's full log
+output — including tower_http TraceLayer and deadpool internal events — for those canaries.
+- **CI bundle gates**: `scripts/scan_bundle_secrets.py` (secret-shaped strings, restricted-key markers,
+listening/seed script text) and `scripts/check_bundle_size.py` (initial gzipped payload < 400 kB per spec,
+single-chunk < 250 kB) run right after `npm run build:client` in CI.
+Alternatives: serde `skip_serializing` on the engine models (rejected: the server needs the scripts
+internally); scanning only built output without the server-side strip (rejected: the leak was server-side,
+the bundle scan was just what surfaced it); per-endpoint allowlist DTOs (heavier; the null-out at the shared
+service boundary covers every current and future route through the same function).
+Spec: 09 §1–§2, 11 (M12), AGENTS.md §3 "Logging" + "Never" list, 06 §4–§8. Reversible: yes (but reversing it
+reintroduces the leaks). Status: approved.
+
 

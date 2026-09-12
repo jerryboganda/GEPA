@@ -77,8 +77,12 @@ impl PostgresClient {
         cfg.url = Some(database_url);
         let pool = match cfg.create_pool(Some(Runtime::Tokio1), NoTls) {
             Ok(p) => p,
-            Err(e) => {
-                tracing::error!("failed to build Postgres pool: {e}");
+            Err(_) => {
+                // The error Display for a config-parse failure can embed the
+                // DSN (which contains credentials) — never log it raw
+                // (AGENTS.md logging redaction list, 09 §2). The only
+                // failure mode here is a malformed DATABASE_URL.
+                tracing::error!("failed to build Postgres pool — DATABASE_URL is malformed (value redacted)");
                 cfg.url = Some("postgres://invalid/invalid".to_string());
                 cfg.create_pool(Some(Runtime::Tokio1), NoTls)
                     .expect("deadpool pool construction is infallible for a well-formed URL string")

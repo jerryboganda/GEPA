@@ -2,6 +2,7 @@ pub mod ai;
 pub mod api;
 pub mod auth;
 pub mod db;
+pub mod logging;
 pub mod repos;
 pub mod schemas;
 pub mod services;

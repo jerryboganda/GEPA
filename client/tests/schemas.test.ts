@@ -22,7 +22,6 @@ import {
   SpeakingTask,
   WordGuidance,
   WritingTask,
-  RestrictedKey,
   ConfirmationConfig,
   ProductiveRulesetConfig,
   RoutingRuleset,
@@ -191,19 +190,16 @@ test('2. Bank objects schema validation and defaults', () => {
   });
   assert.equal(wrt.timeLimitSeconds, 360);
 
-  // RestrictedKey
-  const key = RestrictedKey.parse({
-    item_id: 'LS-B1-01',
-    module: 'LS',
-    band: 'B1',
-    key_option_id: 'opt_1',
-    authoring_letter: 'A',
-    answer_text: 'correct option',
-    option_count: 4,
-    evidence_focus: 'lexical precision',
-    rationale: 'Standard usage',
-  });
-  assert.equal(key.authoring_letter, 'A');
+  // The candidate-facing task schemas must NOT accept server-only fields
+  // (AGENTS.md "Never" list): if a future server regression re-adds
+  // `audio_script` to the wire, this parse must fail loudly — wait, no:
+  // zod objects ignore unknown keys by default, so the *server* strip is
+  // the enforcement point (server/src/services.rs). What we assert here
+  // is that the schema itself no longer declares them, so no client code
+  // can ever read them via the typed surface.
+  assert.equal('audio_script' in SpeakingTask.shape, false);
+  assert.equal('interlocutor_line' in SpeakingTask.shape, false);
+  assert.equal('audio_script' in WritingTask.shape, false);
 });
 
 test('3. Ruleset, form, session schema validation and defaults', () => {

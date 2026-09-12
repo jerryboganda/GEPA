@@ -127,8 +127,12 @@ export const SpeakingTask = z.object({
     'audio_then_speak',
     'interlocutor_audio_then_speak',
   ]),
-  audio_script: z.string().nullable().optional(),
-  interlocutor_line: z.string().nullable().optional(),
+  // `audio_script` / `interlocutor_line` are deliberately NOT mirrored
+  // here: the server strips them before serialization (server/src/services.rs
+  // `get_speaking_tasks`) — the candidate hears audio, never reads the
+  // script (AGENTS.md "Never" list, 06 §4–§6). If a client build ever
+  // starts expecting them again, that's a server regression to catch,
+  // not a schema to widen.
   audio: TaskAudio.nullable().default(null),
   weight: z.number(),
   spontaneous_or_interactive: z.boolean(),
@@ -162,21 +166,9 @@ export const WritingTask = z.object({
   scored_in_writing_level: z.boolean(),
   topic_family: z.string(),
   timeLimitSeconds: z.number().int(),
-  audio_script: z.string().nullable().optional(),
+  // `audio_script` deliberately not mirrored — see SpeakingTask note above
+  // (listen-to-write scripts are server-only, 06 §8).
   audio: TaskAudio.nullable().default(null),
-});
-
-// RESTRICTED (collection restricted_keys). Never leaves server code.
-export const RestrictedKey = z.object({
-  item_id: z.string(),
-  module: z.enum(['LS', 'RD', 'LSN']),
-  band: Band,
-  key_option_id: z.string(),
-  authoring_letter: z.enum(['A', 'B', 'C', 'D']),
-  answer_text: z.string(),
-  option_count: z.number().int(),
-  evidence_focus: z.string().nullable(),
-  rationale: z.string().nullable(),
 });
 
 // ============================================================================
