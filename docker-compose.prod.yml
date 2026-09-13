@@ -28,13 +28,19 @@ services:
     image: ghcr.io/${GEPA_IMAGE_REPO:-jerryboganda/gepa}/gepa-server:${GEPA_TAG:-latest}
     container_name: gepa-server-prod
     restart: unless-stopped
+    # Box-native resource-limit fields (PLATFORM-RULES.md §4 "Resource limits are
+    # mandatory"; same form UBAG's compose uses on this host).
+    cpus: 1.0
+    mem_limit: 512m
     environment:
       - PORT=8080
       - CLIENT_DIST=/app/client/dist
       - SEED_DIR=/app/seed
       - RUST_LOG=server=info,tower_http=info
-      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required — comes from /opt/platform/projects/gepa.env (docs/RUNBOOK.md §9.6)}
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required — comes from /opt/platform/projects/gepa.env (docs/RUNBOOK.md §9.6)}
+      # Platform-generated DSN (postgres://gepa:<pw>@platform-postgres:5432/gepa)
+      # from /opt/platform/projects/gepa.env — see PLATFORM-RULES.md + D-023.
+      - DATABASE_URL=${PLATFORM_PG_URL:?PLATFORM_PG_URL is required — run /opt/platform/bin/provision-project.sh gepa (docs/RUNBOOK.md §9.6)}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required — append it to /opt/platform/projects/gepa.env (docs/RUNBOOK.md §9.6)}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - SIGNED_URL_TTL_SECONDS=${SIGNED_URL_TTL_SECONDS:-600}
       - FEATURE_PRETEST_ITEMS=${FEATURE_PRETEST_ITEMS:-false}
@@ -52,14 +58,6 @@ services:
       - platform
       # Shared ingress — NPM reaches gepa-server-prod:8080 by container name.
       - nginx-proxy-manager_default
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          cpus: '0.2'
-          memory: 128M
 
 networks:
   platform:

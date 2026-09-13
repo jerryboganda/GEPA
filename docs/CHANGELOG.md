@@ -1,5 +1,27 @@
 # GEPA Platform Changelog
 
+## [2.0.0-beta.6] - 2026-09-13 — live: provisioned, wired, deployed to the shared platform
+
+Q-008 executed end-to-end (owner pre-authorized; full record in DECISIONS.md D-023, RUNBOOK §9.6):
+
+- **Platform provisioning** (on the VPS): `/opt/platform/bin/provision-project.sh gepa` created the
+  isolated Postgres role + database `gepa`, MinIO bucket + user + policy, Redis ACL user + logical DB,
+  Soketi app, and `/opt/platform/projects/gepa.env` (chmod 600; `JWT_SECRET` appended, value never
+  logged). `bin/backup.sh` auto-discovers databases, so `gepa` is on the nightly pg_dump rotation.
+- **Platform fix**: `provision-project.sh`'s pinned `minio/mc` client image is no longer pullable from
+  Docker Hub (MinIO removed/privatized Docker Hub repos after community EOL — the debt PLATFORM-RULES.md
+  already recorded). Switched the same tag to `quay.io/minio/mc`; change logged in the platform's History.
+- **Ingress**: NPM Proxy Host `gepa.polytronx.com` → `gepa-server-prod:8080`, Let's Encrypt cert
+  requested and issued (webroot HTTP-01 through Cloudflare proxy), ssl_forced + HTTP/2 enabled. DNS
+  record added by the owner.
+- **Repo secrets**: `VPS_HOST`, `VPS_SSH_KEY`, `VPS_USERNAME`, `VPS_PORT` set via `gh secret set`.
+- **Compose final form**: `DATABASE_URL` maps from the platform's `PLATFORM_PG_URL`; resource limits in
+  the box-native `cpus:`/`mem_limit:` form per PLATFORM-RULES.md §4.
+- **Release**: tagged `v2.0.0-beta.6` → `deploy-vps.yml` built the image on GHA runners, published to
+  GHCR, SSHed to the VPS, pulled, started, and smoke-tested `/healthz` via `docker compose exec`.
+- `GEMINI_API_KEY` is intentionally absent (no key exists yet — Q-002/Q-007); the server degrades
+  gracefully without it (CI's full journey runs keyless and passes).
+
 ## [Unreleased] - 2026-09-13 — Q-008 resolved: shared-platform VPS deploy profile (no app changes)
 
 The owner directed that the production VPS runs **shared infrastructure** (platform stack at
