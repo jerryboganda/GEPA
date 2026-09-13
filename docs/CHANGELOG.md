@@ -1,5 +1,12 @@
 # GEPA Platform Changelog
 
+## [2.0.0-beta.7] - 2026-09-13 — first successful live deploy
+
+- Fixed the deploy workflow's VPS leg: the `deploy-to-vps` job never checked out the repository, so
+  `docker-compose.prod.yml` was absent from the runner workspace and `appleboy/scp-action` tarred an
+  empty archive ("Cowardly refusing to create an empty archive", run 34736332923). Added the checkout
+  step. beta.7 is the same application content as beta.6 plus this workflow fix.
+
 ## [2.0.0-beta.6] - 2026-09-13 — live: provisioned, wired, deployed to the shared platform
 
 Q-008 executed end-to-end (owner pre-authorized; full record in DECISIONS.md D-023, RUNBOOK §9.6):

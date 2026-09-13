@@ -67,6 +67,9 @@ jobs:
     if: needs.build-and-push.result == 'success'
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
       - name: Check VPS Secrets Configuration
         id: check-secrets
         run: |
