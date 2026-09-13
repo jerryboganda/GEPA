@@ -287,40 +287,35 @@ Two layers, both in CI:
   the pool/migration failure paths) and greps the container's full log output for them. The Gemini API key
   rides in the `x-goog-api-key` header, never the URL, so reqwest error Display strings cannot embed it.
 
-### 9.6 Go-live checklist — shared-platform VPS (DECISIONS.md D-023)
-GEPA deploys to the shared production box running the **platform stack** (`/opt/platform`): one shared
-Postgres instance for every project on the box, rules in `/opt/platform/PLATFORM-RULES.md` (VPS-only doc;
-same pattern UBAG follows). Consequently `docker-compose.prod.yml` contains **no database service**: the
-server joins the external `platform` docker network and consumes `platform-postgres`. Ingress is the shared
-Nginx Proxy Manager over the external `nginx-proxy-manager_default` network with **no host ports published**
-— the box has no active firewall, so any 0.0.0.0-bound port would be directly internet-reachable. The VPS
-address itself is deliberately not written here; this repo is public.
+### 9.6 Go-live — shared-platform VPS (DECISIONS.md D-023) — COMPLETED 2026-09-13
+GEPA is **live at https://gepa.polytronx.com** (free_beta). The shared-platform policy (platform stack at
+`/opt/platform`, rules in `/opt/platform/PLATFORM-RULES.md` on the VPS; same pattern as UBAG) was followed
+throughout. What was done, for future re-reference:
 
-One-time platform provisioning (on the VPS, platform admin):
-```bash
-# Creates the gepa database + least-privilege user on the shared instance and writes
-# /opt/platform/projects/gepa.env with DATABASE_URL (never committed to this repo).
-/opt/platform/bin/provision-project.sh gepa
+1. **Provisioning (VPS)**: `/opt/platform/bin/provision-project.sh gepa` created the Postgres role+database
+   `gepa`, MinIO bucket/user/policy, Redis ACL user, Soketi app, and `/opt/platform/projects/gepa.env`
+   (chmod 600) with `PLATFORM_PG_URL` etc. `JWT_SECRET` was appended (value never logged). Nightly
+   `bin/backup.sh` auto-discovers the `gepa` database — no extra backup wiring. Note: `provision-project.sh`
+   was fixed the same day to pull its mc client from `quay.io/minio/mc` (Docker Hub minio images are no
+   longer pullable post community-EOL) — change logged in the platform History.
+2. **Repo secrets**: `VPS_HOST`, `VPS_SSH_KEY`, `VPS_USERNAME`, `VPS_PORT` set via `gh secret set`.
+3. **Ingress**: NPM Proxy Host id 45 — `gepa.polytronx.com` → `http://gepa-server-prod:8080`, LE cert
+   `npm-47` issued (webroot HTTP-01 through Cloudflare-proxied DNS), ssl_forced + HTTP/2 + websocket
+   upgrade enabled. DNS A/AAAA via Cloudflare added by the owner.
+4. **Deploy**: `git tag v2.0.0-beta.7 && git push origin v2.0.0-beta.7` → GHA builds + pushes
+   `ghcr.io/jerryboganda/gepa/gepa-server`, then SSHes: copies the tagged compose to `/opt/docker/gepa`,
+   `docker compose --env-file /opt/platform/projects/gepa.env pull && up -d`, smoke-tests `/healthz` via
+   `docker compose exec`. First boot auto-applied the schema (`001_init.sql`, 4 tables).
+5. **Post-deploy verification**: container healthy; healthz `status: ok` (database/seed_bank healthy) via
+   exec, via box + SNI, and via the public URL; platform `check-compliance.sh`: zero gepa violations.
 
-# Append the app secrets the platform does not manage:
-cat >> /opt/platform/projects/gepa.env
-JWT_SECRET=$(openssl rand -base64 48)
-GEMINI_API_KEY=<key>   # optional: enables AI scoring + the TTS audio upgrade (Q-002, Q-007)
-```
+**Still optional**: `GEMINI_API_KEY` in `/opt/platform/projects/gepa.env` (then `docker compose ... up -d`
+to recreate) — enables AI scoring + the TTS audio upgrade (Q-002/Q-007). Everything else runs without it.
 
-One-time repo secrets (GitHub → Settings → Secrets and variables → Actions):
-`VPS_HOST` (the shared box's address), `VPS_SSH_KEY` (deploy private key), optional
-`VPS_USERNAME`/`VPS_PORT` (defaults `root`/`22`).
-
-One-time ingress (NPM admin UI, same pattern as other projects on the box): Proxy Host —
-domain `gepa.<your-domain>` (DNS via Cloudflare), Forward Hostname `gepa-server-prod`,
-Forward Port `8080`, new Let's Encrypt certificate, force SSL, HTTP/2.
-
-Deploy: `git tag v2.0.0-beta.5 && git push origin v2.0.0-beta.5` → `deploy-vps.yml` builds the
-image on GitHub Actions runners, publishes `ghcr.io/jerryboganda/gepa/gepa-server` (semver +
-`sha-` + `latest` tags), then the VPS pulls it (zero compute), starts it with the platform env
-file, and the workflow smokes `/healthz` via `docker compose exec` (no host ports exist). The
-GHCR package must stay **private**: the image carries `RESTRICTED_*` seed assets (answer keys);
+**Rolling back / redeploying a version**: re-point `latest` by pushing the older `v*` tag again (the
+workflow re-publishes the image, then the VPS leg re-pulls), or on the VPS run
+`GEPA_TAG=<semver> docker compose -f /opt/docker/gepa/docker-compose.prod.yml --env-file /opt/platform/projects/gepa.env up -d`.
+The GHCR package must stay **private**: the image carries `RESTRICTED_*` seed assets (answer keys);
 the workflow authenticates its pull with a short-lived workflow token — never make it public.
 
 ---

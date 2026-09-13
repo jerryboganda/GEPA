@@ -39,20 +39,15 @@ real TTS key exists. Answer:
 ---
 <!-- Agent appends from here. Next id: Q-008 -->
 
-## Q-008 — Production deploy target (final M12 item) — RESOLVED: shared-platform VPS
+## Q-008 — Production deploy target (final M12 item) — RESOLVED AND LIVE: https://gepa.polytronx.com
 Owner directive (2026-09-13): the production VPS runs **shared infrastructure** — the platform stack at
 `/opt/platform` on the shared box (shared Postgres + Redis etc. for every project, rules in
 `/opt/platform/PLATFORM-RULES.md` on the VPS; per-project credentials via
-`/opt/platform/bin/provision-project.sh` into `/opt/platform/projects/gepa.env`, never committed). GEPA's
-deploy path is now fully implemented and policy-compliant (DECISIONS.md D-023):
-- `docker-compose.prod.yml` = shared-platform profile: no per-app database, no published host ports;
-  external `platform` + `nginx-proxy-manager_default` networks; fail-fast required env; 1.0 CPU / 512 MB.
-- `deploy-vps.yml` builds the image on GitHub Actions, publishes it to GHCR on every `v*` tag (zero VPS
-  compute), copies the exact tagged compose file to `/opt/docker/gepa`, pulls with the platform env file,
-  starts, and smokes `/healthz` via `docker compose exec`.
-- Remaining owner steps (RUNBOOK §9.6, one-time, ~10 minutes): (1) on the VPS run
-  `/opt/platform/bin/provision-project.sh gepa` and append `JWT_SECRET` (+ optional `GEMINI_API_KEY`) to
-  `/opt/platform/projects/gepa.env`; (2) add repo secrets `VPS_HOST` + `VPS_SSH_KEY` (optional
-  `VPS_USERNAME`/`VPS_PORT`); (3) add an NPM Proxy Host forwarding to `gepa-server-prod:8080`. The next
-  `v*` tag then deploys end-to-end automatically. The GHCR package must stay private (image carries
-  `RESTRICTED_*` seed assets).
+`/opt/platform/bin/provision-project.sh` into `/opt/platform/projects/gepa.env`, never committed). The
+owner then pre-authorized the remaining go-live steps, which were executed the same day (DECISIONS.md
+D-023, RUNBOOK §9.6): platform provisioning done (`gepa` role/db/bucket/ACL + `JWT_SECRET`, value never
+logged; nightly pg_dump auto-includes gepa), repo secrets set, NPM Proxy Host 45 with LE cert npm-47
+(ssl_forced + HTTP/2) live, and `v2.0.0-beta.7` deployed via `deploy-vps.yml` — healthz `status: ok` on
+the public URL, platform compliance clean, schema auto-migrated on first boot. The only optional residue
+is `GEMINI_API_KEY` (Q-002/Q-007): absent, AI scoring degrades gracefully; add it to the env file and
+recreate the container to enable.
