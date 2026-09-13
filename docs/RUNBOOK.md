@@ -287,6 +287,42 @@ Two layers, both in CI:
   the pool/migration failure paths) and greps the container's full log output for them. The Gemini API key
   rides in the `x-goog-api-key` header, never the URL, so reqwest error Display strings cannot embed it.
 
+### 9.6 Go-live checklist — shared-platform VPS (DECISIONS.md D-023)
+GEPA deploys to the shared production box running the **platform stack** (`/opt/platform`): one shared
+Postgres instance for every project on the box, rules in `/opt/platform/PLATFORM-RULES.md` (VPS-only doc;
+same pattern UBAG follows). Consequently `docker-compose.prod.yml` contains **no database service**: the
+server joins the external `platform` docker network and consumes `platform-postgres`. Ingress is the shared
+Nginx Proxy Manager over the external `nginx-proxy-manager_default` network with **no host ports published**
+— the box has no active firewall, so any 0.0.0.0-bound port would be directly internet-reachable. The VPS
+address itself is deliberately not written here; this repo is public.
+
+One-time platform provisioning (on the VPS, platform admin):
+```bash
+# Creates the gepa database + least-privilege user on the shared instance and writes
+# /opt/platform/projects/gepa.env with DATABASE_URL (never committed to this repo).
+/opt/platform/bin/provision-project.sh gepa
+
+# Append the app secrets the platform does not manage:
+cat >> /opt/platform/projects/gepa.env
+JWT_SECRET=$(openssl rand -base64 48)
+GEMINI_API_KEY=<key>   # optional: enables AI scoring + the TTS audio upgrade (Q-002, Q-007)
+```
+
+One-time repo secrets (GitHub → Settings → Secrets and variables → Actions):
+`VPS_HOST` (the shared box's address), `VPS_SSH_KEY` (deploy private key), optional
+`VPS_USERNAME`/`VPS_PORT` (defaults `root`/`22`).
+
+One-time ingress (NPM admin UI, same pattern as other projects on the box): Proxy Host —
+domain `gepa.<your-domain>` (DNS via Cloudflare), Forward Hostname `gepa-server-prod`,
+Forward Port `8080`, new Let's Encrypt certificate, force SSL, HTTP/2.
+
+Deploy: `git tag v2.0.0-beta.5 && git push origin v2.0.0-beta.5` → `deploy-vps.yml` builds the
+image on GitHub Actions runners, publishes `ghcr.io/jerryboganda/gepa/gepa-server` (semver +
+`sha-` + `latest` tags), then the VPS pulls it (zero compute), starts it with the platform env
+file, and the workflow smokes `/healthz` via `docker compose exec` (no host ports exist). The
+GHCR package must stay **private**: the image carries `RESTRICTED_*` seed assets (answer keys);
+the workflow authenticates its pull with a short-lived workflow token — never make it public.
+
 ---
 
 ## 10. Zero-Compute Production VPS Policy & Operations
@@ -309,26 +345,30 @@ All resource-intensive jobs are offloaded to GitHub Actions runners:
    - Builds production container in GitHub Actions and deploys the pre-built image to Google Cloud Run.
 3. **VPS Zero-Compute Deployment (`.github/workflows/deploy-vps.yml`)**:
    - Builds and publishes the pre-built runtime container to GitHub Container Registry (`ghcr.io`).
-   - Triggers the VPS via SSH to run `docker compose -f docker-compose.prod.yml pull && docker compose up -d`.
+   - Triggers the VPS via SSH to copy the exact tagged compose file and run
+     `docker compose -f docker-compose.prod.yml --env-file /opt/platform/projects/gepa.env pull && up -d`.
+     No per-app database: Postgres is the shared platform instance over the external `platform`
+     network (§9.6, D-023). The smoke check runs via `docker compose exec` because no host ports
+     are published (shared Nginx Proxy Manager handles ingress).
 4. **Scheduled Maintenance (`.github/workflows/scheduled-maintenance.yml`)**:
    - Runs daily at 02:00 UTC on GitHub Actions runners for GDPR retention purges and telemetry exports.
 
-### 10.3 Manual VPS Deployment Steps (Zero-Compute)
-If deploying or updating manually on a production VPS:
+### 10.3 Manual VPS Deployment Steps (Zero-Compute, Shared Platform Profile)
+If deploying or updating manually on a production VPS (one-time platform provisioning per §9.6):
 ```bash
-# 1. Download production compose file
-curl -O https://raw.githubusercontent.com/jerryboganda/gepa/main/docker-compose.prod.yml
+cd /opt/docker/gepa   # compose file copied here by the deploy workflow (or scp it manually)
 
-# 2. Pull pre-compiled container image directly (Zero CPU/memory compilation)
-docker compose -f docker-compose.prod.yml pull
+# 1. Pull pre-compiled container image directly (Zero CPU/memory compilation)
+docker compose -f docker-compose.prod.yml --env-file /opt/platform/projects/gepa.env pull
 
-# 3. Start or restart the container with resource limits (1 CPU, 512MB RAM cap)
-docker compose -f docker-compose.prod.yml up -d --remove-orphans
+# 2. Start or restart the container with resource limits (1 CPU, 512MB RAM cap), no host ports
+docker compose -f docker-compose.prod.yml --env-file /opt/platform/projects/gepa.env up -d --remove-orphans
 
-# 4. Prune dangling images to ensure zero disk creep
+# 3. Prune dangling images to ensure zero disk creep
 docker image prune -f
 
-# 5. Verify live application health
-curl -f http://localhost:8080/healthz
+# 4. Verify live application health (no published ports — exec inside the compose network)
+docker compose -f docker-compose.prod.yml --env-file /opt/platform/projects/gepa.env \
+  exec -T gepa-server curl -f http://localhost:8080/healthz
 ```
 

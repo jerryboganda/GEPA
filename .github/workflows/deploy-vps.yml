@@ -63,7 +63,8 @@ jobs:
     name: Zero-Compute Deployment to Production VPS
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: always()
+    # Never report the deploy leg as passing after a failed build/push.
+    if: needs.build-and-push.result == 'success'
 
     steps:
       - name: Check VPS Secrets Configuration
@@ -76,6 +77,30 @@ jobs:
             echo "::notice::VPS secrets (VPS_HOST, VPS_SSH_KEY) are not set. Pre-built image is available in GHCR for immediate zero-compute pull."
           fi
 
+      - name: Prepare Target Directory
+        if: steps.check-secrets.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ github.event.inputs.vps_host || secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            mkdir -p /opt/docker/gepa
+
+      - name: Copy Compose File (Exact Tagged Revision)
+        if: steps.check-secrets.outputs.configured == 'true'
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ github.event.inputs.vps_host || secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: docker-compose.prod.yml
+          target: /opt/docker/gepa/
+          overwrite: true
+
       - name: SSH to Production VPS & Pull Pre-built Container
         if: steps.check-secrets.outputs.configured == 'true'
         uses: appleboy/ssh-action@v1.0.3
@@ -87,23 +112,31 @@ jobs:
           script: |
             set -e
             echo "=== Zero-Compute VPS Deploy: Pulling Pre-built Container Image ==="
-            cd /opt/gepa || mkdir -p /opt/gepa && cd /opt/gepa
-            
-            # Authenticate with GHCR if needed
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            
-            # Pull pre-compiled runtime image directly (0 CPU build load on VPS)
-            export GEPA_IMAGE_REPO="${{ github.repository }}"
+            # GHCR image refs must be lowercase; ${{ github.repository }} may not be.
+            export GEPA_IMAGE_REPO="$(printf '%s' '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
             export GEPA_TAG="latest"
-            docker compose -f docker-compose.prod.yml pull
-            
+            # Shared-infrastructure policy: platform-managed per-project credentials
+            # (DATABASE_URL, JWT_SECRET, GEMINI_API_KEY) provisioned once by
+            # /opt/platform/bin/provision-project.sh gepa — never committed to the repo.
+            ENV_FILE=/opt/platform/projects/gepa.env
+            if [ ! -f "$ENV_FILE" ]; then
+              echo "::error::$ENV_FILE is missing — run /opt/platform/bin/provision-project.sh gepa and add JWT_SECRET/GEMINI_API_KEY (docs/RUNBOOK.md §9.6)"
+              exit 1
+            fi
+            cd /opt/docker/gepa
+            # The workflow token is expanded Actions-side before the script is sent
+            # (it never exists on the VPS) and is masked in logs; short-lived.
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            # Pull pre-compiled runtime image directly (0 CPU build load on VPS)
+            docker compose -f docker-compose.prod.yml --env-file "$ENV_FILE" pull
             # Restart service with zero-downtime recreation
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
-            
+            docker compose -f docker-compose.prod.yml --env-file "$ENV_FILE" up -d --remove-orphans
             # Minimize disk usage on production host
             docker image prune -f
-            
-            # Smoke test healthcheck
+            # Smoke test healthcheck. Shared-infra policy publishes no host ports, so
+            # exec inside the compose network. First boot applies the schema migration;
+            # the retries ride out transient 503s while the pool initializes.
             sleep 5
-            curl --fail --retry 5 --retry-connrefused http://localhost:8080/healthz || exit 1
+            docker compose -f docker-compose.prod.yml --env-file "$ENV_FILE" exec -T gepa-server \
+              curl --fail --retry 12 --retry-delay 5 --retry-connrefused http://localhost:8080/healthz
             echo "=== GEPA Production VPS Successfully Serving Application ==="

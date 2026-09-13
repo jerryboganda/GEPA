@@ -1,5 +1,30 @@
 # GEPA Platform Changelog
 
+## [Unreleased] - 2026-09-13 — Q-008 resolved: shared-platform VPS deploy profile (no app changes)
+
+The owner directed that the production VPS runs **shared infrastructure** (platform stack at
+`/opt/platform`: shared Postgres for every project, shared NPM ingress, per-project env files under
+`/opt/platform/projects/`). The deploy path was rewritten to comply, and three latent deploy-path defects
+were fixed on the way (full rationale in DECISIONS.md D-023, go-live steps in RUNBOOK.md §9.6):
+
+- `docker-compose.prod.yml` → **shared-platform profile**: removed the dedicated `postgres` service and the
+  published host port 8080; the server joins the external `platform` network (shared `platform-postgres`
+  via `DATABASE_URL`) and the external `nginx-proxy-manager_default` network (NPM forwards to
+  `gepa-server-prod:8080` by container name — the box has no active firewall, so no 0.0.0.0 listeners).
+  `DATABASE_URL`/`JWT_SECRET` fail fast (`:?`) instead of booting degraded silently. No fake Redis wiring —
+  the server's code path is Postgres-only.
+- `.github/workflows/deploy-vps.yml` → `deploy-to-vps` gated on build success (was `if: always()`);
+  copies the **exact tagged** compose file to `/opt/docker/gepa` via `appleboy/scp-action@v1.0.0`;
+  lowercases `github.repository` for the GHCR image ref (docker refs must be lowercase —
+  `jerryboganda/GEPA` would have failed the pull); pulls/starts with
+  `--env-file /opt/platform/projects/gepa.env`; smokes `/healthz` via `docker compose exec` with retry
+  headroom for first-boot schema migration (was host-side `curl localhost:8080`, unreachable without
+  published ports).
+- GHCR package documented as **must-stay-private**: the image bakes in `RESTRICTED_*` seed assets;
+  workflow authenticates pulls with its short-lived token (no PAT to mint or rotate).
+- Release: tagged `v2.0.0-beta.5` → image published to `ghcr.io/jerryboganda/gepa/gepa-server`
+  (semver + `sha-` + `latest`), built 100% on GitHub Actions runners.
+
 ## [Unreleased] - 2026-09-13 — CI hygiene: Node 24-native action pins (no app changes)
 
 Every workflow file bumped off actions that GitHub's runners already force onto Node 24

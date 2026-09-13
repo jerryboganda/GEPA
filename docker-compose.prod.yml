@@ -1,23 +1,41 @@
-# Production Zero-Compute Deployment Configuration
+# Production Zero-Compute Deployment — SHARED PLATFORM PROFILE
 # All compilation, testing, asset validation, and container builds are offloaded to GitHub Actions.
 # The production VPS strictly pulls and executes the lightweight pre-built runtime container.
-# Reference: docs/02_ARCHITECTURE.md §1 & §8, D-016, D-018
+# Reference: docs/02_ARCHITECTURE.md §1 & §8, D-016, D-018, D-023
+#
+# Shared-infrastructure hosting policy (platform stack at /opt/platform on the VPS,
+# rules in /opt/platform/PLATFORM-RULES.md — same pattern as UBAG on the shared box):
+#   * NO per-app databases. GEPA consumes the shared platform-postgres over the
+#     external `platform` docker network (one instance for every project on the box).
+#     GEPA's database + credentials are created once via
+#     /opt/platform/bin/provision-project.sh gepa, which writes
+#     /opt/platform/projects/gepa.env (DATABASE_URL, plus JWT_SECRET / GEMINI_API_KEY).
+#   * NO published host ports — this box has no active firewall, so any 0.0.0.0-bound
+#     port is directly internet-reachable. Ingress is the shared Nginx Proxy Manager
+#     via the external `nginx-proxy-manager_default` network (see RUNBOOK §9.6).
+#   * Zero compute: this stack only pulls the pre-built GHCR image built by
+#     .github/workflows/deploy-vps.yml on GitHub Actions runners. Resource limits
+#     pin this container's share of the shared box (1.0 CPU / 512 MB).
+#   * The GEPA server code path uses Postgres only (self-issued JWT, no queue, no
+#     object store). Shared Redis/NATS/MinIO are available on the `platform` network
+#     but deliberately not referenced here — do not add fake wiring.
+#   * The GHCR image contains RESTRICTED_* seed assets (answer keys, reviewer notes),
+#     so the package MUST stay private; the deploy workflow authenticates the pull
+#     with its short-lived workflow token. Never make the package public.
 
 services:
   gepa-server:
     image: ghcr.io/${GEPA_IMAGE_REPO:-jerryboganda/gepa}/gepa-server:${GEPA_TAG:-latest}
     container_name: gepa-server-prod
-    restart: always
-    ports:
-      - "${PORT:-8080}:8080"
+    restart: unless-stopped
     environment:
       - PORT=8080
       - CLIENT_DIST=/app/client/dist
       - SEED_DIR=/app/seed
       - RUST_LOG=server=info,tower_http=info
+      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required — comes from /opt/platform/projects/gepa.env (docs/RUNBOOK.md §9.6)}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required — comes from /opt/platform/projects/gepa.env (docs/RUNBOOK.md §9.6)}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
       - SIGNED_URL_TTL_SECONDS=${SIGNED_URL_TTL_SECONDS:-600}
       - FEATURE_PRETEST_ITEMS=${FEATURE_PRETEST_ITEMS:-false}
       - FEATURE_AI_DETECTOR_FLAGS=${FEATURE_AI_DETECTOR_FLAGS:-false}
@@ -28,6 +46,12 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    networks:
+      # Shared backing services (platform-postgres) — created by
+      # /opt/platform/bin/init-platform.sh.
+      - platform
+      # Shared ingress — NPM reaches gepa-server-prod:8080 by container name.
+      - nginx-proxy-manager_default
     deploy:
       resources:
         limits:
@@ -36,3 +60,9 @@ services:
         reservations:
           cpus: '0.2'
           memory: 128M
+
+networks:
+  platform:
+    external: true
+  nginx-proxy-manager_default:
+    external: true
